@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class GameState : MonoBehaviour {
 
+	// Helper: Make it easy to turn off exceptions when we ship this
+	public static void ThrowException(string msg) {
+		throw new System.ArgumentException (msg);
+	}
+
 	// Page 1: Dating container object and text + options.
 	public GameObject DialogueStoryTab;
 	public Text StoryTxt;
@@ -22,6 +27,9 @@ public class GameState : MonoBehaviour {
 	public GameObject DateActionTab;
 	public Text DateActTxt;
 	public GameObject DateProressBar;
+
+	// General random generator
+	private System.Random rng = new System.Random();
 
 	// State = what you're doing. 
 	//         some states may be correllated (i.e., talking to your date implies interacting with them), 
@@ -55,6 +63,10 @@ public class GameState : MonoBehaviour {
 		// ChooseInteractTalk sub-states
 		TalkDateSelectReact, // Waiting for particles to settle
 		TalkDateViewResponse, // See how the date likes your reaction (or not)
+
+		// DateAction sub-actions
+		DateActSocialMedia,  // Date is ignoring you and interacting with their fans
+		DateActTalkToYou,  // Date is interacting with you
 	}
 		
 
@@ -64,8 +76,6 @@ public class GameState : MonoBehaviour {
 	// Countdown for whenever your date is acting
 	private static float DateActCountMax = 5; // How many seconds to complete an action
 	private float DateActCount = DateActCountMax;  // When < max, counts up
-
-
 
 	private DateDialogues dateDialogues;
 
@@ -129,6 +139,21 @@ public class GameState : MonoBehaviour {
 
 		CurrState = ActState.DateAction;
 	}
+
+	// What action will our date take?
+	public void MakeDateDecision() {
+		// TODO : More structured randomness, incorporate Pablo's actors
+		if (rng.Next (100) < 50) {
+			CurrState = ActState.DateActSocialMedia;
+			DateActTxt.text = "Your date is tweeting a picture of their food...";
+		} else {
+			CurrState = ActState.DateActTalkToYou;
+			DateActTxt.text = "Your date explains their view on current events...";
+		}
+		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
+		DateActionTab.SetActive (true);
+		DateActCount = 0;
+	}
 		
 
 	public void ChooseOption(int opt) {
@@ -190,7 +215,7 @@ public class GameState : MonoBehaviour {
 
 
 		// Comment out on release.
-		throw new System.ArgumentException ("Bad option: " + opt);
+		ThrowException ("Bad option: " + opt);
 	}
 
 	public void ChoiceParticlesDone() {
@@ -216,21 +241,42 @@ public class GameState : MonoBehaviour {
 
 		
 	}
+
+	private void AdvanceCounter(float amt) {
+		DateActCount += amt;
+
+		// Always update the progress bar
+		float perc = DateActCount / DateActCountMax;
+		if (perc > 1.0f) { perc = 1.0f; }
+		DateProressBar.gameObject.transform.localScale = new Vector3 (perc, 1, 1);
+
+		// Trigger?
+		if (DateActCount >= DateActCountMax) {
+			// What were we in the middle of?
+			if (CurrState == ActState.DateAction) {
+				MakeDateDecision ();
+			} else {
+				ThrowException ("");
+			}
+		}
+	}
+
+	// Skip if waiting on an action
+	public void SkipWaitCounter() {
+		if (DateActCount < DateActCountMax) {
+			AdvanceCounter (9999);
+		}
+	}
 	
 	// Update is called once per frame
 	void Update () {
 		// Deal with counter
-		if (CurrState == ActState.DateAction) {
-			if (DateActCount < DateActCountMax) {
-				DateActCount += Time.deltaTime;
-
-				float perc = DateActCount / DateActCountMax;
-				if (perc > 1.0f) { perc = 1.0f; }
-				DateProressBar.gameObject.transform.localScale = new Vector3 (perc, 1, 1);
-
-				if (DateActCount >= DateActCountMax) {
-					// Done!
-				}
+		if (DateActCount < DateActCountMax) {
+			// Any key will advance the counter 100%
+			if (Input.anyKeyDown && DateActCount > 0) {
+				AdvanceCounter (9999);
+			} else { 
+				AdvanceCounter (Time.deltaTime);
 			}
 		}
 		

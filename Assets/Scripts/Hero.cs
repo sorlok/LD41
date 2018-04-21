@@ -48,7 +48,8 @@ public class Hero : MonoBehaviour {
 
 			if (State.CurrState == GameState.ActState.Nothing) {
 				// Choose action.
-				State.SetupChoosePlayerAction();
+				//State.SetupChoosePlayerAction();
+				State.SetupDateTurn(); // TEMP
 			}
 		}
 
