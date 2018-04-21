@@ -6,6 +6,8 @@ public class Hero : MonoBehaviour {
 	public GameObject HeroCube;
 	public GameObject HeroShield;
 
+	public GameState State;
+
 	//Movement Tech
 	private float heroMoveAmt = 0.2f;
 
