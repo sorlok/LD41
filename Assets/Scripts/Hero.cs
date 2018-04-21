@@ -48,7 +48,6 @@ public class Hero : MonoBehaviour {
 
 			if (State.CurrState == GameState.ActState.Nothing) {
 				// Choose action.
-				State.CurrState = GameState.ActState.PlayerActionSelect;
 				State.SetupChoosePlayerAction();
 			}
 		}

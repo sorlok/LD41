@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameState : MonoBehaviour {
 
 	// Page 1: Dating container object and text + options.
-	public GameObject DialogueStoryChoice;
+	public GameObject DialogueStoryTab;
 	public Text StoryTxt;
 	public Button Response1;
 	public Button Response2;
@@ -17,6 +17,11 @@ public class GameState : MonoBehaviour {
 	public Material GoodOptionTexture;
 	public Material NeutralOptionTexture;
 	public Material BadOptionTexture;
+
+	// The date's action
+	public GameObject DateActionTab;
+	public Text DateActTxt;
+	public GameObject DateProressBar;
 
 	// State = what you're doing. 
 	//         some states may be correllated (i.e., talking to your date implies interacting with them), 
@@ -56,52 +61,73 @@ public class GameState : MonoBehaviour {
 	// Current state tree entry. Sub-state(s) should be set to 0 on state change.
 	public ActState CurrState = ActState.Nothing;
 
+	// Countdown for whenever your date is acting
+	private static float DateActCountMax = 5; // How many seconds to complete an action
+	private float DateActCount = DateActCountMax;  // When < max, counts up
+
 
 
 	private DateDialogues dateDialogues;
 
+	// Show or hide 3 option boxes. If null, hide, if not, show and set text
+	private void ShowBoxes(string opt1, string opt2=null, string opt3=null) {
+		string[] opts = new string[]{ opt1, opt2, opt3 };
+		Button[] comps = new Button[] { Response1, Response2, Response3 };
+
+		for (int i = 0; i < 3; i++) {
+			if (opts [i] != null) {
+				comps [i].GetComponentInChildren <Text> ().text = opts [i];
+			} 
+			comps [i].gameObject.SetActive (opts [i] != null);
+		}
+	}
+
 	public void SetupChoosePlayerAction() {
 		StoryTxt.text = "What will you do this turn?";
-		Response1.GetComponentInChildren <Text>().text = "Interact with Date";
-		Response2.GetComponentInChildren <Text>().text = "Interact with Fans";
-		Response3.GetComponentInChildren <Text>().text = "End Date";
-
-		// Show boxes.
-		foreach (Button g in new Button[]{Response1, Response2, Response3}) {
-			g.gameObject.SetActive (true);
-		}
-
-		DialogueStoryChoice.SetActive (true);
+		ShowBoxes (
+			"Interact with Date",
+			"Interact with Fans",
+			"End Date"
+		);
+		DialogueStoryTab.SetActive (true);
+		CurrState = ActState.PlayerActionSelect;
 	}
 
 	public void SetupInteractWithDate() {
 		StoryTxt.text = "How will you interact with your date?";
-		Response1.GetComponentInChildren <Text>().text = "Talk to Them";
-		Response2.GetComponentInChildren <Text>().text = "Impress Them";
-		Response3.GetComponentInChildren <Text>().text = "Encourage Them";
+		ShowBoxes (
+			"Talk to Them",
+			"Impress Them",
+			"Encourage Them"
+		);
 
-		// Show boxes.
-		foreach (Button g in new Button[]{Response1, Response2, Response3}) {
-			g.gameObject.SetActive (true);
-		}
-
-		DialogueStoryChoice.SetActive (true);
+		DialogueStoryTab.SetActive (true);
+		CurrState = ActState.ChooseInteractWithDate;
 	}
 
 	public void SetupTalkToDate() {
 		DateDialogue dd = dateDialogues.DialogueOptions [0];
 
 		StoryTxt.text = dd.storyText;
-		Response1.GetComponentInChildren <Text>().text = dd.option1;
-		Response2.GetComponentInChildren <Text>().text = dd.option2;
-		Response3.GetComponentInChildren <Text>().text = dd.option3;
+		ShowBoxes (
+			dd.option1,
+			dd.option2,
+			dd.option3
+		);
 
-		// Show boxes.
-		foreach (Button g in new Button[]{Response1, Response2, Response3}) {
-			g.gameObject.SetActive (true);
-		}
+		DialogueStoryTab.SetActive (true);
+		CurrState = ActState.ChooseInteractTalk;
+	}
 
-		DialogueStoryChoice.SetActive (true);
+	public void SetupDateTurn() {
+		DialogueStoryTab.SetActive (false);
+
+		DateActTxt.text = "Your date is deciding what to do...";
+		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
+		DateActionTab.SetActive (true);
+		DateActCount = 0;
+
+		CurrState = ActState.DateAction;
 	}
 		
 
@@ -111,7 +137,6 @@ public class GameState : MonoBehaviour {
 			if (opt == 1) {
 				// Interact with your date.
 				SetupInteractWithDate ();
-				CurrState = ActState.ChooseInteractWithDate;
 			} else if (opt == 2) {
 				// Deal with fans
 			} else if (opt == 3) {
@@ -126,7 +151,6 @@ public class GameState : MonoBehaviour {
 			if (opt == 1) {
 				// Talk to your date
 				SetupTalkToDate ();
-				CurrState = ActState.ChooseInteractTalk;
 			} else if (opt == 2) {
 				// Interact with them
 			} else if (opt == 3) {
@@ -155,31 +179,60 @@ public class GameState : MonoBehaviour {
 			return;
 		}
 
+		// Done talking to date, now move to next phase
+		if (CurrState == ActState.TalkDateViewResponse) {
+			if (opt == 1) {
+				SetupDateTurn ();
+			}
+
+			return;
+		}
+
+
 		// Comment out on release.
 		throw new System.ArgumentException ("Bad option: " + opt);
 	}
 
 	public void ChoiceParticlesDone() {
-		// Clear boxes.
-		foreach (Button g in new Button[]{Response1, Response2, Response3}) {
-			g.gameObject.SetActive (false);
-		}
+		ShowBoxes (
+			"Done Talking"
+		);
 
 		// Set Response
 		StoryTxt.text = "Wow, what a...\nnice? thing to say...";
+
+		// Need to move the state along.
+		CurrState = ActState.TalkDateViewResponse;
 	}
 
 
 
 	// Use this for initialization
 	void Start () {
-		DialogueStoryChoice.SetActive (false);
+		DialogueStoryTab.SetActive (false);
 		dateDialogues = new DateDialogues ();
+
+		DateActionTab.SetActive (false);
+
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		// Deal with counter
+		if (CurrState == ActState.DateAction) {
+			if (DateActCount < DateActCountMax) {
+				DateActCount += Time.deltaTime;
+
+				float perc = DateActCount / DateActCountMax;
+				if (perc > 1.0f) { perc = 1.0f; }
+				DateProressBar.gameObject.transform.localScale = new Vector3 (perc, 1, 1);
+
+				if (DateActCount >= DateActCountMax) {
+					// Done!
+				}
+			}
+		}
 		
 	}
 }
