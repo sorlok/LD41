@@ -26,7 +26,11 @@ public class GameState : MonoBehaviour {
 	// The date's action
 	public GameObject DateActionTab;
 	public Text DateActTxt;
+	public Text ResultTxt;
+	public GameObject DateProgressBarBkg;
 	public GameObject DateProressBar;
+	public GameObject DateProgressSkipBtn;
+	private bool skipAdvanceCounter = false;
 
 	// General random generator
 	private System.Random rng = new System.Random();
@@ -67,6 +71,7 @@ public class GameState : MonoBehaviour {
 		// DateAction sub-actions
 		DateActSocialMedia,  // Date is ignoring you and interacting with their fans
 		DateActTalkToYou,  // Date is interacting with you
+		DateActShowReward, // We're looking at the "reward" the date got from talking to you or using social media.
 	}
 		
 
@@ -132,10 +137,17 @@ public class GameState : MonoBehaviour {
 	public void SetupDateTurn() {
 		DialogueStoryTab.SetActive (false);
 
+		DateProgressBarBkg.SetActive (true);
+		DateProressBar.SetActive (true);
+		DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 70, 0);
+		DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Skip";
+		ResultTxt.gameObject.SetActive (false);
 		DateActTxt.text = "Your date is deciding what to do...";
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
+
+		skipAdvanceCounter = true;
 
 		CurrState = ActState.DateAction;
 	}
@@ -231,6 +243,10 @@ public class GameState : MonoBehaviour {
 	}
 
 
+	// TODO: actually increase values.
+	void DateCollectsReward() {
+	}
+
 
 	// Use this for initialization
 	void Start () {
@@ -243,6 +259,10 @@ public class GameState : MonoBehaviour {
 	}
 
 	private void AdvanceCounter(float amt) {
+		if (skipAdvanceCounter) {
+			return;
+		}
+
 		DateActCount += amt;
 
 		// Always update the progress bar
@@ -252,9 +272,22 @@ public class GameState : MonoBehaviour {
 
 		// Trigger?
 		if (DateActCount >= DateActCountMax) {
+			skipAdvanceCounter = true; // Don't fire more than once per frame.
+
 			// What were we in the middle of?
 			if (CurrState == ActState.DateAction) {
 				MakeDateDecision ();
+			} else if (CurrState == ActState.DateActSocialMedia || CurrState == ActState.DateActTalkToYou) {
+				// Show "rewards"
+				DateProgressBarBkg.SetActive (false);
+				DateProressBar.SetActive (false);
+				DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 120, 0);
+				DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
+				ResultTxt.gameObject.SetActive (true);
+
+				ResultTxt.text = "You gained 1 Self-Confidence\nYour date gained 2k fans";
+
+				CurrState = ActState.DateActShowReward;
 			} else {
 				ThrowException ("");
 			}
@@ -263,8 +296,13 @@ public class GameState : MonoBehaviour {
 
 	// Skip if waiting on an action
 	public void SkipWaitCounter() {
-		if (DateActCount < DateActCountMax) {
-			AdvanceCounter (9999);
+		// This is also our "ok" button
+		if (CurrState == ActState.DateActShowReward) {
+			DateCollectsReward ();
+		} else {
+			if (DateActCount < DateActCountMax) {
+				AdvanceCounter (9999);
+			}
 		}
 	}
 	
@@ -273,12 +311,16 @@ public class GameState : MonoBehaviour {
 		// Deal with counter
 		if (DateActCount < DateActCountMax) {
 			// Any key will advance the counter 100%
-			if (Input.anyKeyDown && DateActCount > 0) {
+			if (Input.anyKeyDown) {
 				AdvanceCounter (9999);
 			} else { 
 				AdvanceCounter (Time.deltaTime);
 			}
 		}
 		
+	}
+
+	void LateUpdate() {
+		skipAdvanceCounter = false; // TODO: This doesn't *quite* work the way we want yet (if you click on the button).
 	}
 }
