@@ -46,9 +46,11 @@ public class Hero : MonoBehaviour {
 		if (Input.GetKey (KeyCode.W)) {
 			Jump ();
 
-			// Conversation start; set menu visible.
-			State.SetupConversation ();
-			State.DialogueStoryChoice.SetActive (true);
+			if (State.CurrState == GameState.ActState.Nothing) {
+				// Choose action.
+				State.CurrState = GameState.ActState.PlayerActionSelect;
+				State.SetupChoosePlayerAction();
+			}
 		}
 
 		if (jumping != 0) {
