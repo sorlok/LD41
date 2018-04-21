@@ -21,7 +21,10 @@ public class DateDialogues {
 
 	private static List<DateDialogue> MakeDialogueOptions() {
 		List<DateDialogue> res = new List<DateDialogue> ();
+
 		res.Add (new DateDialogue("Your date tells you a story about how they got lost\nin the tropics and defeated some dinosaurs.\n\nWhat do you say?", "Compliment Them", "Laugh Manically", "Feign Boredom") );
+
+
 		return res;
 	}
 

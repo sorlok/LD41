@@ -19,11 +19,19 @@ public class GameState : MonoBehaviour {
 		Response1.text = dd.option1;
 		Response2.text = dd.option2;
 		Response3.text = dd.option3;
-
-
-
 	}
 
+	public void ChooseOption1() {
+		StoryTxt.text = "OPT 1";
+	}
+
+	public void ChooseOption2() {
+		StoryTxt.text = "OPT 2";
+	}
+
+	public void ChooseOption3() {
+		StoryTxt.text = "OPT 3";
+	}
 
 
 	// Use this for initialization
