@@ -13,8 +13,10 @@ public class Fan : MonoBehaviour {
 	/* movement */
 	private uint speed = 2;
 
-	private Vector3 dateLoc;
-	private Vector3 promotionLoc;
+	private Vector2Int dateLoc;
+	private Vector2Int promotionLoc;
+
+	private Vector2Int[,] map;
 
 	/* combat */
 	private uint damage = 1;
@@ -27,18 +29,18 @@ public class Fan : MonoBehaviour {
 		return false;
 	}
 
-	void MoveToPromotion () {}
-
-	void MoveToDate () {}
+	void MoveToLocation () {
+		
+	}
 
 	void TakeTurn() {
 		if (influenced) {
-			MoveToPromotion ();
+			MoveToLocation ();
 		} else if (aware) {
 			if (IsPCAdjacent()) {
 				DoDamage ();
 			} else {
-				MoveToDate ();
+				MoveToLocation ();
 			}
 		} else {
 			RandomWalk ();
