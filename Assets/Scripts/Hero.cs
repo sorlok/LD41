@@ -7,7 +7,6 @@ public class Hero : MonoBehaviour {
 	public GameObject HeroShield;
 
 	public GameState State;
-	public GameObject DialogueStoryChoice;
 
 	//Movement Tech
 	private float heroMoveAmt = 0.2f;
@@ -25,7 +24,6 @@ public class Hero : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		DialogueStoryChoice.SetActive (false);
 		
 	}
 	
@@ -50,7 +48,7 @@ public class Hero : MonoBehaviour {
 
 			// Conversation start; set menu visible.
 			State.SetupConversation ();
-			DialogueStoryChoice.SetActive (true);
+			State.DialogueStoryChoice.SetActive (true);
 		}
 
 		if (jumping != 0) {
