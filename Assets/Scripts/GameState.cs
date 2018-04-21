@@ -308,6 +308,14 @@ public class GameState : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (Input.GetKey (KeyCode.W)) {
+			if (CurrState == GameState.ActState.Nothing) {
+				// Choose action.
+				//State.SetupChoosePlayerAction();
+				SetupDateTurn (); // TEMP
+			}
+		}
+
 		// Deal with counter
 		if (DateActCount < DateActCountMax) {
 			// Any key will advance the counter 100%
