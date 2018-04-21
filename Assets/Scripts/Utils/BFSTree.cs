@@ -6,7 +6,7 @@ using UnityEngine;
 public class BFSTree {
 	public BFSTreeNode root;
 
-	BFSTree(Vector2Int start, Vector2Int dest, int[,] matrix) {
+	public BFSTree(Vector2Int start, Vector2Int dest, int[,] matrix) {
 		GenerateTree (start, dest, matrix);
 	}
 
