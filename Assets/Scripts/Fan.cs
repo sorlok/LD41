@@ -35,7 +35,7 @@ public class Fan : MonoBehaviour {
 		if (influenced) {
 			MoveToPromotion ();
 		} else if (aware) {
-			if (IsPCAdjacent) {
+			if (IsPCAdjacent()) {
 				DoDamage ();
 			} else {
 				MoveToDate ();
