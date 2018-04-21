@@ -244,7 +244,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1345055492
+  randomSeed: 1854257767
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -334,7 +334,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0, b: 0.8068962, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -3682,6 +3682,7 @@ MonoBehaviour:
   NeutralOptionTexture: {fileID: 2100000, guid: 86dc989846e524b5d8c5a2a10dd60d03,
     type: 2}
   BadOptionTexture: {fileID: 2100000, guid: 0833d76b72e004d9facf41caac7ff1f0, type: 2}
+  CurrState: 0
 --- !u!4 &430121450
 Transform:
   m_ObjectHideFlags: 0
