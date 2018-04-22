@@ -20,6 +20,9 @@ public class Lead : MonoBehaviour {
 	private uint promotions = 3;
 	private string[] perks;
 
+	/* movement */
+	public Vector2Int currentLoc;
+
 
 	/* --- Methods --- */
 	void DoInstagramPromotion () {}
