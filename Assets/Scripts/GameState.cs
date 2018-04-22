@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class GameState : MonoBehaviour {
@@ -30,7 +31,8 @@ public class GameState : MonoBehaviour {
 	public GameObject DateProgressBarBkg;
 	public GameObject DateProressBar;
 	public GameObject DateProgressSkipBtn;
-	private bool skipAdvanceCounter = false;
+
+	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
 	// General random generator
 	private System.Random rng = new System.Random();
@@ -147,8 +149,6 @@ public class GameState : MonoBehaviour {
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
 
-		skipAdvanceCounter = true;
-
 		CurrState = ActState.DateAction;
 	}
 
@@ -243,8 +243,14 @@ public class GameState : MonoBehaviour {
 	}
 
 
-	// TODO: actually increase values.
 	void DateCollectsReward() {
+		// TODO: actually increase values.
+
+
+		DateActionTab.SetActive (false);
+
+		// TMP: move to next state
+		CurrState = ActState.FansAction;
 	}
 
 
@@ -259,10 +265,6 @@ public class GameState : MonoBehaviour {
 	}
 
 	private void AdvanceCounter(float amt) {
-		if (skipAdvanceCounter) {
-			return;
-		}
-
 		DateActCount += amt;
 
 		// Always update the progress bar
@@ -272,8 +274,6 @@ public class GameState : MonoBehaviour {
 
 		// Trigger?
 		if (DateActCount >= DateActCountMax) {
-			skipAdvanceCounter = true; // Don't fire more than once per frame.
-
 			// What were we in the middle of?
 			if (CurrState == ActState.DateAction) {
 				MakeDateDecision ();
@@ -289,7 +289,7 @@ public class GameState : MonoBehaviour {
 
 				CurrState = ActState.DateActShowReward;
 			} else {
-				ThrowException ("");
+				ThrowException ("Bad current state: " + CurrState);
 			}
 		}
 	}
@@ -299,27 +299,44 @@ public class GameState : MonoBehaviour {
 		// This is also our "ok" button
 		if (CurrState == ActState.DateActShowReward) {
 			DateCollectsReward ();
-		} else {
+		} 
+		/*else {
 			if (DateActCount < DateActCountMax) {
-				AdvanceCounter (9999);
+				if (SkipPhase == CurrState) {
+					AdvanceCounter (9999);
+				}
 			}
-		}
+		}*/
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		// Hack to avoid double-clicking
+		if (Input.GetMouseButtonDown (0)) {
+			if (EventSystem.current.IsPointerOverGameObject()) {
+				SkipPhase = CurrState;
+			}
+		}
+		if (Input.GetMouseButtonUp (0)) {
+			if (SkipPhase == CurrState && DateActCount < DateActCountMax) {
+				if (EventSystem.current.IsPointerOverGameObject ()) {
+					AdvanceCounter (9999);
+				}
+			}
+			SkipPhase = ActState.Nothing;
+		}
+
 		if (Input.GetKey (KeyCode.W)) {
 			if (CurrState == GameState.ActState.Nothing) {
-				// Choose action.
-				//State.SetupChoosePlayerAction();
-				SetupDateTurn (); // TEMP
+				SetupChoosePlayerAction();
+				return;
 			}
 		}
 
 		// Deal with counter
 		if (DateActCount < DateActCountMax) {
 			// Any key will advance the counter 100%
-			if (Input.anyKeyDown) {
+			if (Input.anyKeyDown && SkipPhase == ActState.Nothing) {
 				AdvanceCounter (9999);
 			} else { 
 				AdvanceCounter (Time.deltaTime);
@@ -328,7 +345,4 @@ public class GameState : MonoBehaviour {
 		
 	}
 
-	void LateUpdate() {
-		skipAdvanceCounter = false; // TODO: This doesn't *quite* work the way we want yet (if you click on the button).
-	}
 }
