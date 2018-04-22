@@ -9,11 +9,20 @@ public class MapHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
+		
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	public void CreateLead(int tileX, int tileY) {
+
+	}
+
+	public void CreateFan(int tileX, int tileY) {
+
 	}
 
 	public void GetClickTile () {
