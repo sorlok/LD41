@@ -75,7 +75,7 @@ public class BFSTree {
 		CalculateDistances(dest, root);
 	}
 
-	List<Vector2Int> GetNeighbors(Vector2Int pos, int[,] matrix) {
+	public static List<Vector2Int> GetNeighbors(Vector2Int pos, int[,] matrix) {
 		int maxRow = matrix.GetLength (0);
 		int maxCol = matrix.GetLength (1);
 
