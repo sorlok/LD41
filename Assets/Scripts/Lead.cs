@@ -10,6 +10,12 @@ public class Lead : MonoBehaviour {
 
 	/* basic resources */
 	private uint selfEsteem = 3;
+	public uint SelfEsteem
+	{
+		get { return selfEsteem; }
+		set { selfEsteem = value; }
+	}
+
 	private uint fanCount = 300;
 
 	/* date resources */
@@ -22,6 +28,8 @@ public class Lead : MonoBehaviour {
 
 	/* movement */
 	public Vector2Int currentLoc;
+
+
 
 
 	/* --- Methods --- */
