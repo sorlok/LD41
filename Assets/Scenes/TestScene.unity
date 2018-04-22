@@ -1407,6 +1407,11 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114110805037940746, guid: f5db205ff17b27840b72bc596f8d0e54,
+        type: 2}
+      propertyPath: MapHandler
+      value: 
+      objectReference: {fileID: 1112720158}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f5db205ff17b27840b72bc596f8d0e54, type: 2}
   m_IsPrefabParent: 0
@@ -1762,6 +1767,11 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 180
       objectReference: {fileID: 0}
+    - target: {fileID: 114814744653065392, guid: d8d670da164d0b64296df22df3521945,
+        type: 2}
+      propertyPath: MapHandler
+      value: 
+      objectReference: {fileID: 1112720158}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d8d670da164d0b64296df22df3521945, type: 2}
   m_IsPrefabParent: 0
