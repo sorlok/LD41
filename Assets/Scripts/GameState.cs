@@ -41,7 +41,7 @@ public class GameState : MonoBehaviour {
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
 	// General random generator
-	private System.Random rng = new System.Random();
+	public static System.Random rng = new System.Random();
 
 	// State = what you're doing. 
 	//         some states may be correllated (i.e., talking to your date implies interacting with them), 
@@ -89,6 +89,10 @@ public class GameState : MonoBehaviour {
 	// Countdown for whenever your date is acting
 	private static float DateActCountMax = 5; // How many seconds to complete an action
 	private float DateActCount = DateActCountMax;  // When < max, counts up
+
+	// Temporary hack for moving NPCs
+	private static float NPCMoveCountMax = 1;
+	private float NPCMoveCount = NPCMoveCountMax;
 
 	private DateDialogues dateDialogues;
 
@@ -216,6 +220,8 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.ChooseInteractTalk) {
 			CurrState = ActState.TalkDateSelectReact;
 			ChoiceParticles.GetComponent<ParticleOrientor>().OrientParticles ();
+			ChoiceParticles.Clear ();
+			ChoiceParticles.gameObject.SetActive (true);
 			// Particles
 			//ChoiceParticles.transform.localPosition = new Vector3 (0, -1 * (opt - 1), 0); // Hack for now
 			if (opt == 1) {
@@ -229,6 +235,11 @@ public class GameState : MonoBehaviour {
 			ChoiceParticles.Play();
 			Invoke("ChoiceParticlesDone", 2);
 
+			return;
+		}
+
+		// Noop
+		if (CurrState == ActState.TalkDateSelectReact) {
 			return;
 		}
 
@@ -265,6 +276,9 @@ public class GameState : MonoBehaviour {
 
 		// TMP: move to next state
 		CurrState = ActState.FansAction;
+
+		// TMP: Start an NPC movement
+		NPCMoveCount = 0;
 	}
 
 	// Use this for initialization
@@ -306,6 +320,28 @@ public class GameState : MonoBehaviour {
 				CurrState = ActState.DateActShowReward;
 			} else {
 				ThrowException ("Bad current state: " + CurrState);
+			}
+		}
+	}
+
+	private void AdvanceNPCMoveCounter(float amt) {
+		NPCMoveCount += amt;
+
+		// TODO: Update NPC movement
+
+		// Trigger?
+		if (NPCMoveCount >= NPCMoveCountMax) {
+			// What were we in the middle of?
+			if (CurrState == ActState.FansAction) {
+				// Move a fan randomly, if one is next
+				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
+					NPCMoveCount = 0;
+				} else {
+					MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
+					SetupChoosePlayerAction ();
+				}
+			} else {
+				ThrowException ("Bad NPC current state: " + CurrState);
 			}
 		}
 	}
@@ -359,6 +395,12 @@ public class GameState : MonoBehaviour {
 				AdvanceCounter (Time.deltaTime);
 			}
 		}
+
+		// Deal with NPCs
+		if (NPCMoveCount < NPCMoveCountMax) {
+			AdvanceNPCMoveCounter (Time.deltaTime);
+		}
+
 		
 	}
 }

@@ -150,7 +150,6 @@ public class MapHandler : MonoBehaviour {
 			CreateFan (i, i);
 		}
 
-		Debug.Log ("FANS: " + this.FanCount);
 	}
 
 	public GameObject CreateLead(int tileX, int tileY) {
@@ -168,5 +167,58 @@ public class MapHandler : MonoBehaviour {
 
 	public void GetClickTile () {
 
+	}
+
+	// TEMP: Helper
+	public class IntPoint
+	{
+		public IntPoint(int x, int y) 
+		{
+			this.x = x;
+			this.y = y;
+		}
+		public int x;
+		public int y;
+	}
+
+	// Find the next NPC that hasn't moved and move it randomly.
+	// Return true if an NPC moved
+	// TEMP function
+	public bool MoveNextNPC() {
+		foreach (GameObject fanObj in fans) {
+			TokenHandler fan = fanObj.GetComponent<TokenHandler> ();
+			if (fan.MovedThisTurn) {
+				continue;
+			}
+
+			// Which tiles can we move to
+			List<IntPoint> allowedTileMoves = new List<IntPoint>();
+			if (fan.TileX > 0) {
+				allowedTileMoves.Add (new IntPoint(fan.TileX-1, fan.TileY));
+			}
+			if (fan.TileX+1 < mapTileWidth ) {
+				allowedTileMoves.Add (new IntPoint(fan.TileX+1, fan.TileY));
+			}
+			if (fan.TileY > 0) {
+				allowedTileMoves.Add (new IntPoint(fan.TileX, fan.TileY-1));
+			}
+			if (fan.TileY+1 < mapTileHeight ) {
+				allowedTileMoves.Add (new IntPoint(fan.TileX, fan.TileY+1 ));
+			}
+
+			// Get one
+			IntPoint pt = allowedTileMoves[GameState.rng.Next(allowedTileMoves.Count)];
+			fan.MoveToTile (pt.x, pt.y);
+			fan.MovedThisTurn = true;
+
+			return true;
+		}
+		return false;
+	}
+
+	public void ResetNPCMoves() {
+		foreach (GameObject fan in fans) {
+			fan.GetComponent<TokenHandler>().MovedThisTurn = false;
+		}
 	}
 }
