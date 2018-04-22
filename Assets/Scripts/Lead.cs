@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lead : MonoBehaviour {
+public class Lead {
 	public GameState state;
 	public GameObject lead;
 
@@ -119,12 +119,4 @@ public class Lead : MonoBehaviour {
 	void TweetEncouragment () {}
 
 	void TweetPromotion () {}
-
-
-	/* --- Unity Life Cycle callbacks --- */
-	// Use this for initialization
-	void Start () {}
-	
-	// Update is called once per frame
-	void Update () {}
 }
