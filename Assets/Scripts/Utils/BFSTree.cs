@@ -80,25 +80,25 @@ public class BFSTree {
 		int maxDimension = (int) Math.Sqrt (tiles.Count);
 
 		// check that pos is a valid coordinate
-		if (pos.x < 0 || pos.x > maxDimension || pos.y < 0 || pos.y > maxDimension) {
+		if (pos.x < 0 || pos.x >= maxDimension || pos.y < 0 || pos.y >= maxDimension) {
 			return null;
 		}
 
 		List<Vector2Int> neighbors = new List<Vector2Int> ();
 
-		if (pos.y + 1 > maxDimension) {		// north
+		if (pos.y + 1 < maxDimension) {		// north
 			neighbors.Add (new Vector2Int (pos.x, pos.y + 1));
 		}
 
-		if (pos.x + 1 > maxDimension) {		// east
+		if (pos.x + 1 < maxDimension) {		// east
 			neighbors.Add (new Vector2Int (pos.x + 1, pos.y));
 		}
 			
-		if (pos.y - 1 < 0) {			// south
+		if (pos.y - 1 >= 0) {			// south
 			neighbors.Add (new Vector2Int (pos.x, pos.y + 1));
 		}
 
-		if (pos.x - 1 < 0) {			// west
+		if (pos.x - 1 >= 0) {			// west
 			neighbors.Add (new Vector2Int (pos.x - 1, pos.y));
 		}
 
