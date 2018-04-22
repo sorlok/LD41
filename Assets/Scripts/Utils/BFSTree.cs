@@ -77,7 +77,7 @@ public class BFSTree {
 	}
 
 	public static List<Vector2Int> GetNeighbors(Vector2Int pos, List<int> tiles) {
-		int maxDimension = Math.Sqrt (tiles.Count);
+		int maxDimension = (int) Math.Sqrt (tiles.Count);
 
 		// check that pos is a valid coordinate
 		if (pos.x < 0 || pos.x > maxDimension || pos.y < 0 || pos.y > maxDimension) {
