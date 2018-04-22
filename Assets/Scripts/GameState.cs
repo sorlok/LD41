@@ -32,6 +32,9 @@ public class GameState : MonoBehaviour {
 	public GameObject DateProressBar;
 	public GameObject DateProgressSkipBtn;
 
+	// Some Leads/Fans (TODO: actually add)
+	private Lead testLead = new Lead();
+
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
 	// General random generator
@@ -99,7 +102,14 @@ public class GameState : MonoBehaviour {
 		}
 	}
 
+	// TEST
+	public void TestFunction(uint val) {
+		Debug.Log ("TEST: " + val);
+	}
+
 	public void SetupChoosePlayerAction() {
+		testLead.SelfEsteemTracker += TestFunction; // TEMP
+
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
 			"Interact with Date",
@@ -111,6 +121,9 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupInteractWithDate() {
+		testLead.SelfEsteem = 20;
+		testLead.SelfEsteem = 100;
+
 		StoryTxt.text = "How will you interact with your date?";
 		ShowBoxes (
 			"Talk to Them",

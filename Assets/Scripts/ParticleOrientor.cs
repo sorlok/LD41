@@ -7,6 +7,7 @@ public class ParticleOrientor : MonoBehaviour {
 	public GameObject Camera;
 
 	public void OrientParticles() {
+		
 	}
 
 	// Use this for initialization
