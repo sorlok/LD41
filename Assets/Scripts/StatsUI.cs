@@ -7,7 +7,9 @@ using UnityEngine.UI;
 public class StatsUI : MonoBehaviour {
 	private Lead player;
 
+	public GameObject selfEsteemLabel;
 	public GameObject fanCountLabel;
+
 	public GameObject mapHandler;
 
 
@@ -17,13 +19,15 @@ public class StatsUI : MonoBehaviour {
 	}
 
 	void SelfEsteemChanged(uint newVal) {
-		// update ui
+		selfEsteemLabel.GetComponent<Text>().text = "" + newVal;
 	}
 
 
 	// --- Unity Lifecycle Callbacks ---
 	// Use this for initialization
 	void Start () {
+		gameObject.SetActive (true);
+
 		player = mapHandler.GetComponent<MapHandler>().LeadPlayerScript;
 
 		player.SelfEsteemTracker += SelfEsteemChanged;
