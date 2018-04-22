@@ -7,19 +7,19 @@ using UnityEngine;
 public class BFSTree {
 	public BFSTreeNode root;
 
-	public BFSTree(Vector2Int start, Vector2Int dest, List<int> tiles) {
-		GenerateTree (start, dest, tiles);
+	public BFSTree(Vector2Int start, Vector2Int dest, MapHandler mapHnd) {
+		GenerateTree (start, dest, mapHnd);
 	}
 
 	int CalculateDistances (Vector2Int dest, BFSTreeNode node) {
-		if (node.children.Count == 0) {
-			return -1;
-		}
-
-		if (node.id == dest) {
+		if (node.isDest) {
 			return 1;
 		}
 
+		if (node.children.Count == 0) {
+			return -1;
+		}
+			
 		// assign distance values for all children
 		int minDistance = 1000000000;
 		foreach (BFSTreeNode child in node.children) {
@@ -38,36 +38,41 @@ public class BFSTree {
 		return 1 + minDistance;
 	}
 
-	void GenerateTree (Vector2Int start, Vector2Int dest, List<int> tiles) {
+	void GenerateTree (Vector2Int start, Vector2Int dest, MapHandler mapHnd) {
 		root = new BFSTreeNode (start);
-		BFSTreeNode destNode = new BFSTreeNode (dest);
 
-		// structure to keep track of visited matrix cells
-		Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool> ();
+		// Track all cells we have or might visit
+		Dictionary<Vector2Int, bool> blacklisted = new Dictionary<Vector2Int, bool> ();
 
 		// structure to keep track of frontier of breadth-first search
-		Queue<Vector2Int> frontier = new Queue<Vector2Int> ();
-		frontier.Enqueue (start);
-
+		Queue<BFSTreeNode> frontier = new Queue<BFSTreeNode> ();
+		frontier.Enqueue (root);
+	
 		// construct breadth-first tree
-		Vector2Int currentPos;
-		BFSTreeNode currentNode = root;
+		blacklisted.Add (start, true);
 		while (frontier.Count > 0) {
-			currentPos = frontier.Dequeue ();
-			if (currentPos != dest) {
-				visited.Add (currentPos, true);
-			}
+			BFSTreeNode currentNode = frontier.Dequeue ();
 
-			foreach (Vector2Int nextPos in GetNeighbors(currentPos, tiles)) {
-				// leaf node
-				if (nextPos == dest) {
-					currentNode.AddChild (destNode);
+			foreach (Vector2Int nextPos in GetNeighbors(currentNode.id, mapHnd)) {
+				BFSTreeNode nextNode = new BFSTreeNode ( nextPos );
+				currentNode.AddChild (nextNode );
+
+				// Success is when we are +1 in either direction from the destination
+				int xDiff = Math.Abs(nextPos.x - dest.x);
+				int yDiff = Math.Abs(nextPos.y - dest.y);
+				if (xDiff == 1 && yDiff == 0) {
+					nextNode.isDest = true;
+					break;
+				}
+				if (yDiff == 1 && xDiff == 0) {
+					nextNode.isDest = true;
+					break;
 				}
 
 				// expand search frontier
-				if (!visited.ContainsKey(nextPos)) {
-					currentNode.AddChild (nextPos);
-					frontier.Enqueue (nextPos);
+				if (!blacklisted.ContainsKey(nextPos)) {
+					blacklisted.Add (nextPos, true);
+					frontier.Enqueue (nextNode);
 				}
 			}
 		}
@@ -76,30 +81,19 @@ public class BFSTree {
 		CalculateDistances(dest, root);
 	}
 
-	public static List<Vector2Int> GetNeighbors(Vector2Int pos, List<int> tiles) {
-		int maxDimension = (int) Math.Sqrt (tiles.Count);
-
+	public static List<Vector2Int> GetNeighbors(Vector2Int pos, MapHandler mapHnd) {
 		// check that pos is a valid coordinate
-		if (pos.x < 0 || pos.x >= maxDimension || pos.y < 0 || pos.y >= maxDimension) {
+		if (pos.x < 0 || pos.x >= mapHnd.mapTileWidth || pos.y < 0 || pos.y >= mapHnd.mapTileHeight) {
 			return null;
 		}
 
 		List<Vector2Int> neighbors = new List<Vector2Int> ();
 
-		if (pos.y + 1 < maxDimension) {		// north
-			neighbors.Add (new Vector2Int (pos.x, pos.y + 1));
-		}
-
-		if (pos.x + 1 < maxDimension) {		// east
-			neighbors.Add (new Vector2Int (pos.x + 1, pos.y));
-		}
-			
-		if (pos.y - 1 >= 0) {			// south
-			neighbors.Add (new Vector2Int (pos.x, pos.y + 1));
-		}
-
-		if (pos.x - 1 >= 0) {			// west
-			neighbors.Add (new Vector2Int (pos.x - 1, pos.y));
+		foreach (char s in "NSEW") {
+			IntPoint newPos = IntPoint.FromCardinal (pos.x, pos.y, s);
+			if (mapHnd.CanMove (newPos)) {
+				neighbors.Add (new Vector2Int(newPos.x, newPos.y));
+			}
 		}
 
 		return neighbors;

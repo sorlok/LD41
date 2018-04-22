@@ -19,7 +19,10 @@ public class Fan {
 	private Vector2Int promotionLoc;
 
 	private List<int> tiles;
-	private BFSTreeNode travelPlan;
+
+	//private BFSTreeNode travelPlan;
+	// Our travel plan is a direct list of moves to make, and we re-calculate it if someone gets in the way.
+	public List<IntPoint> TravelPlan;
 
 	/* combat */
 	public Lead lead;
@@ -38,10 +41,13 @@ public class Fan {
 		Vector2Int result = currentLoc - lead.currentLoc;
 		return (result.magnitude == 1);
 	}
+		
 
+	// Return the list of valid choices that are the shortest move away.
+	// Shortest move incluces invalid moves; we want to time out if someone 
+	/*
 	void MakeTravelPlan() {
-		BFSTree bfsTravelPlan = new BFSTree (currentLoc, dateLoc, tiles);
-		travelPlan = bfsTravelPlan.root;
+		travelPlan = new BFSTree (currentLoc, dateLoc, tiles).root;
 		isTraveling = true;
 	}
 
@@ -74,18 +80,21 @@ public class Fan {
 			isTraveling = false;
 		}
 	}
+	*/
 
+	// TODO: Pull this out
+	/*
 	void TakeTurn() {
-		/* Priority 1: If this fan has been affected by a promoted tweet, they perform the following behavior. */
+		// Priority 1: If this fan has been affected by a promoted tweet, they perform the following behavior. 
 		if (influenced) {
 			MoveToLocation ();
 
-		/* Priority 2: If this fan is aware of the Leads, they perform the following behavior. */
+		// Priority 2: If this fan is aware of the Leads, they perform the following behavior. 
 		} else if (aware) {
 			if (IsPCAdjacent()) {
 				DoDamage ();
 			
-			/* Make travel plans or execute on the travel plans. */
+			// Make travel plans or execute on the travel plans. 
 			} else {
 				if (isTraveling) {
 					MoveToLocation ();
@@ -94,12 +103,15 @@ public class Fan {
 				}
 			}
 
-		/* Priority 3: Do a random walk. */
+		// Priority 3: Do a random walk. 
 		} else {
 			RandomWalk ();
 		}
 	}
+*/
 
+    // NOTE: This ia alreay removed
+/*
 	void RandomWalk () {
 		// get adjacent tiles
 		List<Vector2Int> neighborList = BFSTree.GetNeighbors (currentLoc, tiles);
@@ -110,6 +122,7 @@ public class Fan {
 
 		currentLoc = choiceLoc; // TODO: do actual movement later
 	}
+	*/
 
 	public void SetAwareness (bool awareness, Vector2Int dateLocation) {
 		aware = awareness;
