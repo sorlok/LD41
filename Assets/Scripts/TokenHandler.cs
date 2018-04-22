@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class TokenHandler : MonoBehaviour {
 	public GameObject self;
-
 	public GameObject MapHandler;
+
+	// Either of these is non-null, depending on the type. 
+	// Use LeadPlayerScript/etc. from MapHandler
+	public Lead LeadObj;
+	public Fan FanObj;
 
 	// Did our fan move this turn?
 	public bool MovedThisTurn = false;
@@ -34,11 +38,6 @@ public class TokenHandler : MonoBehaviour {
 	}
 
 	public void MoveToTile (int tileX, int tileY) {
-		// TEMP: Workaround
-		if (MapHandler == null) {
-			MapHandler = GameObject.Find ("Map00");
-		}
-
 		int tileHeight = 2;
 		int expTileHeight = MapHandler.GetComponent<MapHandler>().GetTileHeight (tileX, tileY);
 		if (expTileHeight > 0) {

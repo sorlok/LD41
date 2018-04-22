@@ -33,11 +33,11 @@ public class MapHandler : MonoBehaviour {
 	// Handy helper; just get the lead players' scripts
 	public Lead LeadPlayerScript 
 	{
-		get { return leadPlayer.GetComponent<Lead> (); }
+		get { return leadPlayer.GetComponent<TokenHandler> ().LeadObj; }
 	}
 	public Lead LeadDateScript 
 	{
-		get { return leadDate.GetComponent<Lead> (); }
+		get { return leadDate.GetComponent<TokenHandler> ().LeadObj; }
 	}
 
 	// Fans are stored when created
@@ -52,7 +52,7 @@ public class MapHandler : MonoBehaviour {
 	}
 	public Fan FanScript(int id)
 	{
-		return fans [id].GetComponent<Fan> ();
+		return fans [id].GetComponent<TokenHandler> ().FanObj;
 	}
 
 
@@ -154,13 +154,17 @@ public class MapHandler : MonoBehaviour {
 
 	public GameObject CreateLead(int tileX, int tileY) {
 		GameObject res = Instantiate(LeadPrefab, new Vector3(0, 2, 0), Quaternion.identity);
+		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
+		res.GetComponent<TokenHandler> ().LeadObj = new Lead ();
 		return res;
 	}
 
 	public GameObject CreateFan(int tileX, int tileY) {
 		GameObject res = Instantiate(FanPrefab, new Vector3(0, 2, 0), Quaternion.identity);
+		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
+		res.GetComponent<TokenHandler> ().FanObj = new Fan ();
 		fans.Add (res);
 		return res;
 	}
