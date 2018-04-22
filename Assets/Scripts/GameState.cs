@@ -11,6 +11,10 @@ public class GameState : MonoBehaviour {
 		throw new System.ArgumentException (msg);
 	}
 
+	public AudioSource sfxSource;
+	public AudioClip buttonSFX;
+	public AudioClip turnSFX;
+
 	// Page 1: Dating container object and text + options.
 	public GameObject DialogueStoryTab;
 	public Text StoryTxt;
@@ -199,6 +203,8 @@ public class GameState : MonoBehaviour {
 				// End date (or move)
 			}
 
+			sfxSource.clip = buttonSFX;
+			sfxSource.Play ();
 			return;
 		}
 
@@ -213,6 +219,8 @@ public class GameState : MonoBehaviour {
 				// Encourage them
 			}
 
+			sfxSource.clip = buttonSFX;
+			sfxSource.Play ();
 			return;
 		}
 
@@ -231,6 +239,10 @@ public class GameState : MonoBehaviour {
 			} else {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
 			}
+
+			sfxSource.clip = buttonSFX;
+			sfxSource.Play ();
+
 			// TODO: Update after setting material?
 			ChoiceParticles.Play();
 			Invoke("ChoiceParticlesDone", 2);
@@ -359,6 +371,9 @@ public class GameState : MonoBehaviour {
 				}
 			}
 		}*/
+
+		sfxSource.clip = buttonSFX;
+		sfxSource.Play ();
 	}
 
 	// Update is called once per frame
