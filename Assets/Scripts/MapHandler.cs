@@ -75,6 +75,9 @@ public class MapHandler : MonoBehaviour {
 		return fans [id].GetComponent<TokenHandler> ().FanObj;
 	}
 
+	public AudioSource sfxSource;
+	public AudioClip[] movementSFX;
+
 
 	// Helper
 	private void CallClearAllEvents(GameObject gobj) {
@@ -206,6 +209,9 @@ public class MapHandler : MonoBehaviour {
 
 			// TODO: Check if it knows about the players or not
 			fan.RandomWalkFan();
+
+			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
+			sfxSource.Play();
 
 			return true;
 		}
