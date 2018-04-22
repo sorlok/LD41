@@ -18,7 +18,7 @@ public class Fan : MonoBehaviour {
 	private Vector2Int dateLoc;
 	private Vector2Int promotionLoc;
 
-	private int[,] map;
+	private List<int> tiles;
 	private BFSTreeNode travelPlan;
 
 	/* combat */
@@ -40,7 +40,7 @@ public class Fan : MonoBehaviour {
 	}
 
 	void MakeTravelPlan() {
-		BFSTree bfsTravelPlan = new BFSTree (currentLoc, dateLoc, map);
+		BFSTree bfsTravelPlan = new BFSTree (currentLoc, dateLoc, tiles);
 		travelPlan = bfsTravelPlan.root;
 		isTraveling = true;
 	}
@@ -102,7 +102,7 @@ public class Fan : MonoBehaviour {
 
 	void RandomWalk () {
 		// get adjacent tiles
-		List<Vector2Int> neighborList = BFSTree.GetNeighbors (currentLoc, map);
+		List<Vector2Int> neighborList = BFSTree.GetNeighbors (currentLoc, tiles);
 		Vector2Int[] neighbors = neighborList.ToArray();
 
 		// choose adjacent tile
