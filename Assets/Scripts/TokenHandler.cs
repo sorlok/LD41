@@ -37,6 +37,22 @@ public class TokenHandler : MonoBehaviour {
 		
 	}
 
+	// As a fan, walk randomly (avoiding going out of bounds, non-steppable tiles, and other fans)
+	public void RandomWalkFan() {
+		// Which tiles can we move to
+		List<IntPoint> allowedTileMoves = new List<IntPoint>();
+		foreach (char s in "NSEW") {
+			IntPoint newPos = IntPoint.FromCardinal (TileX, TileY, s);
+			if (MapHandler.GetComponent<MapHandler> ().CanMove (newPos)) {
+				allowedTileMoves.Add (newPos);
+			}
+		}
+
+		// Get one
+		IntPoint pt = allowedTileMoves[GameState.rng.Next(allowedTileMoves.Count)];
+		MoveToTile (pt.x, pt.y);
+	}
+
 	public void MoveToTile (int tileX, int tileY) {
 		int tileHeight = 2;
 		int expTileHeight = MapHandler.GetComponent<MapHandler>().GetTileHeight (tileX, tileY);
@@ -48,5 +64,6 @@ public class TokenHandler : MonoBehaviour {
 		this.tileY = tileY;
 			
 		gameObject.transform.position = new Vector3 (tileX * 8, tileHeight, tileY*8);
+		MovedThisTurn = true;
 	}
 }

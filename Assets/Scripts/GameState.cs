@@ -275,9 +275,13 @@ public class GameState : MonoBehaviour {
 		DateActionTab.SetActive (false);
 
 		// TMP: move to next state
-		CurrState = ActState.FansAction;
+		StartFansActionState();
+	}
 
-		// TMP: Start an NPC movement
+	private void StartFansActionState() 
+	{
+		CurrState = ActState.FansAction;
+		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
 		NPCMoveCount = 0;
 	}
 
@@ -291,6 +295,9 @@ public class GameState : MonoBehaviour {
 
 		// Put our lead and a few fans on the board
 		MapHandler.GetComponent<MapHandler>().LoadMap1();
+
+		// TEMP: Testing fan actions
+		StartFansActionState();
 
 	}
 
@@ -337,7 +344,7 @@ public class GameState : MonoBehaviour {
 				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
 					NPCMoveCount = 0;
 				} else {
-					MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
+					//MapHandler.GetComponent<MapHandler> ().ResetNPCMoves (); // TODO: Redundant
 					SetupChoosePlayerAction ();
 				}
 			} else {
@@ -352,13 +359,6 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.DateActShowReward) {
 			DateCollectsReward ();
 		} 
-		/*else {
-			if (DateActCount < DateActCountMax) {
-				if (SkipPhase == CurrState) {
-					AdvanceCounter (9999);
-				}
-			}
-		}*/
 	}
 
 	// Update is called once per frame
