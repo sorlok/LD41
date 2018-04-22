@@ -143,7 +143,7 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupTalkToDate() {
-		DateDialogue dd = dateDialogues.DialogueOptions [0];
+		DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(4)];
 
 		StoryTxt.text = dd.storyText;
 		ShowBoxes (
