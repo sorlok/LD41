@@ -93,7 +93,7 @@ public class MapHandler : MonoBehaviour {
 		return GetTileValue (mapTileHeights, id);
 	}
 
-	private int GetTileIndex(int tileX, int tileY) {
+	public int GetTileIndex(int tileX, int tileY) {
 		if (tileX < 0 || tileX >= mapTileWidth || tileY < 0 || tileY >= mapTileHeight) {
 			return -1;
 		}
