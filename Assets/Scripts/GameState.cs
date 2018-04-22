@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class GameState : MonoBehaviour {
@@ -26,7 +27,12 @@ public class GameState : MonoBehaviour {
 	// The date's action
 	public GameObject DateActionTab;
 	public Text DateActTxt;
+	public Text ResultTxt;
+	public GameObject DateProgressBarBkg;
 	public GameObject DateProressBar;
+	public GameObject DateProgressSkipBtn;
+
+	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
 	// General random generator
 	private System.Random rng = new System.Random();
@@ -67,6 +73,7 @@ public class GameState : MonoBehaviour {
 		// DateAction sub-actions
 		DateActSocialMedia,  // Date is ignoring you and interacting with their fans
 		DateActTalkToYou,  // Date is interacting with you
+		DateActShowReward, // We're looking at the "reward" the date got from talking to you or using social media.
 	}
 		
 
@@ -132,6 +139,11 @@ public class GameState : MonoBehaviour {
 	public void SetupDateTurn() {
 		DialogueStoryTab.SetActive (false);
 
+		DateProgressBarBkg.SetActive (true);
+		DateProressBar.SetActive (true);
+		DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 70, 0);
+		DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Skip";
+		ResultTxt.gameObject.SetActive (false);
 		DateActTxt.text = "Your date is deciding what to do...";
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
@@ -231,6 +243,10 @@ public class GameState : MonoBehaviour {
 	}
 
 
+	// TODO: actually increase values.
+	void DateCollectsReward() {
+	}
+
 
 	// Use this for initialization
 	void Start () {
@@ -255,6 +271,22 @@ public class GameState : MonoBehaviour {
 			// What were we in the middle of?
 			if (CurrState == ActState.DateAction) {
 				MakeDateDecision ();
+			} else if (CurrState == ActState.DateActSocialMedia || CurrState == ActState.DateActTalkToYou) {
+				// Show "rewards"
+				DateProgressBarBkg.SetActive (false);
+				DateProressBar.SetActive (false);
+				DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 120, 0);
+				DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
+				ResultTxt.gameObject.SetActive (true);
+
+				ResultTxt.text = "You gained 1 Self-Confidence\nYour date gained 2k fans";
+
+				CurrState = ActState.DateActShowReward;
+			} else if (CurrState == ActState.DateActShowReward) {
+				DateActionTab.SetActive (false);
+
+				// TMP: move to next state
+				CurrState = ActState.FansAction;
 			} else {
 				ThrowException ("");
 			}
@@ -263,17 +295,47 @@ public class GameState : MonoBehaviour {
 
 	// Skip if waiting on an action
 	public void SkipWaitCounter() {
-		if (DateActCount < DateActCountMax) {
-			AdvanceCounter (9999);
-		}
+		// This is also our "ok" button
+		if (CurrState == ActState.DateActShowReward) {
+			DateCollectsReward ();
+		} 
+		/*else {
+			if (DateActCount < DateActCountMax) {
+				if (SkipPhase == CurrState) {
+					AdvanceCounter (9999);
+				}
+			}
+		}*/
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		// Hack to avoid double-clicking
+		if (Input.GetMouseButtonDown (0)) {
+			if (EventSystem.current.IsPointerOverGameObject()) {
+				SkipPhase = CurrState;
+			}
+		}
+		if (Input.GetMouseButtonUp (0)) {
+			if (SkipPhase == CurrState) {
+				if (EventSystem.current.IsPointerOverGameObject ()) {
+					AdvanceCounter (9999);
+				}
+			}
+			SkipPhase = ActState.Nothing;
+		}
+
+		if (Input.GetKey (KeyCode.W)) {
+			if (CurrState == GameState.ActState.Nothing) {
+				SetupChoosePlayerAction();
+				return;
+			}
+		}
+
 		// Deal with counter
 		if (DateActCount < DateActCountMax) {
 			// Any key will advance the counter 100%
-			if (Input.anyKeyDown && DateActCount > 0) {
+			if (Input.anyKeyDown && SkipPhase == ActState.Nothing) {
 				AdvanceCounter (9999);
 			} else { 
 				AdvanceCounter (Time.deltaTime);
@@ -281,4 +343,5 @@ public class GameState : MonoBehaviour {
 		}
 		
 	}
+
 }

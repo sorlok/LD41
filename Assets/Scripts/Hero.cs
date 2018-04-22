@@ -45,12 +45,6 @@ public class Hero : MonoBehaviour {
 		// Jump
 		if (Input.GetKey (KeyCode.W)) {
 			Jump ();
-
-			if (State.CurrState == GameState.ActState.Nothing) {
-				// Choose action.
-				//State.SetupChoosePlayerAction();
-				State.SetupDateTurn(); // TEMP
-			}
 		}
 
 		if (jumping != 0) {
