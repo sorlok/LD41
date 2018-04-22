@@ -370,20 +370,10 @@ public class GameState : MonoBehaviour {
 		// This is also our "ok" button
 		if (CurrState == ActState.DateActShowReward) {
 			DateCollectsReward ();
-		} 
-<<<<<<< HEAD
-		/*else {
-			if (DateActCount < DateActCountMax) {
-				if (SkipPhase == CurrState) {
-					AdvanceCounter (9999);
-				}
-			}
-		}*/
+		}
 
 		sfxSource.clip = buttonSFX;
 		sfxSource.Play ();
-=======
->>>>>>> 7a835a734c1683c90e095049549a84670fc114d6
 	}
 
 	// Update is called once per frame
