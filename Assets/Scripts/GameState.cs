@@ -11,6 +11,10 @@ public class GameState : MonoBehaviour {
 		throw new System.ArgumentException (msg);
 	}
 
+	public AudioSource sfxSource;
+	public AudioClip buttonSFX;
+	public AudioClip turnSFX;
+
 	// Page 1: Dating container object and text + options.
 	public GameObject DialogueStoryTab;
 	public Text StoryTxt;
@@ -199,6 +203,8 @@ public class GameState : MonoBehaviour {
 				// End date (or move)
 			}
 
+			sfxSource.clip = buttonSFX;
+			sfxSource.Play ();
 			return;
 		}
 
@@ -213,6 +219,8 @@ public class GameState : MonoBehaviour {
 				// Encourage them
 			}
 
+			sfxSource.clip = buttonSFX;
+			sfxSource.Play ();
 			return;
 		}
 
@@ -231,6 +239,10 @@ public class GameState : MonoBehaviour {
 			} else {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
 			}
+
+			sfxSource.clip = buttonSFX;
+			sfxSource.Play ();
+
 			// TODO: Update after setting material?
 			ChoiceParticles.Play();
 			Invoke("ChoiceParticlesDone", 2);
@@ -275,9 +287,13 @@ public class GameState : MonoBehaviour {
 		DateActionTab.SetActive (false);
 
 		// TMP: move to next state
-		CurrState = ActState.FansAction;
+		StartFansActionState();
+	}
 
-		// TMP: Start an NPC movement
+	private void StartFansActionState() 
+	{
+		CurrState = ActState.FansAction;
+		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
 		NPCMoveCount = 0;
 	}
 
@@ -291,6 +307,9 @@ public class GameState : MonoBehaviour {
 
 		// Put our lead and a few fans on the board
 		MapHandler.GetComponent<MapHandler>().LoadMap1();
+
+		// TEMP: Testing fan actions
+		StartFansActionState();
 
 	}
 
@@ -337,7 +356,7 @@ public class GameState : MonoBehaviour {
 				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
 					NPCMoveCount = 0;
 				} else {
-					MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
+					//MapHandler.GetComponent<MapHandler> ().ResetNPCMoves (); // TODO: Redundant
 					SetupChoosePlayerAction ();
 				}
 			} else {
@@ -351,14 +370,10 @@ public class GameState : MonoBehaviour {
 		// This is also our "ok" button
 		if (CurrState == ActState.DateActShowReward) {
 			DateCollectsReward ();
-		} 
-		/*else {
-			if (DateActCount < DateActCountMax) {
-				if (SkipPhase == CurrState) {
-					AdvanceCounter (9999);
-				}
-			}
-		}*/
+		}
+
+		sfxSource.clip = buttonSFX;
+		sfxSource.Play ();
 	}
 
 	// Update is called once per frame

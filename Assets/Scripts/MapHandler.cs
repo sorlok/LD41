@@ -2,6 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Helper class for representing movement easily.
+public class IntPoint
+{
+	public IntPoint(int x, int y) 
+	{
+		this.x = x;
+		this.y = y;
+	}
+	public int x;
+	public int y;
+
+	public static IntPoint FromCardinal(int x, int y, char dir) {
+		if (dir == 'N') { return new IntPoint (x+1, y); }
+		if (dir == 'S') { return new IntPoint (x-1, y); }
+		if (dir == 'E') { return new IntPoint (x, y-1); }
+		if (dir == 'W') { return new IntPoint (x, y+1); }
+		return new IntPoint (x, y);
+	}
+}
+
 public class MapHandler : MonoBehaviour {
 	public List<int> mapTileValues = new List<int>();
 
@@ -102,16 +122,18 @@ public class MapHandler : MonoBehaviour {
 	// Load a given level
 	public void LoadMap1() {
 		// Load the map data
+		// 0 = Grass/Road/etc.
+		// 1 = House
 		mapTileValues = new List<int> {
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //0
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //1
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //2
+			0, 0, 0, 0, 0, 0, 0, 1, 0, 0,  //1
+			0, 0, 0, 0, 0, 1, 1, 0, 0, 0,  //2
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //3
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //4
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //5
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //6
+			0, 0, 0, 1, 0, 1, 0, 0, 1, 0,  //4
+			0, 0, 0, 1, 0, 1, 1, 0, 1, 0,  //5
+			0, 0, 0, 1, 0, 1, 1, 0, 1, 0,  //6
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //7
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //8
+			0, 0, 0, 0, 1, 1, 1, 0, 1, 0,  //8
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //9
 		};
 
@@ -169,21 +191,8 @@ public class MapHandler : MonoBehaviour {
 		return res;
 	}
 
-	public void GetClickTile () {
-
-	}
-
-	// TEMP: Helper
-	public class IntPoint
-	{
-		public IntPoint(int x, int y) 
-		{
-			this.x = x;
-			this.y = y;
-		}
-		public int x;
-		public int y;
-	}
+	/*public void GetClickTile () {
+	}*/
 
 	// Find the next NPC that hasn't moved and move it randomly.
 	// Return true if an NPC moved
@@ -195,29 +204,49 @@ public class MapHandler : MonoBehaviour {
 				continue;
 			}
 
-			// Which tiles can we move to
-			List<IntPoint> allowedTileMoves = new List<IntPoint>();
-			if (fan.TileX > 0) {
-				allowedTileMoves.Add (new IntPoint(fan.TileX-1, fan.TileY));
-			}
-			if (fan.TileX+1 < mapTileWidth ) {
-				allowedTileMoves.Add (new IntPoint(fan.TileX+1, fan.TileY));
-			}
-			if (fan.TileY > 0) {
-				allowedTileMoves.Add (new IntPoint(fan.TileX, fan.TileY-1));
-			}
-			if (fan.TileY+1 < mapTileHeight ) {
-				allowedTileMoves.Add (new IntPoint(fan.TileX, fan.TileY+1 ));
-			}
-
-			// Get one
-			IntPoint pt = allowedTileMoves[GameState.rng.Next(allowedTileMoves.Count)];
-			fan.MoveToTile (pt.x, pt.y);
-			fan.MovedThisTurn = true;
+			// TODO: Check if it knows about the players or not
+			fan.RandomWalkFan();
 
 			return true;
 		}
 		return false;
+	}
+
+	private bool SingleCollide(GameObject other, IntPoint dest) {
+		return dest.x == other.GetComponent<TokenHandler> ().TileX && dest.y == other.GetComponent<TokenHandler> ().TileY;
+	}
+
+	// Is this tile free?
+	public bool CanMove(IntPoint dest) 
+	{
+		// Bounds collisions
+		if (dest.x < 0 || dest.y < 0) {
+			return false;
+		}
+		if (dest.x >= mapTileWidth || dest.y >= mapTileHeight) {
+			return false;
+		}
+
+		// Tile Collisions
+		if (GetTileValue (dest.x, dest.y) != 0) {
+			return false;
+		}
+
+		// Player/Fan collisions
+		foreach (GameObject fan in fans) {
+			if (SingleCollide(fan, dest)) {
+				return false;
+			}
+		}
+		if (SingleCollide(leadPlayer, dest)) {
+			return false;
+		}
+		if (SingleCollide(leadDate, dest)) {
+			return false;
+		} 
+
+
+		return true;
 	}
 
 	public void ResetNPCMoves() {
