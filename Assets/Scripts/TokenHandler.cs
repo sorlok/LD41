@@ -48,6 +48,16 @@ public class TokenHandler : MonoBehaviour {
 			}
 		}
 
+		// No moves?
+		if (allowedTileMoves.Count == 0) {
+			// TEMP
+			gameObject.transform.RotateAround (gameObject.transform.position, Vector3.forward, 90f);
+
+
+			MovedThisTurn = true;
+			return;
+		}
+
 		// Get one
 		IntPoint pt = allowedTileMoves[GameState.rng.Next(allowedTileMoves.Count)];
 		MoveToTile (pt.x, pt.y);

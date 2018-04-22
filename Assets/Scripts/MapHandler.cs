@@ -122,16 +122,18 @@ public class MapHandler : MonoBehaviour {
 	// Load a given level
 	public void LoadMap1() {
 		// Load the map data
+		// 0 = Grass/Road/etc.
+		// 1 = House
 		mapTileValues = new List<int> {
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //0
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //1
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //2
+			0, 0, 0, 0, 0, 0, 0, 1, 0, 0,  //1
+			0, 0, 0, 0, 0, 1, 1, 0, 0, 0,  //2
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //3
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //4
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //5
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //6
+			0, 0, 0, 1, 0, 1, 0, 0, 1, 0,  //4
+			0, 0, 0, 1, 0, 1, 1, 0, 1, 0,  //5
+			0, 0, 0, 1, 0, 1, 1, 0, 1, 0,  //6
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //7
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //8
+			0, 0, 0, 0, 1, 1, 1, 0, 1, 0,  //8
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //9
 		};
 
@@ -226,7 +228,9 @@ public class MapHandler : MonoBehaviour {
 		}
 
 		// Tile Collisions
-		// TODO
+		if (GetTileValue (dest.x, dest.y) != 0) {
+			return false;
+		}
 
 		// Player/Fan collisions
 		foreach (GameObject fan in fans) {
