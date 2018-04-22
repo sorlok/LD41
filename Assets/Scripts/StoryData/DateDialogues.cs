@@ -22,7 +22,7 @@ public class DateDialogues {
 	private static List<DateDialogue> MakeDialogueOptions() {
 		List<DateDialogue> res = new List<DateDialogue> ();
 
-		res.Add (new DateDialogue("Your date tells you a story about how they got lost\nin the tropics and defeated some dinosaurs.\n\nWhat do you say?", "Compliment Them", "Laugh Manically", "Feign Boredom") );
+		res.Add ( new DateDialogue("Your date tells you a story about how they got lost\nin the tropics and defeated some dinosaurs.\n\nWhat do you say?", "Compliment Them", "Laugh Manically", "Feign Boredom") );
 		res.Add ( new DateDialogue("Your date waxes poetic about the futility of life.\n\nHow do you respond?", "Sigh Meaningfully", "Agree Enthusiastically", "Show disdain for their opinion.") );
 		res.Add ( new DateDialogue("Your date shares and embarassing story from their\n childhood. They blush all throughout the telling.\n\nHow do you engage?", "Mock their youthful indiscretion.", "Share a similar tale.", "Admire their forthrightness.") );
 		res.Add ( new DateDialogue("Your date tells you abou their kooky family.\n The tales are told with a mixture of affection\n and disdain.\n\nWhat do you say?", "Mirror their expressions.", "Share your family history.", "Insult their family.") );

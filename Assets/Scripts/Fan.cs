@@ -22,6 +22,9 @@ public class Fan : MonoBehaviour {
 	private BFSTreeNode travelPlan;
 
 	/* combat */
+	public Lead pc;
+	public Lead date;
+
 	private uint damage = 1;
 
 
@@ -52,7 +55,7 @@ public class Fan : MonoBehaviour {
 		List<BFSTreeNode> possibleChoices = new List<BFSTreeNode>();
 		BFSTreeNode[] children = travelPlan.children.ToArray ();
 		for (int i = 0; i < children.Length; i++) {
-			if (distances [i] == minDistance) {
+			if (distances[i] == minDistance) {
 				possibleChoices.Add (children[i]);
 			}
 		}
@@ -60,6 +63,9 @@ public class Fan : MonoBehaviour {
 		// make choice
 		BFSTreeNode[] choices = possibleChoices.ToArray();
 		travelPlan = choices[Random.Range (0, choices.Length)];
+
+		// move to chosen location
+		currentLoc = travelPlan.id;		// TODO: do actual movement later
 	}
 
 	void TakeTurn() {
@@ -87,7 +93,16 @@ public class Fan : MonoBehaviour {
 		}
 	}
 
-	void RandomWalk () {}
+	void RandomWalk () {
+		// get adjacent tiles
+		List<Vector2Int> neighborList = BFSTree.GetNeighbors (currentLoc, map);
+		Vector2Int[] neighbors = neighborList.ToArray();
+
+		// choose adjacent tile
+		Vector2Int choiceLoc = neighbors[ Random.Range(0, neighbors.Length) ];
+
+		currentLoc = choiceLoc; // TODO: do actual movement later
+	}
 
 	public void SetAwareness (bool awareness, Vector2Int dateLocation) {
 		aware = awareness;
@@ -100,5 +115,9 @@ public class Fan : MonoBehaviour {
 	void Start () {}
 
 	// Update is called once per frame
-	void Update () {}
+	void Update () {
+		if (Input.GetKey (KeyCode.F)) {
+			// test things here
+		}
+	}
 }
