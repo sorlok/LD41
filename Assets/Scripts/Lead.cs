@@ -10,7 +10,7 @@ public class Lead : MonoBehaviour {
 
 	/* basic resources */
 	private uint selfEsteem = 3;
-	public double SelfEsteem
+	public uint SelfEsteem
 	{
 		get { return selfEsteem; }
 		set { selfEsteem = value; }
