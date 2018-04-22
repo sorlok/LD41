@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -6,8 +7,8 @@ using UnityEngine;
 public class BFSTree {
 	public BFSTreeNode root;
 
-	public BFSTree(Vector2Int start, Vector2Int dest, int[,] matrix) {
-		GenerateTree (start, dest, matrix);
+	public BFSTree(Vector2Int start, Vector2Int dest, List<int> tiles) {
+		GenerateTree (start, dest, tiles);
 	}
 
 	int CalculateDistances (Vector2Int dest, BFSTreeNode node) {
@@ -37,7 +38,7 @@ public class BFSTree {
 		return 1 + minDistance;
 	}
 
-	void GenerateTree (Vector2Int start, Vector2Int dest, int[,] matrix) {
+	void GenerateTree (Vector2Int start, Vector2Int dest, List<int> tiles) {
 		root = new BFSTreeNode (start);
 		BFSTreeNode destNode = new BFSTreeNode (dest);
 
@@ -57,7 +58,7 @@ public class BFSTree {
 				visited.Add (currentPos, true);
 			}
 
-			foreach (Vector2Int nextPos in GetNeighbors(currentPos, matrix)) {
+			foreach (Vector2Int nextPos in GetNeighbors(currentPos, tiles)) {
 				// leaf node
 				if (nextPos == dest) {
 					currentNode.AddChild (destNode);
@@ -75,30 +76,29 @@ public class BFSTree {
 		CalculateDistances(dest, root);
 	}
 
-	public static List<Vector2Int> GetNeighbors(Vector2Int pos, int[,] matrix) {
-		int maxRow = matrix.GetLength (0);
-		int maxCol = matrix.GetLength (1);
+	public static List<Vector2Int> GetNeighbors(Vector2Int pos, List<int> tiles) {
+		int maxDimension = (int) Math.Sqrt (tiles.Count);
 
 		// check that pos is a valid coordinate
-		if (pos.x < 0 || pos.x > maxRow || pos.y < 0 || pos.y > maxCol) {
+		if (pos.x < 0 || pos.x >= maxDimension || pos.y < 0 || pos.y >= maxDimension) {
 			return null;
 		}
 
 		List<Vector2Int> neighbors = new List<Vector2Int> ();
 
-		if (pos.y + 1 > maxCol) {		// north
+		if (pos.y + 1 < maxDimension) {		// north
 			neighbors.Add (new Vector2Int (pos.x, pos.y + 1));
 		}
 
-		if (pos.x + 1 > maxRow) {		// east
+		if (pos.x + 1 < maxDimension) {		// east
 			neighbors.Add (new Vector2Int (pos.x + 1, pos.y));
 		}
 			
-		if (pos.y - 1 < 0) {			// south
+		if (pos.y - 1 >= 0) {			// south
 			neighbors.Add (new Vector2Int (pos.x, pos.y + 1));
 		}
 
-		if (pos.x - 1 < 0) {			// west
+		if (pos.x - 1 >= 0) {			// west
 			neighbors.Add (new Vector2Int (pos.x - 1, pos.y));
 		}
 

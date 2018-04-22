@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Lead : MonoBehaviour {
-	public bool isPC = false;
-
+	public GameState state;
 	public GameObject lead;
-	public Lead date;
+
+	public bool isPC = false;
 
 	// Delegate for all resources
 	public delegate void ValueChanged(uint newval);
@@ -45,7 +45,6 @@ public class Lead : MonoBehaviour {
 	}
 	public event ValueChanged ConnectionTracker;
 
-
 	private uint moves = 2;
 	public uint Moves
 	{
@@ -54,6 +53,8 @@ public class Lead : MonoBehaviour {
 	}
 	public event ValueChanged MovesTracker;
 
+	public Lead date;				// if PC, 'date' object is date; otherwise, 'date' object is PC
+
 
 	/* special resources */
 	private uint promotions = 3;
@@ -61,8 +62,6 @@ public class Lead : MonoBehaviour {
 
 	/* movement */
 	public Vector2Int currentLoc;
-
-
 
 
 
@@ -77,7 +76,7 @@ public class Lead : MonoBehaviour {
 		}
 
 		// interact with social media
-		if (Random.Range (0, 101) < connection) {
+		if (Random.Range (0, 101) < 51) {
 			Tweet ();
 		// interact with date
 		} else {
@@ -85,7 +84,26 @@ public class Lead : MonoBehaviour {
 		}
 	}
 
-	void TalkToDate () {}
+	// This method describes behavior of your date talking to you.
+	void TalkToDate () {
+		bool affectYou = Random.Range (0, 2) == 0;
+		bool affectEsteem = Random.Range (0, 2) == 0;
+		int rollTalk = Random.Range (0, 101);
+
+		if (affectYou) {
+			if (affectEsteem) {
+				date.SelfEsteem = date.SelfEsteem + (uint)(rollTalk < connection ? 1 : -1);
+			} else {
+				date.FanCount = date.FanCount + (uint)(rollTalk < connection ? 100 : -100);
+			}
+		} else {
+			if (affectEsteem) {
+				SelfEsteem = SelfEsteem + (uint)(rollTalk < connection ? 1 : -1);
+			} else {
+				FanCount = FanCount + (uint)(rollTalk < connection ? 100 : -100);
+			}
+		}
+	}
 
 	void Tweet () {}
 
