@@ -20861,6 +20861,7 @@ GameObject:
   - component: {fileID: 557698911}
   - component: {fileID: 557698913}
   - component: {fileID: 557698912}
+  - component: {fileID: 557698914}
   m_Layer: 5
   m_Name: FanCountVal
   m_TagString: Untagged
@@ -20925,6 +20926,18 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 557698910}
+--- !u!114 &557698914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 557698910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f60531a3c5f24024b7b5ed1470a591b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fanCountLabel: {fileID: 557698910}
 --- !u!1 &557931992
 GameObject:
   m_ObjectHideFlags: 0
