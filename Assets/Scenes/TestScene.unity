@@ -17389,6 +17389,7 @@ MonoBehaviour:
   DateProgressBarBkg: {fileID: 812994288}
   DateProressBar: {fileID: 1188018629}
   DateProgressSkipBtn: {fileID: 716427883}
+  GlobalCanvas: {fileID: 1367222992}
   MapHandler: {fileID: 1112720158}
   CurrState: 0
 --- !u!4 &430121450
@@ -17564,6 +17565,10 @@ Prefab:
     - target: {fileID: 4490697117192718, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
@@ -37313,8 +37318,8 @@ MonoBehaviour:
   mapTileHeights: 
   mapTileWidth: 10
   mapTileHeight: 10
-  LeadPrefab: {fileID: 0}
-  FanPrefab: {fileID: 0}
+  LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
+  FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
 --- !u!1 &1113601619
 GameObject:
   m_ObjectHideFlags: 0

@@ -35,6 +35,7 @@ public class GameState : MonoBehaviour {
 	// Some Leads/Fans (TODO: actually add)
 	//private Lead testLead = new Lead();
 
+	public GameObject GlobalCanvas;
 	public GameObject MapHandler;
 
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
@@ -270,9 +271,10 @@ public class GameState : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		DialogueStoryTab.SetActive (false);
 		dateDialogues = new DateDialogues ();
 
+		GlobalCanvas.SetActive (true);
+		DialogueStoryTab.SetActive (false);
 		DateActionTab.SetActive (false);
 	}
 

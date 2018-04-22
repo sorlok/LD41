@@ -11,8 +11,8 @@ public class MapHandler : MonoBehaviour {
 	public int mapTileWidth = 10;
 	public int mapTileHeight = 10;
 
-	public Transform LeadPrefab;
-	public Transform FanPrefab;
+	public GameObject LeadPrefab;
+	public GameObject FanPrefab;
 
 	public int GetTileValue(int tileX, int tileY) {
 		int id = GetTileIndex (tileX, tileY);
@@ -50,16 +50,16 @@ public class MapHandler : MonoBehaviour {
 		
 	}
 
-	public Transform CreateLead(int tileX, int tileY) {
+	public GameObject CreateLead(int tileX, int tileY) {
 		// 2 for normal, 5 for hill height; 8 for house-on-hill height
-		Transform res = Instantiate(LeadPrefab, new Vector3(0, 2, 0), Quaternion.identity);
+		GameObject res = Instantiate(LeadPrefab, new Vector3(0, 2, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		return res;
 	}
 
-	public Transform CreateFan(int tileX, int tileY) {
+	public GameObject CreateFan(int tileX, int tileY) {
 		// 2 for normal, 5 for hill height; 8 for house-on-hill height
-		Transform res = Instantiate(FanPrefab, new Vector3(0, 2, 0), Quaternion.identity);
+		GameObject res = Instantiate(FanPrefab, new Vector3(0, 2, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		return res;
 	}
