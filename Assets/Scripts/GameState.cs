@@ -282,6 +282,11 @@ public class GameState : MonoBehaviour {
 				ResultTxt.text = "You gained 1 Self-Confidence\nYour date gained 2k fans";
 
 				CurrState = ActState.DateActShowReward;
+			} else if (CurrState == ActState.DateActShowReward) {
+				DateActionTab.SetActive (false);
+
+				// TMP: move to next state
+				CurrState = ActState.FansAction;
 			} else {
 				ThrowException ("");
 			}
@@ -322,9 +327,7 @@ public class GameState : MonoBehaviour {
 
 		if (Input.GetKey (KeyCode.W)) {
 			if (CurrState == GameState.ActState.Nothing) {
-				// Choose action.
-				//State.SetupChoosePlayerAction();
-				SetupDateTurn (); // TEMP
+				SetupChoosePlayerAction();
 				return;
 			}
 		}
