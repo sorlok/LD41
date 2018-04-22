@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fan : MonoBehaviour {
+public class Fan {
 	public GameObject fan;
 
 	/* basic resources */
@@ -116,15 +116,4 @@ public class Fan : MonoBehaviour {
 		dateLoc = dateLocation;
 	}
 
-
-	/* --- Unity Life Cycle callbacks --- */
-	// Use this for initialization
-	void Start () {}
-
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetKey (KeyCode.F)) {
-			// test things here
-		}
-	}
 }
