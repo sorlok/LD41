@@ -18,6 +18,13 @@ public class Lead : MonoBehaviour {
 		}
 	}
 
+	public void ClearAllEvents() {
+		SelfEsteemTracker = null;
+		FanCountTracker = null;
+		ConnectionTracker = null;
+		MovesTracker = null;
+	}
+
 	/* basic resources */
 	private uint selfEsteem = 3;
 	public uint SelfEsteem

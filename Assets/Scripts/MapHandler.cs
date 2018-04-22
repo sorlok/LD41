@@ -11,8 +11,31 @@ public class MapHandler : MonoBehaviour {
 	public int mapTileWidth = 10;
 	public int mapTileHeight = 10;
 
+	// Used to create the lead/fan
 	public GameObject LeadPrefab;
 	public GameObject FanPrefab;
+
+	// Actual Lead tokens
+	private GameObject leadPlayer;
+	public GameObject LeadPlayer
+	{
+		get { return leadPlayer; }
+		set { CallClearAllEvents (leadPlayer); leadPlayer = value; }
+	}
+		
+	private GameObject leadDate;
+	public GameObject LeadDate
+	{
+		get { return leadDate; }
+		set { CallClearAllEvents (leadDate); leadDate = value; }
+	}
+
+	// Helper
+	private void CallClearAllEvents(GameObject gobj) {
+		if (gobj != null) {
+			gobj.GetComponent<Lead>().ClearAllEvents ();
+		}
+	}
 
 	public int GetTileValue(int tileX, int tileY) {
 		int id = GetTileIndex (tileX, tileY);
@@ -50,15 +73,65 @@ public class MapHandler : MonoBehaviour {
 		
 	}
 
+	// Load a given level
+	public void LoadMap1() {
+		// Load the map data
+		mapTileValues = new List<int> {
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //0
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //1
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //2
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //3
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //4
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //5
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //6
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //7
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //8
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  //9
+		};
+
+
+		// For tile heights:
+		// 2 = default, "on the ground"
+		// 5 = on a hill, or on a house
+		// 8 = on a house that's on a hill (shouldn't happen)
+		mapTileHeights = new List<int> {
+			2,2,2,2,2,2,2,2,2,2,  //0
+			2,2,2,2,2,2,2,5,2,2,  //1
+			2,2,2,2,2,5,5,2,2,2,  //2
+			5,5,5,2,2,2,2,2,2,2,  //3
+			2,2,2,5,2,5,2,2,5,2,  //4
+			2,2,2,5,2,5,5,2,5,2,  //5
+			2,2,2,5,2,5,5,2,5,2,  //6
+			2,2,2,2,2,2,2,2,2,2,  //7
+			2,2,2,2,5,5,5,2,5,2,  //8
+			2,2,2,2,2,2,2,2,2,2,  //9
+		};
+
+		// Sanity check
+		if (mapTileWidth * mapTileHeight != mapTileValues.Count) {
+			throw new System.ArgumentException ("Bad map width/height and array sizes [1]");
+		}
+		if (mapTileWidth * mapTileHeight != mapTileHeights.Count) {
+			throw new System.ArgumentException ("Bad map width/height and array sizes [2]");
+		}
+
+
+		// Create the players, and some fans
+		leadPlayer = CreateLead (1, 3);
+		leadDate = CreateLead (1, 4);
+
+		for (int i = 2; i < 10; i++) {
+			CreateFan (i, i);
+		}
+	}
+
 	public GameObject CreateLead(int tileX, int tileY) {
-		// 2 for normal, 5 for hill height; 8 for house-on-hill height
 		GameObject res = Instantiate(LeadPrefab, new Vector3(0, 2, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		return res;
 	}
 
 	public GameObject CreateFan(int tileX, int tileY) {
-		// 2 for normal, 5 for hill height; 8 for house-on-hill height
 		GameObject res = Instantiate(FanPrefab, new Vector3(0, 2, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		return res;

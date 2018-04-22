@@ -113,8 +113,6 @@ public class GameState : MonoBehaviour {
 	public void SetupChoosePlayerAction() {
 		//testLead.SelfEsteemTracker += TestFunction; // TEMP
 
-		MapHandler.GetComponent<MapHandler> ().CreateLead (2, 2);
-
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
 			"Interact with Date",
@@ -276,6 +274,10 @@ public class GameState : MonoBehaviour {
 		GlobalCanvas.SetActive (true);
 		DialogueStoryTab.SetActive (false);
 		DateActionTab.SetActive (false);
+
+		// Put our lead and a few fans on the board
+		MapHandler.GetComponent<MapHandler>().LoadMap1();
+
 	}
 
 	private void AdvanceCounter(float amt) {

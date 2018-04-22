@@ -10,6 +10,7 @@ public class TokenHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
 		
 	}
 	
@@ -19,6 +20,11 @@ public class TokenHandler : MonoBehaviour {
 	}
 
 	public void MoveToTile (int tileX, int tileY) {
+		// TEMP: Workaround
+		if (MapHandler == null) {
+			MapHandler = GameObject.Find ("Map00");
+		}
+
 		int tileHeight = 2;
 		int expTileHeight = MapHandler.GetComponent<MapHandler>().GetTileHeight (tileX, tileY);
 		if (expTileHeight > 0) {
