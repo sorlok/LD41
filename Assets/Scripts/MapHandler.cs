@@ -96,7 +96,7 @@ public class MapHandler : MonoBehaviour {
 		return GetTileValue (mapTileHeights, id);
 	}
 
-	private int GetTileIndex(int tileX, int tileY) {
+	public int GetTileIndex(int tileX, int tileY) {
 		if (tileX < 0 || tileX >= mapTileWidth || tileY < 0 || tileY >= mapTileHeight) {
 			return -1;
 		}
@@ -171,8 +171,8 @@ public class MapHandler : MonoBehaviour {
 		leadPlayer = CreateLead (1, 3);
 		leadDate = CreateLead (2, 3);
 
-		for (int i = 2; i < 10; i++) {
-			CreateFan (i, i);
+		for (int i = 2; i < 8; i++) {
+			CreateFan (i+2, i);
 		}
 
 	}
@@ -206,9 +206,16 @@ public class MapHandler : MonoBehaviour {
 			if (fan.MovedThisTurn) {
 				continue;
 			}
+			fan.MovedThisTurn = true;
 
 			// TODO: Check if it knows about the players or not
-			fan.RandomWalkFan();
+			if (true) {
+				// Move towards teh lead player (for now)
+				fan.FanWalkTowards (LeadPlayer);
+			} else {
+				// Just move randomly.
+				fan.FanRandomWalk ();
+			}
 
 			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
 			sfxSource.Play();
