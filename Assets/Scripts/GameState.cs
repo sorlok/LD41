@@ -33,7 +33,9 @@ public class GameState : MonoBehaviour {
 	public GameObject DateProgressSkipBtn;
 
 	// Some Leads/Fans (TODO: actually add)
-	private Lead testLead = new Lead();
+	//private Lead testLead = new Lead();
+
+	public GameObject MapHandler;
 
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
@@ -108,7 +110,9 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupChoosePlayerAction() {
-		testLead.SelfEsteemTracker += TestFunction; // TEMP
+		//testLead.SelfEsteemTracker += TestFunction; // TEMP
+
+		MapHandler.GetComponent<MapHandler> ().CreateLead (2, 2);
 
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
@@ -121,8 +125,8 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupInteractWithDate() {
-		testLead.SelfEsteem = 20;
-		testLead.SelfEsteem = 100;
+		//testLead.SelfEsteem = 20;
+		//testLead.SelfEsteem = 100;
 
 		StoryTxt.text = "How will you interact with your date?";
 		ShowBoxes (
