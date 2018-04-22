@@ -243,8 +243,14 @@ public class GameState : MonoBehaviour {
 	}
 
 
-	// TODO: actually increase values.
 	void DateCollectsReward() {
+		// TODO: actually increase values.
+
+
+		DateActionTab.SetActive (false);
+
+		// TMP: move to next state
+		CurrState = ActState.FansAction;
 	}
 
 
@@ -282,13 +288,8 @@ public class GameState : MonoBehaviour {
 				ResultTxt.text = "You gained 1 Self-Confidence\nYour date gained 2k fans";
 
 				CurrState = ActState.DateActShowReward;
-			} else if (CurrState == ActState.DateActShowReward) {
-				DateActionTab.SetActive (false);
-
-				// TMP: move to next state
-				CurrState = ActState.FansAction;
 			} else {
-				ThrowException ("");
+				ThrowException ("Bad current state: " + CurrState);
 			}
 		}
 	}
@@ -317,7 +318,7 @@ public class GameState : MonoBehaviour {
 			}
 		}
 		if (Input.GetMouseButtonUp (0)) {
-			if (SkipPhase == CurrState) {
+			if (SkipPhase == CurrState && DateActCount < DateActCountMax) {
 				if (EventSystem.current.IsPointerOverGameObject ()) {
 					AdvanceCounter (9999);
 				}
