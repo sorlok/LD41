@@ -22,17 +22,21 @@ public class Fan : MonoBehaviour {
 	private BFSTreeNode travelPlan;
 
 	/* combat */
-	public Lead pc;
-	public Lead date;
+	public Lead lead;
 
 	private uint damage = 1;
 
 
 	/* --- Methods --- */
-	void DoDamage () {}
+	void DoDamage () {
+		if (IsPCAdjacent()) {
+			lead.SelfEsteem = lead.SelfEsteem - (damage * (enraged ? 2u : 1u)); 
+		}
+	}
 
 	bool IsPCAdjacent () {
-		return false;
+		Vector2Int result = currentLoc - lead.currentLoc;
+		return (result.magnitude == 1);
 	}
 
 	void MakeTravelPlan() {
@@ -66,6 +70,9 @@ public class Fan : MonoBehaviour {
 
 		// move to chosen location
 		currentLoc = travelPlan.id;		// TODO: do actual movement later
+		if (IsPCAdjacent ()) {
+			isTraveling = false;
+		}
 	}
 
 	void TakeTurn() {
