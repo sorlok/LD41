@@ -30,9 +30,7 @@ public class TokenHandler : MonoBehaviour {
 		if (expTileHeight > 0) {
 			tileHeight = expTileHeight;
 		}
-
-		Debug.Log (tileX*8 + "," + tileHeight + "," + tileY * 8);
-
+			
 		gameObject.transform.position = new Vector3 (tileX * 8, tileHeight, tileY*8);
 	}
 }

@@ -30,6 +30,32 @@ public class MapHandler : MonoBehaviour {
 		set { CallClearAllEvents (leadDate); leadDate = value; }
 	}
 
+	// Handy helper; just get the lead players' scripts
+	public Lead LeadPlayerScript 
+	{
+		get { return leadPlayer.GetComponent<Lead> (); }
+	}
+	public Lead LeadDateScript 
+	{
+		get { return leadDate.GetComponent<Lead> (); }
+	}
+
+	// Fans are stored when created
+	private List<GameObject> fans = new List<GameObject>();
+	public int FanCount
+	{
+		get { return fans.Count; }
+	}
+	public GameObject Fan(int id) 
+	{
+		return fans [id];
+	}
+	public Fan FanScript(int id)
+	{
+		return fans [id].GetComponent<Fan> ();
+	}
+
+
 	// Helper
 	private void CallClearAllEvents(GameObject gobj) {
 		if (gobj != null) {
@@ -118,11 +144,13 @@ public class MapHandler : MonoBehaviour {
 
 		// Create the players, and some fans
 		leadPlayer = CreateLead (1, 3);
-		leadDate = CreateLead (1, 4);
+		leadDate = CreateLead (2, 3);
 
 		for (int i = 2; i < 10; i++) {
 			CreateFan (i, i);
 		}
+
+		Debug.Log ("FANS: " + this.FanCount);
 	}
 
 	public GameObject CreateLead(int tileX, int tileY) {
@@ -134,6 +162,7 @@ public class MapHandler : MonoBehaviour {
 	public GameObject CreateFan(int tileX, int tileY) {
 		GameObject res = Instantiate(FanPrefab, new Vector3(0, 2, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
+		fans.Add (res);
 		return res;
 	}
 
