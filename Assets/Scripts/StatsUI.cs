@@ -24,7 +24,7 @@ public class StatsUI : MonoBehaviour {
 	// --- Unity Lifecycle Callbacks ---
 	// Use this for initialization
 	void Start () {
-		player = mapHandler.GetComponent<MapHandler>().LeadPlayer;
+		player = mapHandler.GetComponent<MapHandler>().LeadPlayerScript;
 
 		player.SelfEsteemTracker += SelfEsteemChanged;
 		player.FanCountTracker += FanCountChanged;
