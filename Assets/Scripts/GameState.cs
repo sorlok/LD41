@@ -183,7 +183,6 @@ public class GameState : MonoBehaviour {
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
 	}
-		
 
 	public void ChooseOption(int opt) {
 		// Being asked to select the interaction method.
@@ -260,10 +259,8 @@ public class GameState : MonoBehaviour {
 		CurrState = ActState.TalkDateViewResponse;
 	}
 
-
 	void DateCollectsReward() {
 		// TODO: actually increase values.
-
 
 		DateActionTab.SetActive (false);
 
@@ -271,15 +268,12 @@ public class GameState : MonoBehaviour {
 		CurrState = ActState.FansAction;
 	}
 
-
 	// Use this for initialization
 	void Start () {
 		DialogueStoryTab.SetActive (false);
 		dateDialogues = new DateDialogues ();
 
 		DateActionTab.SetActive (false);
-
-		
 	}
 
 	private void AdvanceCounter(float amt) {
@@ -326,7 +320,7 @@ public class GameState : MonoBehaviour {
 			}
 		}*/
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		// Hack to avoid double-clicking
@@ -335,6 +329,7 @@ public class GameState : MonoBehaviour {
 				SkipPhase = CurrState;
 			}
 		}
+
 		if (Input.GetMouseButtonUp (0)) {
 			if (SkipPhase == CurrState && DateActCount < DateActCountMax) {
 				if (EventSystem.current.IsPointerOverGameObject ()) {
@@ -362,5 +357,4 @@ public class GameState : MonoBehaviour {
 		}
 		
 	}
-
 }

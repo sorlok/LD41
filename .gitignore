@@ -9,6 +9,11 @@
 
 Maya.meta
 
+*.exe
+*.dll
+
+TestBuild_Data/
+
 # Visual Studio 2015 cache directory
 /.vs/
 
