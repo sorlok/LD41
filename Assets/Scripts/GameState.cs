@@ -200,8 +200,9 @@ public class GameState : MonoBehaviour {
 		// Talking to date, they react to your choice
 		if (CurrState == ActState.ChooseInteractTalk) {
 			CurrState = ActState.TalkDateSelectReact;
+			ChoiceParticles.GetComponent<ParticleOrientor>().OrientParticles ();
 			// Particles
-			ChoiceParticles.transform.localPosition = new Vector3 (0, -1 * (opt - 1), 0); // Hack for now
+			//ChoiceParticles.transform.localPosition = new Vector3 (0, -1 * (opt - 1), 0); // Hack for now
 			if (opt == 1) {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
 			} else if (opt == 2) {
