@@ -29,8 +29,8 @@ public class Fan : MonoBehaviour {
 
 	/* --- Methods --- */
 	void DoDamage () {
-		if (IsPCAdjacent) {
-			lead.SelfEsteem = lead.SelfEsteem - (damage * (enraged ? 2 : 1)); 
+		if (IsPCAdjacent()) {
+			lead.SelfEsteem = lead.SelfEsteem - (damage * (enraged ? 2u : 1u)); 
 		}
 	}
 
