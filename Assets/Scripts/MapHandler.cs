@@ -249,6 +249,9 @@ public class MapHandler : MonoBehaviour {
 				if (SingleCollide (leadPlayer, next)) {
 					leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem -= 1;
 
+					// James: death animation
+					Debug.Log("James: a death animation is needed here.");
+
 					// Destroy this fan
 					fans.Remove (fanObj);
 					Destroy (fanObj);
