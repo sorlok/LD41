@@ -9,6 +9,8 @@ public class BFSTreeNode {
 	public List<int> distances;
 	public List<BFSTreeNode> children;
 
+	public bool isDest = false; // Did we find the destination here?
+
 	public BFSTreeNode(Vector2Int _id) {
 		id = _id;
 
@@ -20,7 +22,7 @@ public class BFSTreeNode {
 		children.Add (_node);
 	}
 
-	public void AddChild (Vector2Int _id) {
+	/*public void AddChild (Vector2Int _id) {
 		children.Add (new BFSTreeNode(_id));
-	}
+	}*/
 }

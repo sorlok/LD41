@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -9315,6 +9315,7 @@ Transform:
   m_Children:
   - {fileID: 123588094}
   - {fileID: 747617657}
+  - {fileID: 315532592}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 80, y: 0, z: 0}
@@ -14612,12 +14613,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 315532591}
-  m_LocalRotation: {x: 0.6427876, y: -0, z: -0, w: 0.7660445}
-  m_LocalPosition: {x: -285.5, y: -86, z: 20}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 430121450}
-  m_RootOrder: 0
+  m_Father: {fileID: 165503788}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &315532594
 AudioSource:
@@ -18532,8 +18533,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 325.5, y: 156, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 315532592}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -40248,6 +40248,14 @@ MonoBehaviour:
   mapTileHeight: 10
   LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
   FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
+  sfxSource: {fileID: 315532594}
+  movementSFX:
+  - {fileID: 8300000, guid: 38f36dd706ac9429398cebff173f7dc6, type: 3}
+  - {fileID: 8300000, guid: 3f652b4e124ab41b9a97ac759e4f31a6, type: 3}
+  - {fileID: 8300000, guid: 59df4cf2e86544c55b50efb962f044e6, type: 3}
+  - {fileID: 8300000, guid: aa0ba72e4a0534836838045ccf1505ec, type: 3}
+  - {fileID: 8300000, guid: 4076abd115c6c4e2a8ed0c4caa89a890, type: 3}
+  - {fileID: 8300000, guid: 9fe3bc5a5f72346cc9e4bd28e4e67f61, type: 3}
 --- !u!1 &1113601619
 GameObject:
   m_ObjectHideFlags: 0

@@ -382,10 +382,10 @@ public class GameState : MonoBehaviour {
 		// This is also our "ok" button
 		if (CurrState == ActState.DateActShowReward) {
 			DateCollectsReward ();
-		}
 
-		sfxSource.clip = buttonSFX;
-		sfxSource.Play ();
+			sfxSource.clip = turnSFX;
+			sfxSource.Play ();
+		}
 	}
 
 	// Update is called once per frame
