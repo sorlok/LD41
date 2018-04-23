@@ -17,7 +17,14 @@ public class DateDialogue {
 }
 
 public class DateDialogues {
+	// The actual stories.
 	public List<DateDialogue> DialogueOptions = MakeDialogueOptions();
+
+	// The responses, based on mood
+	public List<DateDialogue> DialogueGoodResponses = MakeGoodResponses();
+	public List<DateDialogue> DialogueNeutralResponses = MakeNeutralResponses();
+	public List<DateDialogue> DialogueBadResponses = MakeBadResponses();
+
 
 	private static List<DateDialogue> MakeDialogueOptions() {
 		List<DateDialogue> res = new List<DateDialogue> ();
@@ -30,4 +37,27 @@ public class DateDialogues {
 		return res;
 	}
 
+	private static List<DateDialogue> MakeGoodResponses() {
+		List<DateDialogue> res = new List<DateDialogue> ();
+
+		res.Add ( new DateDialogue("Your date looks at you dreamily.\n\n\"Wow, what a nice thing to say!\"", null, "I know, right?", null) );
+
+		return res;
+	}
+
+	private static List<DateDialogue> MakeNeutralResponses() {
+		List<DateDialogue> res = new List<DateDialogue> ();
+
+		res.Add ( new DateDialogue("Your date looks confused\n\n\"Wow, what a... nice (?) thing to say...\"", null, "You deserve it!", null) );
+
+		return res;
+	}
+
+	private static List<DateDialogue> MakeBadResponses() {
+		List<DateDialogue> res = new List<DateDialogue> ();
+
+		res.Add ( new DateDialogue("Your date looks upset\n\n\"Are you even TRYING to make a good impression?\"", null, "Eh, not really", null) );
+
+		return res;
+	}
 }

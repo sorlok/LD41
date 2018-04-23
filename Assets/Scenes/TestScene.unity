@@ -18540,6 +18540,8 @@ MonoBehaviour:
   GlobalCanvas: {fileID: 1367222992}
   MapHandler: {fileID: 1112720158}
   RespStamp1: {fileID: 1457615869}
+  RespStamp2: {fileID: 815969740}
+  RespStamp3: {fileID: 1260985628}
   CurrState: 0
   phaseName: 
   phaseHandler: {fileID: 1453999554}

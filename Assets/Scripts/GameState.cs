@@ -57,6 +57,8 @@ public class GameState : MonoBehaviour {
 
 	// Used to reset stamps
 	public GameObject RespStamp1;
+	public GameObject RespStamp2;
+	public GameObject RespStamp3;
 
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
@@ -111,6 +113,9 @@ public class GameState : MonoBehaviour {
 
 	// The state to set after the next fade?
 	private ActState AfterFadeState;
+
+	// Whether or not our date liked the last response
+	private char LastDateResponse;
 
 	// Current interpolation variables
 	private float interpStartTime;
@@ -245,6 +250,32 @@ public class GameState : MonoBehaviour {
 
 			return;
 		}
+
+		// Phase 1.A - Date reacts to dialogue choice
+		if (CurrState == ActState.ChooseInteractTalk) {
+			CurrState = ActState.FadingTextOut;
+			AfterFadeState = ActState.TalkDateSelectReact;
+
+			ChoiceParticles.GetComponent<ParticleOrientor>().OrientParticles ();
+			ChoiceParticles.Clear ();
+			ChoiceParticles.gameObject.SetActive (true);
+			// Particles
+			LastDateResponse = new char[]{'G','B','N'}[rng.Next(3)];
+			if (LastDateResponse == 'G') {
+				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
+			} else if (LastDateResponse == 'N') {
+				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
+			} else {
+				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
+			}
+
+			sfxSource.clip = buttonSFX;
+			sfxSource.Play ();
+
+			ChoiceParticles.Play();
+			Invoke("ChoiceParticlesDone", 2);
+		
+		}
 	}
 
 	// TEST
@@ -334,6 +365,7 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void ChooseOption(int opt) {
+		/*
 		// Being asked to select the interaction method.
 		if (CurrState == ActState.PlayerActionSelect) {
 			if (opt == 1) {
@@ -409,16 +441,17 @@ public class GameState : MonoBehaviour {
 
 		// Comment out on release.
 		ThrowException ("Bad option: " + opt);
+		*/
 	}
 
 	public void ChoiceParticlesDone() {
-		ShowBoxes (
+		/*ShowBoxes (
 			"Done Talking"
 		);
 
 		// Set Response
 		StoryTxt.text = "Wow, what a...\nnice? thing to say...";
-
+*/
 		// Need to move the state along.
 		CurrState = ActState.TalkDateViewResponse;
 	}
@@ -584,21 +617,44 @@ public class GameState : MonoBehaviour {
 			Response2.GetComponentInChildren <Text> ().color = newAlphaColor;
 			Response3.GetComponentInChildren <Text> ().color = newAlphaColor;
 			if (overflow) {
-				DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];
 
-				// Set Story text
-				StoryTxtHeader.text = "Date Dialogue";
-				StoryTxt.text = dd.storyText;
+				// Set Story text or response text
+				if (AfterFadeState == ActState.TalkDateSelectReact) {
+					List<DateDialogue> resp = dateDialogues.DialogueBadResponses;
+					if (LastDateResponse == 'G') {
+						resp = dateDialogues.DialogueGoodResponses;
+					} else if (LastDateResponse == 'N') {
+						resp = dateDialogues.DialogueNeutralResponses;
+					}
 
-				// Set response text
-				ShowBoxes (
-					dd.option1,
-					dd.option2,
-					dd.option3
-				);
+					DateDialogue dd = resp [rng.Next(resp.Count)];
+					StoryTxtHeader.text = "Date Dialogue";
+					StoryTxt.text = dd.storyText;
+
+					// Set response text
+					ShowBoxes (
+						dd.option1,
+						dd.option2,
+						dd.option3
+					);		
+				} else {
+					// Standard date text
+					DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];
+					StoryTxtHeader.text = "Date Dialogue";
+					StoryTxt.text = dd.storyText;
+
+					// Set response text
+					ShowBoxes (
+						dd.option1,
+						dd.option2,
+						dd.option3
+					);
+				}
 					
 				// Hide stamps; change to fade-in
 				RespStamp1.GetComponent<StampHandler>().HideStamp ();
+				RespStamp2.GetComponent<StampHandler>().HideStamp ();
+				RespStamp3.GetComponent<StampHandler>().HideStamp ();
 				CurrState = ActState.FadingTextIn;
 			}
 		}
