@@ -22,6 +22,7 @@ public class GameState : MonoBehaviour {
 	// Big button texts
 	public Text SkipText;
 	public Text NextText;
+	public GameObject NextStamp;
 
 	public AudioSource sfxSource;
 	public AudioClip buttonSFX;
@@ -283,6 +284,13 @@ public class GameState : MonoBehaviour {
 			AfterFadeState = ActState.DateAction;
 			//SetupDateTurn ();
 		}
+
+		// Phase 2 - Ready to switch to fan phase?
+		if (CurrState == ActState.DateActShowReward) {
+			CurrState = ActState.FadingTextOut;
+			AfterFadeState = ActState.FansAction;
+		}
+
 	}
 
 	// TEST
@@ -291,6 +299,7 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupChoosePlayerAction() {
+		StoryTxtHeader.text = "Date Action";
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
 			"Talk to Date",
@@ -471,8 +480,9 @@ public class GameState : MonoBehaviour {
 
 	void DateCollectsReward() {
 		// TODO: actually increase values.
+		// TODO: skipping this phase isn't hooked up correctly right now
 
-		DateActionTab.SetActive (false);
+		//DateActionTab.SetActive (false);
 
 		// TMP: move to next state
 		StartFansActionState();
@@ -481,14 +491,10 @@ public class GameState : MonoBehaviour {
 	private void StartFansActionState() 
 	{
 		CurrState = ActState.FansAction;
-		phaseName = "Fan's Turn";
+		phaseName = "Fans' Turns";
 		phaseHandler.UpdateActiveUser (phaseName);
 		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
 		NPCMoveCount = 0;
-
-		//Update Phase Clock
-		phaseHandler.UpdateMinute();
-		phaseHandler.UpdateTime ();
 	}
 
 	// Use this for initialization
@@ -519,6 +525,15 @@ public class GameState : MonoBehaviour {
 
 	}
 
+	// Modify the stat and return a string describing it.
+	private string RandomlyModifyStats() {
+		// Can add other stuff here.
+		MapHandler.GetComponent<MapHandler>().LeadDateScript.SelfEsteem += 1;
+		MapHandler.GetComponent<MapHandler>().LeadDateScript.FanCount += 1;
+
+		return "\n  +1 Self Esteem" + "\n  +2 Fans";
+	}
+
 	private void AdvanceCounter(float amt) {
 		DateActCount += amt;
 
@@ -534,13 +549,17 @@ public class GameState : MonoBehaviour {
 				MakeDateDecision ();
 			} else if (CurrState == ActState.DateActSocialMedia || CurrState == ActState.DateActTalkToYou) {
 				// Show "rewards"
-				DateProgressBarBkg.SetActive (false);
-				DateProressBar.SetActive (false);
+				DateActionTab.SetActive (false);
+				//DateProressBar.SetActive (false);
 				//DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 120, 0);
-				DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
-				ResultTxt.gameObject.SetActive (true);
+				//DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
+				//ResultTxt.gameObject.SetActive (true);
 
-				ResultTxt.text = "You gained 1 Self-Confidence\nYour date gained 2k fans";
+				StoryTxt.text += "\n" + RandomlyModifyStats();
+
+				// Set up next button again
+				NextStamp.GetComponent<StampHandler>().HideStamp ();
+				NextText.text = "Fan Phase";
 
 				CurrState = ActState.DateActShowReward;
 			} else {
@@ -562,6 +581,10 @@ public class GameState : MonoBehaviour {
 				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
 					NPCMoveCount = 0;
 				} else {
+					//Update Phase Clock
+					phaseHandler.UpdateMinute();
+					phaseHandler.UpdateTime ();
+
 					//MapHandler.GetComponent<MapHandler> ().ResetNPCMoves (); // TODO: Redundant
 					SetupChoosePlayerAction ();
 				}
@@ -657,6 +680,13 @@ public class GameState : MonoBehaviour {
 
 					// No responses here
 					ShowBoxes (null, null, null);	
+				} else if (AfterFadeState == ActState.FansAction) {
+					StoryTxtHeader.text = "Fan Reactions";
+					StoryTxt.text = "";
+					NextText.text = "(Fan Phase)";
+
+					// No responses here
+					ShowBoxes (null, null, null);	
 				} else {
 					// Standard date text
 					DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];
@@ -696,6 +726,8 @@ public class GameState : MonoBehaviour {
 			if (overflow) {
 				if (AfterFadeState == ActState.DateAction) {
 					SetupDateTurn ();
+				} else if (AfterFadeState == ActState.FansAction) {
+					StartFansActionState ();
 				} else {
 					CurrState = AfterFadeState;
 				}

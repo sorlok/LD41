@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4374898, g: 0.48531306, b: 0.56558794, a: 1}
+  m_IndirectSpecularColor: {r: 0.43748954, g: 0.48531282, b: 0.56558746, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -18551,6 +18551,7 @@ MonoBehaviour:
   BigButtonPanel: {fileID: 694917656}
   SkipText: {fileID: 90171496}
   NextText: {fileID: 146942557}
+  NextStamp: {fileID: 1586779893}
   sfxSource: {fileID: 315532594}
   buttonSFX: {fileID: 8300000, guid: b126f52af89c948f3b8b23c2043057ab, type: 3}
   turnSFX: {fileID: 8300000, guid: 33eb4fd8b32e54d1faeb7d340364296d, type: 3}
