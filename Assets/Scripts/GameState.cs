@@ -79,6 +79,8 @@ public class GameState : MonoBehaviour {
 
 	public TweetHandler tweetHandler;
 
+	public int preFanHP;
+
 	// General random generator
 	public static System.Random rng = new System.Random();
 
@@ -781,6 +783,14 @@ public class GameState : MonoBehaviour {
 					NextText.text = "Time Marches On...";
 
 				}
+
+				// Update HP
+				int totalDmg = preFanHP - MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem;
+				if (totalDmg > 0) {
+					StoryTxt.text = "Fans have done a total of " + totalDmg + " damage to your self esteem.";
+				} else if (CurrState == ActState.WaitingFanAckFromPlayer) {
+					StoryTxt.text = "You have weathered the onslaught of your fans with your self esteem intact (for now).";
+				}
 			} else {
 				ThrowException ("Bad NPC current state: " + CurrState);
 			}
@@ -942,6 +952,8 @@ public class GameState : MonoBehaviour {
 
 					// No responses here
 					ShowBoxes (null, null, null);	
+
+					preFanHP = MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem;
 				} else if (AfterFadeState == ActState.PlayerActionSelect) {
 					StoryTxtHeader.text = "Date Action";
 					StoryTxt.text = "";
