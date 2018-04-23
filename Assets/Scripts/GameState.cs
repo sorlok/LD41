@@ -258,7 +258,7 @@ public class GameState : MonoBehaviour {
 		// Phase 1.A - Date reacts to dialogue choice
 		if (CurrState == ActState.ChooseInteractTalk) {
 			CurrState = ActState.FadingTextOut;
-			AfterFadeState = ActState.TalkDateSelectReact;
+			AfterFadeState = ActState.TalkDateViewResponse;
 
 			ChoiceParticles.GetComponent<ParticleOrientor>().OrientParticles ();
 			ChoiceParticles.Clear ();
@@ -273,11 +273,10 @@ public class GameState : MonoBehaviour {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
 			}
 
-			sfxSource.clip = buttonSFX;
-			sfxSource.Play ();
+			PlayButtonSound ();
 
 			ChoiceParticles.Play();
-			Invoke("ChoiceParticlesDone", 2);
+			//Invoke("ChoiceParticlesDone", 2);
 		
 		}
 
@@ -285,13 +284,15 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.TalkDateViewResponse) {
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.DateAction;
-			//SetupDateTurn ();
+			PlayButtonSound ();
 		}
 
 		// Phase 2 - Ready to switch to fan phase?
 		if (CurrState == ActState.DateActShowReward) {
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.FansAction;
+			PlayButtonSound ();
+
 		}
 
 		// Phase 3 - Ready to switch back to player phase?
@@ -303,8 +304,15 @@ public class GameState : MonoBehaviour {
 			// Fade text to player's turn
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.PlayerActionSelect;
+			PlayButtonSound ();
+
 		}
 
+	}
+
+	public void PlayButtonSound() {
+		sfxSource.clip = buttonSFX;
+		sfxSource.Play ();
 	}
 
 	// TEST
@@ -480,17 +488,16 @@ public class GameState : MonoBehaviour {
 		*/
 	}
 
-	public void ChoiceParticlesDone() {
-		/*ShowBoxes (
-			"Done Talking"
-		);
+	/*public void ChoiceParticlesDone() {
+		//ShowBoxes (
+		//	"Done Talking"
+		//);
 
 		// Set Response
-		StoryTxt.text = "Wow, what a...\nnice? thing to say...";
-*/
+		//StoryTxt.text = "Wow, what a...\nnice? thing to say...";
 		// Need to move the state along.
 		CurrState = ActState.TalkDateViewResponse;
-	}
+	}*/
 
 	void DateCollectsReward() {
 		// TODO: actually increase values.
