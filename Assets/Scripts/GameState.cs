@@ -110,6 +110,9 @@ public class GameState : MonoBehaviour {
 		// Fading the text out/in for a story text transition
 		FadingTextOut,
 		FadingTextIn,
+
+		// Waiting for the player to acknowledge the damage all fans have done
+		WaitingFanAckFromPlayer,
 	}
 
 	// The state to set after the next fade?
@@ -289,6 +292,17 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.DateActShowReward) {
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.FansAction;
+		}
+
+		// Phase 3 - Ready to switch back to player phase?
+		if (CurrState == ActState.WaitingFanAckFromPlayer) {
+			//Update Phase Clock
+			phaseHandler.UpdateMinute();
+			phaseHandler.UpdateTime ();
+
+			// Fade text to player's turn
+			CurrState = ActState.FadingTextOut;
+			AfterFadeState = ActState.PlayerActionSelect;
 		}
 
 	}
@@ -581,12 +595,10 @@ public class GameState : MonoBehaviour {
 				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
 					NPCMoveCount = 0;
 				} else {
-					//Update Phase Clock
-					phaseHandler.UpdateMinute();
-					phaseHandler.UpdateTime ();
+					CurrState = ActState.WaitingFanAckFromPlayer;
+					NextStamp.GetComponent<StampHandler>().HideStamp ();
+					NextText.text = "Time Marches On...";
 
-					//MapHandler.GetComponent<MapHandler> ().ResetNPCMoves (); // TODO: Redundant
-					SetupChoosePlayerAction ();
 				}
 			} else {
 				ThrowException ("Bad NPC current state: " + CurrState);
@@ -687,6 +699,14 @@ public class GameState : MonoBehaviour {
 
 					// No responses here
 					ShowBoxes (null, null, null);	
+				} else if (AfterFadeState == ActState.PlayerActionSelect) {
+					StoryTxtHeader.text = "Date Action";
+					StoryTxt.text = "";
+					SkipText.text = "Main Action";
+					NextText.text = "(In Story)";
+
+					// No responses here
+					ShowBoxes (null, null, null);	
 				} else {
 					// Standard date text
 					DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];
@@ -728,6 +748,8 @@ public class GameState : MonoBehaviour {
 					SetupDateTurn ();
 				} else if (AfterFadeState == ActState.FansAction) {
 					StartFansActionState ();
+				} else if (AfterFadeState == ActState.PlayerActionSelect) {
+					SetupChoosePlayerAction ();	
 				} else {
 					CurrState = AfterFadeState;
 				}
