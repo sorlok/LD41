@@ -306,6 +306,8 @@ public class GameState : MonoBehaviour {
 
 			} else if (stampId == 2) {
 				// Tweet @ fans
+				StoryTxt.text += "\n\nUse the mouse to aim; click to fire off a tweet.";
+
 				tweetHandler.StartTweeting();
 			} else if (stampId == 3) {
 				// Move date location
@@ -463,6 +465,25 @@ public class GameState : MonoBehaviour {
 		CurrState = ActState.ChooseInteractTalk;
 	}*/
 
+	public void SetupDateTurnAfterTwee() {
+		if (CurrState == ActState.PlayerActionSelect) {
+			StoryTxtHeader.text = "Date Dialogue";
+			StoryTxt.text = "Your date is deciding what to do...";
+			NextText.text = "(Date Acting)";
+
+			// No responses here
+			ShowBoxes (null, null, null);
+
+			// Hack
+			RespStamp1.GetComponent<StampHandler>().HideStamp ();
+			RespStamp2.GetComponent<StampHandler>().HideStamp ();
+			RespStamp3.GetComponent<StampHandler>().HideStamp ();
+
+			// Done
+			SetupDateTurn ();
+		}
+	}
+
 	public void SetupDateTurn() {
 		// unused
 		//DialogueStoryTab.SetActive (false);
@@ -473,7 +494,6 @@ public class GameState : MonoBehaviour {
 		DateActionTab.transform.localPosition = new Vector3 (0, 0, 0);
 		DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Skip";
 		ResultTxt.gameObject.SetActive (false);
-		//StoryTxt.text = "Your date is deciding what to do...";
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
