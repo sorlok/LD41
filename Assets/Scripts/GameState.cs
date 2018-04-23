@@ -119,6 +119,13 @@ public class GameState : MonoBehaviour {
 	private Vector3 interpEndPos2;
 	private Vector3 interpStartSz2;
 	private Vector3 interpEndSz2;
+
+	// Interpolation 3
+	private Transform interpTarget3;
+	private Vector3 interpStartPos3;
+	private Vector3 interpEndPos3;
+	private Vector3 interpStartSz3;
+	private Vector3 interpEndSz3;
 		
 
 	// Current state tree entry. Sub-state(s) should be set to 0 on state change.
@@ -159,6 +166,9 @@ public class GameState : MonoBehaviour {
 		interpTarget2.position = Vector3.Lerp(interpStartPos2, interpEndPos2, fracJourney);
 		interpTarget2.localScale = Vector3.Lerp (interpStartSz2, interpEndSz2, fracJourney);
 
+		interpTarget3.position = Vector3.Lerp(interpStartPos3, interpEndPos3, fracJourney);
+		interpTarget3.localScale = Vector3.Lerp (interpStartSz3, interpEndSz3, fracJourney);
+
 		return distCovered >= 1;
 	}
 
@@ -181,6 +191,14 @@ public class GameState : MonoBehaviour {
 			interpTarget2 = DialoguePanel.transform;
 			DialoguePanel.SetActive (true);
 
+			// Third interpolation
+			interpEndPos3 = AttributesPanel.transform.position;
+			interpStartPos3 = AttributesPanel.transform.position + new Vector3 (0, 0, 1f);
+			interpEndSz3 = new Vector3 (1, 1, 1);
+			interpStartSz3 = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget3 = AttributesPanel.transform;
+			AttributesPanel.SetActive (true);
+
 			// Set up the interpolation
 			interpStartTime = Time.time;
 			interpTotalLength = Vector3.Distance (interpStartPos, interpEndPos);
@@ -199,6 +217,7 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupChoosePlayerAction() {
+		/*
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
 			"Interact with Date",
@@ -206,7 +225,18 @@ public class GameState : MonoBehaviour {
 			"End Date"
 		);
 		DialogueStoryTab.SetActive (true);
-		CurrState = ActState.PlayerActionSelect;
+		CurrState = ActState.PlayerActionSelect;*/
+
+
+		// Choose dialogue options
+
+		// Set Next button text
+		SkipText.text = "Main Action";
+		NextText.text = "(In Story)";
+
+		// Reset button stamp statuses (but not for the bottom item).
+
+
 		phaseName = "Your Turn";
 		phaseHandler.UpdateActiveUser (phaseName);
 	}
@@ -501,8 +531,7 @@ public class GameState : MonoBehaviour {
 		//  Deal with interpolation?
 		if (CurrState == ActState.DoingInterp) {
 			if (updateInterpolation ()) {
-				// TODO: done with interp; actually set up the dialogue text
-				// Also reset buttons
+				SetupChoosePlayerAction ();
 
 			}
 		}

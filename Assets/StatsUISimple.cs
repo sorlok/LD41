@@ -27,8 +27,6 @@ public class StatsUISimple : MonoBehaviour {
 
 	public void CallbackUpdate(uint val) {
 		TextTrack.text = StatName + ": " + val;
-
-		Debug.Log ("Callback: " + val);
 	}
 
 	private bool turn1 = true;
