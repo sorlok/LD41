@@ -40,6 +40,8 @@ public class MapHandler : MonoBehaviour {
 	public GameObject FanPrefab;
 	public GameObject DebugPrefab;
 
+	public GameObject heartPrefab;
+
 	// Actual Lead tokens
 	private GameObject leadPlayer;
 	public GameObject LeadPlayer
@@ -189,8 +191,8 @@ public class MapHandler : MonoBehaviour {
 		leadPlayer = CreateLead (1, 3);
 		leadDate = CreateLead (2, 3);
 
-		for (int i = 2; i < 8; i++) {
-			CreateFan (i+2, i);
+		for (int i = 2; i < 10; i++) {
+			CreateFan (i, i);
 		}
 
 	}
@@ -212,6 +214,13 @@ public class MapHandler : MonoBehaviour {
 		return res;
 	}
 
+	public GameObject CreateHeart(int tileX, int tileY) {
+		GameObject res = Instantiate(heartPrefab, new Vector3(0, 5, 0), Quaternion.identity);
+		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
+		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
+		return res;
+	}
+
 	/*public void GetClickTile () {
 	}*/
 
@@ -224,19 +233,27 @@ public class MapHandler : MonoBehaviour {
 			if (fan.MovedThisTurn) {
 				continue;
 			}
+
 			fan.MovedThisTurn = true;
 
 			// TODO: Check if it knows about the players or not
-			if (true) {
-				// Move towards teh lead player (for now)
-				fan.FanWalkTowards (LeadPlayer);
-			} else {
-				// Just move randomly.
-				fan.FanRandomWalk ();
-			}
+			fan.FanRandomWalk();
 
+			// Play movement SFX
 			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
 			sfxSource.Play();
+
+			// Do damage to player
+			foreach (char s in "NSEW") {
+				IntPoint next = IntPoint.FromCardinal (fan.TileX, fan.TileY, s);
+				if (SingleCollide (leadPlayer, next)) {
+					leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem -= 1;
+
+					// Destroy this fan
+					fans.Remove (fanObj);
+					Destroy (fanObj);
+				}
+			}
 
 			return true;
 		}

@@ -621,8 +621,14 @@ public class GameState : MonoBehaviour {
 				CurrState = AfterFadeState;
 			}
 		}
+			
+		// Test-driven development for heart animation... >3>
+		if (Input.GetKey (KeyCode.F)) {
+			MapHandler.GetComponent<MapHandler> ().CreateHeart(5,5);
+			return;
+		}
 
-		// Deal with counter			
+		// Deal with counter
 		if (DateActCount < DateActCountMax) {
 			// Any key will advance the counter 100%
 			if (Input.anyKeyDown && SkipPhase == ActState.Nothing) {
@@ -636,7 +642,5 @@ public class GameState : MonoBehaviour {
 		if (NPCMoveCount < NPCMoveCountMax) {
 			AdvanceNPCMoveCounter (Time.deltaTime);
 		}
-
-		
 	}
 }

@@ -18542,7 +18542,7 @@ MonoBehaviour:
   RespStamp1: {fileID: 1457615869}
   CurrState: 0
   phaseName: 
-  phaseHandler: {fileID: 1453999554}
+  phaseHandler: {fileID: 0}
 --- !u!4 &430121450
 Transform:
   m_ObjectHideFlags: 0
@@ -40272,6 +40272,8 @@ MonoBehaviour:
   LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
   FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
   DebugPrefab: {fileID: 1197471345975690, guid: a3fa1a4d4cc1f4dc59668d5f732c5dc8,
+    type: 2}
+  heartPrefab: {fileID: 1189565663332404, guid: 9e0c4c4a24e634a02ba85cf0de0e1d44,
     type: 2}
   sfxSource: {fileID: 315532594}
   movementSFX:
