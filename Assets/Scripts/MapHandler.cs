@@ -23,7 +23,7 @@ public class IntPoint
 }
 
 public class MapHandler : MonoBehaviour {
-	public bool DebugMoves = false;
+	public bool showDebugMoves = false;
 
 	public List<int> mapTileValues = new List<int>();
 
@@ -119,7 +119,7 @@ public class MapHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		// TEMP: Some useful debug code
-		if (DebugMoves) {
+		if (showDebugMoves) {
 			for (int i = 0; i < mapTileWidth * mapTileHeight; i++) {
 				debugArray.Add (null);
 			}
