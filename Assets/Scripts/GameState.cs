@@ -11,6 +11,9 @@ public class GameState : MonoBehaviour {
 		throw new System.ArgumentException (msg);
 	}
 
+	public GameObject LeftPanel;
+	public GameObject RightPanel;
+
 	public AudioSource sfxSource;
 	public AudioClip buttonSFX;
 	public AudioClip turnSFX;
@@ -311,6 +314,8 @@ public class GameState : MonoBehaviour {
 		// TEMP: Testing fan actions
 		StartFansActionState();
 
+		LeftPanel.SetActive (true);
+		RightPanel.SetActive (true);
 	}
 
 	private void AdvanceCounter(float amt) {
