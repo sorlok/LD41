@@ -63,6 +63,8 @@ public class GameState : MonoBehaviour {
 
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
+	public TweetHandler tweetHandler;
+
 	// General random generator
 	public static System.Random rng = new System.Random();
 
@@ -246,6 +248,7 @@ public class GameState : MonoBehaviour {
 
 			} else if (stampId == 2) {
 				// Tweet @ fans
+				tweetHandler.StartTweeting();
 			} else if (stampId == 3) {
 				// Move date location
 				// TEMP: should restrict this to turns 3+

@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TweetHandler : MonoBehaviour {
+	public Camera mainCamera;
 	public GameObject thisTweet;
 	public GameObject tweetBody;
 	public GameObject tweetBirdBurst;
 
 	private float burstTime, burstDelay = 1.5f;
 	private bool bursting = false;
+	private bool tweetTracking = false;
+	private float distance = 500;
+	public Collider cast;
 
 	// Use this for initialization
 	void Start () {
@@ -28,7 +32,19 @@ public class TweetHandler : MonoBehaviour {
 			ActivateTweetBurst();
 		}
 		*/
-		//Tweet Bird Burst Handler
+		/*
+		if (Input.GetMouseButtonDown (1)) {
+			StartTweeting ();
+		}
+		*/
+		if (Input.GetMouseButtonDown (0)) {
+			SendTweet();
+		}
+
+		if (tweetTracking) {
+			HandleTweeting ();
+		}
+
 		HandleTweetBurst();
 	}
 
@@ -39,12 +55,12 @@ public class TweetHandler : MonoBehaviour {
 
 	void DeactivateTweet () {
 		//print ("Body inactive.");
-		tweetBody.SetActive (false);
+		thisTweet.SetActive (false);
 	}
 
 	void ActivateTweet () {
 		//print ("Body active.");
-		tweetBody.SetActive (true);
+		thisTweet.SetActive (true);
 	}
 
 	void DeactivateTweetBody () {
@@ -79,6 +95,35 @@ public class TweetHandler : MonoBehaviour {
 		if (bursting && Delayed (burstDelay, burstTime)) {
 			DeactivateTweetBody ();
 			DeactivateTweetBurst ();
+			DeactivateTweet ();
+			tweetTracking = false;
 		}
+	}
+
+	public void StartTweeting () {
+		//thisTweet.transform.position = new Vector3 (origin.x, thisTweet.transform.position.y, origin.z);
+		if (!thisTweet.activeSelf) {
+			tweetTracking = true;
+			ActivateTweet ();
+		}
+	}
+
+	void HandleTweeting () {
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit;
+		if (cast.Raycast (ray, out hit, distance)) {
+			if (hit.collider.CompareTag ("Cast")) {
+				//Debug.DrawLine (ray.origin, hit.point);
+				//Debug.Log (hit.point);
+				thisTweet.transform.position = new Vector3 (hit.point.x, thisTweet.transform.position.y, hit.point.z);
+			}
+		}
+	}
+
+	void SendTweet () {
+		//print ("Tweet.");
+		tweetTracking = false;
+		ActivateTweetBody ();
+		ActivateTweetBurst ();
 	}
 }

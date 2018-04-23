@@ -243,6 +243,9 @@ public class TokenHandler : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider other) {
-		RemoveToken ();
+		//Remove Token if Tweet Trigger and Fan interact.
+		if (FanObj != null && other.tag == "Tweet") {
+			RemoveToken ();
+		}
 	}
 }
