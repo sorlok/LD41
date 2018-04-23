@@ -16,6 +16,9 @@ public class GameState : MonoBehaviour {
 	public GameObject GameOverObj;
 	public GameObject GameOverTxt;
 
+	public GameObject FinalScreenObj;
+	public GameObject FinalScreenTxt;
+
 	public GameObject LeftPanel;
 	public GameObject AttributesPanel;
 	public GameObject PhasePanel;
@@ -132,6 +135,9 @@ public class GameState : MonoBehaviour {
 		// Gameover stuff
 		GameOverFadein,
 		GameOverOnscreen,
+
+		// Final screen stuff
+		FinalScreenOnscreen,
 	}
 
 	// The state to set after the next fade?
@@ -257,6 +263,9 @@ public class GameState : MonoBehaviour {
 			// Update all
 			updateInterpolation ();
 
+			// Temp
+			phaseHandler.UpdateColoring();
+
 			CurrState = ActState.DoingInterp;
 			return;
 		}
@@ -271,6 +280,7 @@ public class GameState : MonoBehaviour {
 			} else {
 				if (phaseHandler.thisHour == 10) {
 					// TODO: End date code here.
+					ShowFinalScreen();
 				} else {
 					// Fade back to start
 					CurrState = ActState.FadingTextOut;
@@ -424,6 +434,16 @@ public class GameState : MonoBehaviour {
 
 		DialogueStoryTab.SetActive (true);
 		CurrState = ActState.ChooseInteractWithDate;
+	}
+
+	private void ShowFinalScreen() {
+		Lead player = MapHandler.GetComponent<MapHandler> ().LeadPlayerScript;
+		int score = player.Connection * 1000 + player.SelfEsteem * 100 + player.FanCount;
+
+		FinalScreenObj.SetActive (true);
+		FinalScreenTxt.GetComponent<Text> ().text = "Final Score: " + score;
+
+		CurrState = ActState.FinalScreenOnscreen;
 	}
 
 /*	public void SetupTalkToDate() {
@@ -612,6 +632,8 @@ public class GameState : MonoBehaviour {
 		BigButtonPanel.SetActive (true);
 		GameOverObj.SetActive (false);
 		GameOverTxt.SetActive (false);
+		FinalScreenObj.SetActive (false);
+
 
 		// Set up start text on Big Button Panel
 		SkipText.text = "Your Date Starts at 7pm";
@@ -748,6 +770,10 @@ public class GameState : MonoBehaviour {
 	}
 
 	private bool TooSoonToMove() {
+		//TEMP: DEBUG
+		//return false;
+
+
 		return phaseHandler.thisMinute <= 10;
 	}
 

@@ -32,6 +32,10 @@ public class PhaseHandler : MonoBehaviour {
 		sun.MoveSun (1);
 	}
 
+	public void UpdateColoring() {
+		//sun.RecolorSun (false); // not needed
+	}
+
 	public void UpdateTime () {
 		string time;
 		if (thisMinute < 10) {
