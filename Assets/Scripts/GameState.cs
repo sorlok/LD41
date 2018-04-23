@@ -747,6 +747,15 @@ public class GameState : MonoBehaviour {
 					StoryTxtHeader.text = "Date Dialogue";
 					StoryTxt.text = dd.storyText;
 
+					if (LastDateResponse == 'G') {
+						StoryTxt.text += "\n\n  +2 Self Esteem";
+					} else if (LastDateResponse == 'N') {
+						StoryTxt.text += "\n\n  +1 Self Esteem";
+					} else {
+						StoryTxt.text += "\n\n  -1 Self Esteem";
+					}
+
+
 					// Set response text
 					ShowBoxes (
 						dd.option1,
