@@ -41,15 +41,15 @@ public class TokenHandler : MonoBehaviour {
 	}
 
 	// As a fan, walk towards a given other fan or player
-	public void FanWalkTowards(GameObject otherObj1, GameObject otherObj2) {
+	public bool FanWalkTowards(GameObject otherObj1, GameObject otherObj2) {
 		// Try to take 1 step in our plan.
 		if (FanMakeNextMove ()) {
-			return;
+			return true;
 		}
 
 		// TEMP
-		gameObject.transform.RotateAround (gameObject.transform.position, Vector3.forward, 90f);
-		return;
+		//gameObject.transform.RotateAround (gameObject.transform.position, Vector3.forward, 90f);
+		return false;
 	}
 
 	// Try to make the next move in the current plan, recalculating once.

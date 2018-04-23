@@ -159,7 +159,7 @@ public class GameState : MonoBehaviour {
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
-	private static float NPCMoveCountMax = 1;
+	private static float NPCMoveCountMax = 0.5f;
 	private float NPCMoveCount = NPCMoveCountMax;
 
 	private DateDialogues dateDialogues;

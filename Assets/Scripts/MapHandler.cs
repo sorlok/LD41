@@ -199,6 +199,17 @@ public class MapHandler : MonoBehaviour {
 	}
 
 
+	private int getMinDistFromPlayer(IntPoint fan) {
+		int dist1 = Mathf.Abs(fan.x - LeadDate.GetComponent<TokenHandler>().TileX) + Mathf.Abs(fan.y - LeadDate.GetComponent<TokenHandler>().TileY);
+		int dist2 = Mathf.Abs(fan.x - LeadPlayer.GetComponent<TokenHandler>().TileX) + Mathf.Abs(fan.y - LeadPlayer.GetComponent<TokenHandler>().TileY);
+		if (dist1 < dist2) {
+			return dist1;
+		} else {
+			return dist2;
+		}
+	}
+
+
 	public void SpawnFans(int count) {
 		// Save allowed fan locations
 		List<IntPoint> fanSpawns = new List<IntPoint>();
@@ -208,9 +219,8 @@ public class MapHandler : MonoBehaviour {
 				if (CanMove (res)) {
 					// Additional safety: not too close to dates
 					int amt = 4;
-					int dist1 = Mathf.Abs(res.x - LeadDate.GetComponent<TokenHandler>().TileX) + Mathf.Abs(res.y - LeadDate.GetComponent<TokenHandler>().TileY);
-					int dist2 = Mathf.Abs(res.x - LeadPlayer.GetComponent<TokenHandler>().TileX) + Mathf.Abs(res.y - LeadPlayer.GetComponent<TokenHandler>().TileY);
-					if (dist1 >= amt && dist2 >= amt) {
+					int dist = getMinDistFromPlayer (res);
+					if (dist >= amt) {
 						fanSpawns.Add (res);
 					}
 				}
@@ -281,12 +291,31 @@ public class MapHandler : MonoBehaviour {
 	// Return true if an NPC moved
 	// TEMP function
 	public bool MoveNextNPC() {
+		// Find the NEAREST fan that hasn't moved
+		GameObject nextFan = null;
+
 		foreach (GameObject fanObj in fans) {
 			TokenHandler fan = fanObj.GetComponent<TokenHandler> ();
 			if (fan.MovedThisTurn) {
 				continue;
 			}
 
+			// Set/compare it
+			if (nextFan == null) {
+				nextFan = fanObj;
+			} else {
+				TokenHandler curr = nextFan.GetComponent<TokenHandler> ();
+				int currDist = getMinDistFromPlayer (new IntPoint (curr.TileX, curr.TileY));
+				int nxtDist = getMinDistFromPlayer (new IntPoint (fan.TileX, fan.TileY));
+				if (nxtDist < currDist) {
+					nextFan = fanObj;
+				}
+			}
+		}
+
+		// Anything?
+		if (nextFan != null) {
+			TokenHandler fan = nextFan.GetComponent<TokenHandler> ();
 			fan.MovedThisTurn = true;
 
 			// Are we moving or attacking?
@@ -308,23 +337,31 @@ public class MapHandler : MonoBehaviour {
 					Debug.Log("James: a death animation is needed here.");
 
 					// Destroy this fan
-					fans.Remove (fanObj);
-					Destroy (fanObj);
+					DestroyFan(nextFan);
 
 					return true;
 				}
 			}
 
 			// Ok, we're walking
-			fan.FanWalkTowards(LeadDate, LeadPlayer);
+			bool didAWalk = fan.FanWalkTowards(LeadDate, LeadPlayer);
 
 			// Play movement SFX
-			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
-			sfxSource.Play();
+			if (didAWalk) {
+				sfxSource.clip = movementSFX [Random.Range (0, movementSFX.Length)];
+				sfxSource.Play ();
 
-			return true;
+				return true;
+			} else {
+				return false;
+			}
 		}
 		return false;
+	}
+
+	public void DestroyFan(GameObject fan) {
+		fans.Remove (fan);
+		Destroy (fan);
 	}
 
 	private bool SingleCollide(GameObject other, IntPoint dest) {
