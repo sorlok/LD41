@@ -82,6 +82,8 @@ public class GameState : MonoBehaviour {
 
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
+	private bool GameOverFirstTime = true;
+
 	public TweetHandler tweetHandler;
 
 	public int preFanHP;
@@ -712,8 +714,11 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void GameoverTracker(int selfEsteem) {
+		Debug.Log ("Game Over check: " + selfEsteem);
+
 		if (selfEsteem <= 0) {
 			CurrState = ActState.GameOverFadein;
+
 			//Flip Leads
 			MapHandler.GetComponent<MapHandler>().LeadPlayer.GetComponent<TokenHandler>().RemoveToken();
 			MapHandler.GetComponent<MapHandler>().LeadDate.GetComponent<TokenHandler>().RemoveToken();
@@ -806,11 +811,6 @@ public class GameState : MonoBehaviour {
 	}
 
 	private void AdvanceNPCMoveCounter(float amt) {
-		if (CurrState == ActState.GameOverFadein || CurrState == ActState.GameOverOnscreen) {
-			NPCMoveCount = NPCMoveCountMaxNow;
-			return;
-		}
-
 		NPCMoveCount += amt;
 
 		// TODO: Update NPC movement
@@ -877,13 +877,15 @@ public class GameState : MonoBehaviour {
 	void Update () {
 		// Gameover fading takes priority
 		if (CurrState == ActState.GameOverFadein) {
-			if (!GameOverObj.activeSelf) {
+			if (GameOverFirstTime) {
 				// Init
 				Color clr = GameOverObj.GetComponent<Image> ().color;
 				GameOverObj.GetComponent<Image> ().color = new Color (clr.r, clr.g, clr.b, 0);
 				GameOverObj.SetActive (true);
 
 				PlayEvilLaugh ();
+
+				GameOverFirstTime = false;
 			} else {
 				// Music fade out
 				float newVol = bgmSource.volume - 0.02f;
@@ -912,6 +914,10 @@ public class GameState : MonoBehaviour {
 				}
 			}
 
+			return;
+		}
+
+		if (CurrState == ActState.GameOverOnscreen) {
 			return;
 		}
 
