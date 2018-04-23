@@ -18500,6 +18500,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc08c20a8ee3e4146aed2f9a37cb039f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LeftPanel: {fileID: 798296889}
+  RightPanel: {fileID: 297781419}
   sfxSource: {fileID: 315532594}
   buttonSFX: {fileID: 8300000, guid: b126f52af89c948f3b8b23c2043057ab, type: 3}
   turnSFX: {fileID: 8300000, guid: 33eb4fd8b32e54d1faeb7d340364296d, type: 3}
@@ -40242,12 +40244,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7b47d26ff38c04fa83dee9e1f5395e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DebugMoves: 1
   mapTileValues: 
   mapTileHeights: 
+  debugArray: []
   mapTileWidth: 10
   mapTileHeight: 10
   LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
   FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
+  DebugPrefab: {fileID: 1197471345975690, guid: a3fa1a4d4cc1f4dc59668d5f732c5dc8,
+    type: 2}
   sfxSource: {fileID: 315532594}
   movementSFX:
   - {fileID: 8300000, guid: 38f36dd706ac9429398cebff173f7dc6, type: 3}
