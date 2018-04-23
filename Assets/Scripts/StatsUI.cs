@@ -14,11 +14,11 @@ public class StatsUI : MonoBehaviour {
 
 
 	// --- Methods ---
-	void FanCountChanged(uint newVal) {
-		fanCountLabel.GetComponent<Text>().text = "" + newVal;
+	void FanCountChanged(int newVal) {
+		fanCountLabel.GetComponent<Text>().text = "" + (newVal < 0 ? 0 : newVal);
 	}
 
-	void SelfEsteemChanged(uint newVal) {
+	void SelfEsteemChanged(int newVal) {
 		selfEsteemLabel.GetComponent<Text>().text = "" + newVal;
 	}
 

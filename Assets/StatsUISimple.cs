@@ -25,8 +25,8 @@ public class StatsUISimple : MonoBehaviour {
 	// The associated MapHandler
 	public GameObject MapHandler;
 
-	public void CallbackUpdate(uint val) {
-		TextTrack.text = StatName + ": " + val;
+	public void CallbackUpdate(int val) {
+		TextTrack.text = StatName + ": " + (val < 0 ? 0 : val);
 	}
 	public void CallbackUpdate(string val) {
 		TextTrack.text = StatName + ": " + val;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 public class GameState : MonoBehaviour {
 
@@ -10,6 +12,9 @@ public class GameState : MonoBehaviour {
 	public static void ThrowException(string msg) {
 		throw new System.ArgumentException (msg);
 	}
+
+	public GameObject GameOverObj;
+	public GameObject GameOverTxt;
 
 	public GameObject LeftPanel;
 	public GameObject AttributesPanel;
@@ -24,10 +29,14 @@ public class GameState : MonoBehaviour {
 	public Text NextText;
 	public GameObject NextStamp;
 
+	public AudioSource bgmSource;
+
 	public AudioSource sfxSourceBtn;
 	public AudioClip buttonSFX;
 	public AudioSource sfxSourceTurn;
 	public AudioClip turnSFX;
+
+	public AudioClip buttonEvilLaugh;
 
 	// Page 1: Dating container object and text + options.
 	public GameObject DialogueStoryTab;
@@ -119,6 +128,10 @@ public class GameState : MonoBehaviour {
 
 		// Confirm move
 		MoveToNewLocation,
+
+		// Gameover stuff
+		GameOverFadein,
+		GameOverOnscreen,
 	}
 
 	// The state to set after the next fade?
@@ -315,6 +328,10 @@ public class GameState : MonoBehaviour {
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem -= 1;
 			}
 
+			// TODO:TEMP:DEBUG
+			//MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem -= 99;
+
+
 			PlayButtonSound ();
 
 			ChoiceParticles.Play();
@@ -360,6 +377,11 @@ public class GameState : MonoBehaviour {
 
 	public void PlayButtonSound() {
 		sfxSourceBtn.clip = buttonSFX;
+		sfxSourceBtn.Play ();
+	}
+
+	public void PlayEvilLaugh() {
+		sfxSourceBtn.clip = buttonEvilLaugh;
 		sfxSourceBtn.Play ();
 	}
 
@@ -588,12 +610,27 @@ public class GameState : MonoBehaviour {
 		RightPanel.SetActive (true);
 		DialoguePanel.SetActive (false);
 		BigButtonPanel.SetActive (true);
+		GameOverObj.SetActive (false);
+		GameOverTxt.SetActive (false);
 
 		// Set up start text on Big Button Panel
 		SkipText.text = "Your Date Starts at 7pm";
 		NextText.text = "Begin Date";
 
+		// Add a listener for gameovers
+		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteemTracker += GameoverTracker;
 	}
+
+	public void GameoverTracker(int selfEsteem) {
+		if (selfEsteem <= 0) {
+			CurrState = ActState.GameOverFadein;
+
+			// Reset practically everything
+			DateActCount = DateActCountMax;
+			NPCMoveCount = NPCMoveCountMax;
+		}
+	}
+
 
 	// Modify the stat and return a string describing it.
 	private string RandomlyModifyStatsFromTweet() {
@@ -606,7 +643,7 @@ public class GameState : MonoBehaviour {
 		int count = rng.Next(100) > 75 ? 2 : 1;
 		for (int i = 0; i < count; i++) {
 			bool positive = rng.Next (100) > 75;
-			uint amt = rng.Next (100) > 75 ? 2u : 1u;
+			int amt = rng.Next (100) > 75 ? 2 : 1;
 			if (rng.Next (100) > fanCutoff) {
 				// Fans
 				amt *= 10;
@@ -714,8 +751,53 @@ public class GameState : MonoBehaviour {
 		return phaseHandler.thisMinute <= 10;
 	}
 
+	public void DoNewGame() {
+		SceneManager.LoadScene( SceneManager.GetActiveScene().name );
+	}
+
 	// Update is called once per frame
 	void Update () {
+		// Gameover fading takes priority
+		if (CurrState == ActState.GameOverFadein) {
+			if (!GameOverObj.activeSelf) {
+				// Init
+				Color clr = GameOverObj.GetComponent<Image> ().color;
+				GameOverObj.GetComponent<Image> ().color = new Color (clr.r, clr.g, clr.b, 0);
+				GameOverObj.SetActive (true);
+
+				PlayEvilLaugh ();
+			} else {
+				// Music fade out
+				float newVol = bgmSource.volume - 0.02f;
+				if (newVol < 0) {
+					newVol = 0;
+				}
+				bgmSource.volume = newVol;
+
+
+				// Fade in
+				Color clr = GameOverObj.GetComponent<Image> ().color;
+				float newAlpha = clr.a += 0.01f;
+				bool overflow = false;
+				if (newAlpha >= 0.98f) {
+					newAlpha = 1;
+					overflow = true;
+				}
+				GameOverObj.GetComponent<Image> ().color = new Color (clr.r, clr.g, clr.b, newAlpha);
+
+				if (overflow) {
+					// Show text
+					GameOverTxt.SetActive(true);
+
+					// Done
+					CurrState = ActState.GameOverOnscreen;
+				}
+			}
+
+			return;
+		}
+
+
 		// Hack to avoid double-clicking
 		if (Input.GetMouseButtonDown (0)) {
 			if (EventSystem.current.IsPointerOverGameObject()) {
