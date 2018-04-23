@@ -318,6 +318,9 @@ public class GameState : MonoBehaviour {
 			phaseHandler.UpdateMinute();
 			phaseHandler.UpdateTime ();
 
+			// Add some new fans
+			MapHandler.GetComponent<MapHandler>().SpawnFans(3);
+
 			// Fade text to player's turn
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.PlayerActionSelect;

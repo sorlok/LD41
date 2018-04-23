@@ -196,7 +196,6 @@ public class MapHandler : MonoBehaviour {
 		leadDate = CreateLead (2, 3);
 
 		SpawnFans (3);
-
 	}
 
 
