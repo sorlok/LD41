@@ -248,6 +248,20 @@ public class GameState : MonoBehaviour {
 			return;
 		}
 
+		// Phase 1C: Try to move to new location
+		if (CurrState == ActState.MoveToNewLocation) {
+			// Go back
+			if (TooSoonToMove ()) {
+				// Fade text to player's turn
+				CurrState = ActState.FadingTextOut;
+				AfterFadeState = ActState.PlayerActionSelect;
+			} else {
+			}
+
+			PlayButtonSound ();
+			return;
+		}
+
 		// Phase 1: Select talk, tweet, or move
 		if (CurrState == ActState.PlayerActionSelect) {
 			PlayButtonSound ();
@@ -688,6 +702,10 @@ public class GameState : MonoBehaviour {
 		}
 	}
 
+	private bool TooSoonToMove() {
+		return phaseHandler.thisMinute <= 10;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		// Hack to avoid double-clicking
@@ -792,7 +810,7 @@ public class GameState : MonoBehaviour {
 					SkipText.text = "Main Action";
 					NextText.text = "(Moving Locations)";
 
-					if (phaseHandler.thisMinute <= 10) {
+					if (TooSoonToMove()) {
 						StoryTxt.text = "You can't move to a new date location yet; you basically just arrived here!";
 						ShowBoxes (null, "Ok", null);
 					} else {
