@@ -213,6 +213,8 @@ public class MapHandler : MonoBehaviour {
 				continue;
 			}
 
+			fan.MovedThisTurn = true;
+
 			// TODO: Check if it knows about the players or not
 			fan.FanRandomWalk();
 
@@ -221,11 +223,14 @@ public class MapHandler : MonoBehaviour {
 			sfxSource.Play();
 
 			// Do damage to player
-			Debug.Log (leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem);
 			foreach (char s in "NSEW") {
 				IntPoint next = IntPoint.FromCardinal (fan.TileX, fan.TileY, s);
 				if (SingleCollide (leadPlayer, next)) {
 					leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem -= 1;
+
+					// Destroy this fan
+					fans.Remove (fanObj);
+					Destroy (fanObj);
 				}
 			}
 
