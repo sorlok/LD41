@@ -962,7 +962,7 @@ public class GameState : MonoBehaviour {
 						TokenHandler leadPlayer = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ();
 						TokenHandler leadDate = MapHandler.GetComponent<MapHandler> ().LeadDate.GetComponent<TokenHandler> ();
 						if (phaseHandler.thisHour == 7) {
-							StoryTxt.text = "You leave the romantic highway overlook behind, and move to your backyard, doding fans along the way.";
+							StoryTxt.text = "You leave the romantic highway overlook behind, and move to your backyard, dodging fans along the way.";
 							StoryTxt.text += "\n\n  +25 Atmosphere";
 							MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere = "B";
 							ShowBoxes (null, "Resume Date", null);
