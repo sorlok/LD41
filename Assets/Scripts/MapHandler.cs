@@ -171,16 +171,16 @@ public class MapHandler : MonoBehaviour {
 		// 5 = on a hill, or on a house
 		// 8 = on a house that's on a hill (shouldn't happen)
 		mapTileHeights = new List<int> {
-			2,2,2,2,2,2,2,2,2,2,  //0
-			2,2,2,2,2,2,2,5,2,2,  //1
-			2,2,2,2,2,5,5,2,2,2,  //2
-			5,5,5,2,2,2,2,2,2,2,  //3
-			2,2,2,5,2,5,2,2,5,2,  //4
-			2,2,2,5,2,5,5,2,5,2,  //5
-			2,2,2,5,2,5,5,2,5,2,  //6
-			2,2,2,2,2,2,2,2,2,2,  //7
-			2,2,2,2,5,5,5,2,5,2,  //8
-			2,2,2,2,2,2,2,2,2,2,  //9
+			2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  //0
+			2, 2, 2, 2, 2, 2, 2, 5, 2, 2,  //1
+			2, 2, 2, 2, 2, 5, 5, 2, 2, 2,  //2
+			5, 5, 5, 2, 2, 2, 2, 2, 2, 2,  //3
+			2, 2, 2, 5, 2, 5, 2, 2, 5, 2,  //4
+			2, 2, 2, 5, 2, 5, 5, 2, 5, 2,  //5
+			2, 2, 2, 5, 2, 5, 5, 2, 5, 2,  //6
+			2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  //7
+			2, 2, 2, 2, 5, 5, 5, 2, 5, 2,  //8
+			2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  //9
 		};
 
 		// Sanity check
@@ -191,13 +191,45 @@ public class MapHandler : MonoBehaviour {
 			throw new System.ArgumentException ("Bad map width/height and array sizes [2]");
 		}
 
-
 		// Create the players, and some fans
 		leadPlayer = CreateLead (1, 3);
 		leadDate = CreateLead (2, 3);
 
-		for (int i = 2; i < 8; i++) {
-			CreateFan (i+2, i);
+		SpawnFans (3);
+
+	}
+
+
+	public void SpawnFans(int count) {
+		// Save allowed fan locations
+		List<IntPoint> fanSpawns = new List<IntPoint>();
+		for (int y = 0; y < mapTileHeight; y++) {
+			for (int x = 0; x < mapTileWidth; x++) {
+				IntPoint res = new IntPoint (x, y);
+				if (CanMove (res)) {
+					// Additional safety: not too close to dates
+					int amt = 4;
+					int dist1 = Mathf.Abs(res.x - LeadDate.GetComponent<TokenHandler>().TileX) + Mathf.Abs(res.y - LeadDate.GetComponent<TokenHandler>().TileY);
+					int dist2 = Mathf.Abs(res.x - LeadPlayer.GetComponent<TokenHandler>().TileX) + Mathf.Abs(res.y - LeadPlayer.GetComponent<TokenHandler>().TileY);
+					if (dist1 >= amt && dist2 >= amt) {
+						fanSpawns.Add (res);
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < count; i++) {
+			// Safety
+			if (fanSpawns.Count == 0) {
+				break;
+			}
+
+			// Make a fan at a random position
+			int id = GameState.rng.Next(fanSpawns.Count);
+			IntPoint pt = fanSpawns [id];
+			fanSpawns.RemoveAt (id);
+
+			CreateFan (pt.x, pt.y);
 		}
 
 	}
