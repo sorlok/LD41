@@ -276,6 +276,11 @@ public class GameState : MonoBehaviour {
 			Invoke("ChoiceParticlesDone", 2);
 		
 		}
+
+		// Phase 1.B - Saw date react, move to next phase
+		if (CurrState == ActState.TalkDateViewResponse) {
+			SetupDateTurn ();
+		}
 	}
 
 	// TEST
@@ -332,14 +337,16 @@ public class GameState : MonoBehaviour {
 	}*/
 
 	public void SetupDateTurn() {
-		DialogueStoryTab.SetActive (false);
+		// unused
+		//DialogueStoryTab.SetActive (false);
+		//DateProgressBarBkg.SetActive (true);
 
-		DateProgressBarBkg.SetActive (true);
+		// todo: migrate over to the right
 		DateProressBar.SetActive (true);
 		DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 70, 0);
 		DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Skip";
 		ResultTxt.gameObject.SetActive (false);
-		DateActTxt.text = "Your date is deciding what to do...";
+		StoryTxt.text = "Your date is deciding what to do...";
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
