@@ -8,7 +8,7 @@ public class PhaseHandler : MonoBehaviour {
 	public SunHandler sun;
 
 	public Text turnCountText, activeUserText;
-	private float thisMinute = 0, thisHour = 7;
+	public float thisMinute = 0, thisHour = 7;
 
 	//private string you, 
 

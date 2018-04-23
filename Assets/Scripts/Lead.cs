@@ -10,9 +10,15 @@ public class Lead {
 
 	// Delegate for all resources
 	public delegate void ValueChanged(uint newval);
+	public delegate void ValueChanged2(string newval);
 
 	// Helper
 	private void FireChanged(ValueChanged tracker, uint value) {
+		if (tracker != null) {
+			tracker (value);
+		}
+	}
+	private void FireChanged(ValueChanged2 tracker, string value) {
 		if (tracker != null) {
 			tracker (value);
 		}
@@ -26,6 +32,14 @@ public class Lead {
 	}
 
 	/* basic resources */
+	private string atmosphere = "C-";
+	public string Atmosphere 
+	{
+		get { return atmosphere; }
+		set { atmosphere = value; FireChanged (AtmosphereTracker, value); }
+	}
+	public event ValueChanged2 AtmosphereTracker;
+
 	private uint selfEsteem = 3;
 	public uint SelfEsteem
 	{

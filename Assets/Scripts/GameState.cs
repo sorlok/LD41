@@ -116,6 +116,9 @@ public class GameState : MonoBehaviour {
 
 		// Waiting for the player to acknowledge the damage all fans have done
 		WaitingFanAckFromPlayer,
+
+		// Confirm move
+		MoveToNewLocation,
 	}
 
 	// The state to set after the next fade?
@@ -262,8 +265,8 @@ public class GameState : MonoBehaviour {
 				tweetHandler.StartTweeting();
 			} else if (stampId == 3) {
 				// Move date location
-				// TEMP: should restrict this to turns 3+
-				StoryTxt.text = "You can't move to a new date location yet; you just arrived at this one!";
+				CurrState = ActState.FadingTextOut;
+				AfterFadeState = ActState.MoveToNewLocation;
 			}
 
 			return;
@@ -784,6 +787,30 @@ public class GameState : MonoBehaviour {
 
 					// No responses here
 					ShowBoxes (null, null, null);	
+				} else if (AfterFadeState == ActState.MoveToNewLocation) {
+					StoryTxtHeader.text = "Date Action";
+					SkipText.text = "Main Action";
+					NextText.text = "(Moving Locations)";
+
+					if (phaseHandler.thisMinute <= 10) {
+						StoryTxt.text = "You can't move to a new date location yet; you basically just arrived here!";
+						ShowBoxes (null, "Ok", null);
+					} else {
+						if (phaseHandler.thisHour == 7) {
+							StoryTxt.text = "You leave the romantic highway overlook behind, and move to your backyard.";
+							StoryTxt.text += "\n\n  +25 Atmosphere";
+							MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere = "B";
+							ShowBoxes (null, "Resume Date", null);
+						} else if (phaseHandler.thisHour == 8) { 
+							StoryTxt.text = "Your friend with the fancy house invites you both to hang out by the pool";
+							StoryTxt.text += "\n\n  +50 Atmosphere";
+							MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere = "A+";
+							ShowBoxes (null, "Resume Date", null);
+						} else if (phaseHandler.thisHour == 9) { 
+							StoryTxt.text = "You both had a great time! You part and go your separate ways.";
+							ShowBoxes (null, "Date Complete!", null);
+						}
+					}
 				} else {
 					// Standard date text
 					DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];

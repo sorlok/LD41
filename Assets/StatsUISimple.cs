@@ -28,6 +28,9 @@ public class StatsUISimple : MonoBehaviour {
 	public void CallbackUpdate(uint val) {
 		TextTrack.text = StatName + ": " + val;
 	}
+	public void CallbackUpdate(string val) {
+		TextTrack.text = StatName + ": " + val;
+	}
 
 	private bool turn1 = true;
 
@@ -52,10 +55,9 @@ public class StatsUISimple : MonoBehaviour {
 				lead.FanCountTracker += CallbackUpdate;
 				CallbackUpdate (lead.FanCount);
 			} else if (StatTrack == StatToTrack.PlayerAtmosphere) {
-				// TODO
-				//StatName = "Atmosphere";
-				//lead.AtmosphereTracker += CallbackUpdate;
-				//CallbackUpdate (lead.Atmosphere);
+				StatName = "Atmosphere";
+				lead.AtmosphereTracker += CallbackUpdate;
+				CallbackUpdate (lead.Atmosphere);
 			} else if (StatTrack == StatToTrack.PlayerConnection) {
 				StatName = "Connection";
 				lead.ConnectionTracker += CallbackUpdate;
