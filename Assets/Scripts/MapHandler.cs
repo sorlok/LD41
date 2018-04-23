@@ -200,6 +200,7 @@ public class MapHandler : MonoBehaviour {
 	public GameObject CreateLead(int tileX, int tileY) {
 		GameObject res = Instantiate(LeadPrefab, new Vector3(0, 2, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
+		res.GetComponent<TokenHandler> ().self = res;
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		res.GetComponent<TokenHandler> ().LeadObj = new Lead ();
 		return res;
@@ -208,6 +209,7 @@ public class MapHandler : MonoBehaviour {
 	public GameObject CreateFan(int tileX, int tileY) {
 		GameObject res = Instantiate(FanPrefab, new Vector3(0, 2, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
+		res.GetComponent<TokenHandler> ().self = res;
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		res.GetComponent<TokenHandler> ().FanObj = new Fan ();
 		fans.Add (res);
@@ -217,6 +219,7 @@ public class MapHandler : MonoBehaviour {
 	public GameObject CreateHeart(int tileX, int tileY) {
 		GameObject res = Instantiate(heartPrefab, new Vector3(0, 5, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
+		res.GetComponent<TokenHandler> ().self = res;
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		return res;
 	}

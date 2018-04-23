@@ -6,6 +6,9 @@ public class TokenHandler : MonoBehaviour {
 	public GameObject self;
 	public GameObject MapHandler;
 
+	//Token Removal
+	private int minRemovalDistance = 10, maxRemovalDistance = 30, maxRemovalHeight = 30, removalVelocity = 1;
+
 	// Either of these is non-null, depending on the type. 
 	// Use LeadPlayerScript/etc. from MapHandler
 	public Lead LeadObj;
@@ -232,5 +235,14 @@ public class TokenHandler : MonoBehaviour {
 		this.tileY = tileY;
 			
 		gameObject.transform.position = new Vector3 (tileX * 8, tileHeight, tileY*8);
+	}
+
+	public void RemoveToken () {
+		
+		print ("Token Removed.");
+	}
+
+	void OnTriggerEnter (Collider other) {
+		RemoveToken ();
 	}
 }

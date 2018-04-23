@@ -38,6 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4658970060043142}
   - component: {fileID: 114961972585787102}
+  - component: {fileID: 135679090270150544}
   m_Layer: 0
   m_Name: TokenLeadM2
   m_TagString: Untagged
@@ -244,3 +245,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   self: {fileID: 0}
   MapHandler: {fileID: 0}
+  MovedThisTurn: 0
+--- !u!135 &135679090270150544
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1373886656943672}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 3
+  m_Center: {x: 0, y: 0, z: 0}
