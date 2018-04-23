@@ -35,6 +35,9 @@ public class MapHandler : MonoBehaviour {
 	public int mapTileWidth = 10;
 	public int mapTileHeight = 10;
 
+	//Destroying Tokens
+	//public List<TokenHandler> dyingTokens = new List<TextMesh>();
+
 	// Used to create the lead/fan
 	public GameObject LeadPrefab0M;
 	public GameObject LeadPrefab1M;
@@ -61,6 +64,9 @@ public class MapHandler : MonoBehaviour {
 		get { return leadDate; }
 		set { CallClearAllEvents (leadDate); leadDate = value; }
 	}
+
+	//Tweet Handler
+	public TweetHandler tweetHandler;
 
 	// Handy helper; just get the lead players' scripts
 	public Lead LeadPlayerScript 
@@ -261,6 +267,8 @@ public class MapHandler : MonoBehaviour {
 		}
 		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
 		res.GetComponent<TokenHandler> ().self = res;
+		res.GetComponent<TokenHandler> ().tweetHandler = tweetHandler;
+
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		res.GetComponent<TokenHandler> ().LeadObj = new Lead ();
 		return res;
@@ -270,6 +278,8 @@ public class MapHandler : MonoBehaviour {
 		GameObject res = Instantiate(FanPrefab, new Vector3(0, 2, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
 		res.GetComponent<TokenHandler> ().self = res;
+		res.GetComponent<TokenHandler> ().tweetHandler = tweetHandler;
+
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		res.GetComponent<TokenHandler> ().FanObj = new Fan ();
 		fans.Add (res);
@@ -280,6 +290,8 @@ public class MapHandler : MonoBehaviour {
 		GameObject res = Instantiate(heartPrefab, new Vector3(0, 5, 0), Quaternion.identity);
 		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
 		res.GetComponent<TokenHandler> ().self = res;
+		res.GetComponent<TokenHandler> ().tweetHandler = tweetHandler;
+
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
 		return res;
 	}
@@ -361,7 +373,8 @@ public class MapHandler : MonoBehaviour {
 
 	public void DestroyFan(GameObject fan) {
 		fans.Remove (fan);
-		Destroy (fan);
+		//fan.GetComponent<TokenHandler> ().FlipToken ();
+		//Destroy (fan);
 	}
 
 	private bool SingleCollide(GameObject other, IntPoint dest) {

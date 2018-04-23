@@ -4,15 +4,32 @@ using UnityEngine;
 
 public class TokenHandler : MonoBehaviour {
 	public GameObject self;
+	public GameObject selfRender;
+
 	public GameObject MapHandler;
 
 	//Token Removal
-	private int minRemovalDistance = 10, maxRemovalDistance = 30, maxRemovalHeight = 30, removalVelocity = 1;
+	private int minDistance = 100, maxDistance = 180, minHeight = 80, maxHeight = 160;
+	private bool removing = false;
+	private float removalDelay = 5, removalTime;
+	private float rotateSpeed = 30;
+	private Vector2 removalTarget;
+	private float targetDistance;
+	private float xShift, zShift, yShift;
+	private int heightDirection = 1;
+	private float heightDistance;
 
 	// Either of these is non-null, depending on the type. 
 	// Use LeadPlayerScript/etc. from MapHandler
 	public Lead LeadObj;
 	public Fan FanObj;
+	public TweetHandler tweetHandler;
+	private bool highlighting = false;
+	public MeshRenderer tokenRender;
+	public Material fanMaterialOn, fanMaterialOff;
+
+
+
 
 	// Did our fan move this turn?
 	public bool MovedThisTurn = false;
@@ -31,13 +48,19 @@ public class TokenHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
-		
+		//tokenMaterialOff = tokenRender.material;
+		selfRender = self.transform.GetChild(0).gameObject;
+		//
+		//ShiftToken();
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void FixedUpdate () {
+		if (removing) {
+			HandleRemoval ();
+		}
+
+		//FlipToken ();
 	}
 
 	// As a fan, walk towards a given other fan or player
@@ -244,14 +267,112 @@ public class TokenHandler : MonoBehaviour {
 	}
 
 	public void RemoveToken () {
-		
-		print ("Token Removed.");
+		removing = true;
+		removalTime = Time.fixedTime;
+		//print ("Token Removed.");
+		MapHandler.GetComponent<MapHandler> ().DestroyFan (self);
+
+		ShiftToken ();
+		heightDistance = Random.Range (minHeight, maxHeight);
+		targetDistance = Random.Range (minDistance, maxDistance);
+		removalTarget = Random.insideUnitCircle * targetDistance;
+		SetZShift ();
+		SetXShift ();
+		SetYShift ();
+	}
+
+	public void HighlightToken () {
+		highlighting = true;
+		tokenRender.material = fanMaterialOn;
+		//print ("Token Highlighted.");
+	}
+	public void HideToken () {
+		highlighting = false;
+		tokenRender.material = fanMaterialOff;
+		//print ("Token Hidden.");
+
+	}
+
+	void OnTriggerStay (Collider other) {
+		//Remove Token if Tweet Trigger and Fan interact.
+		if (FanObj != null && other.tag == "Tweet") {
+			if (tweetHandler.sending && !removing) {
+				RemoveToken ();
+			}
+		}
 	}
 
 	void OnTriggerEnter (Collider other) {
-		//Remove Token if Tweet Trigger and Fan interact.
 		if (FanObj != null && other.tag == "Tweet") {
-			RemoveToken ();
+			if (!tweetHandler.sending && !highlighting) {
+				HighlightToken();
+			}
+		}
+	}
+
+	void OnTriggerExit (Collider other) {
+		if (FanObj != null && other.tag == "Tweet") {
+			if (!tweetHandler.sending && highlighting) {
+				HideToken();
+			}
+		}
+	}
+
+	void DestroyToken () {
+		removing = false;
+		Destroy (self);
+	}
+
+	void HandleRemoval () {		
+		FlipToken ();
+		MoveToken ();
+		if (Delayed(removalDelay, removalTime)) {
+			DestroyToken ();
+		}
+	}
+
+	void ShiftToken () {
+		int yShift = Random.Range (0, 360);
+		self.transform.localEulerAngles = new Vector3 (0,yShift,0);
+	}
+
+	void FlipToken () {
+		//print ("Flipping");
+		//selfRender.transform.RotateAround (selfRender.transform.position, Vector3.left, 1600 * Time.deltaTime);
+		selfRender.transform.Rotate (rotateSpeed, 0, 0, Space.Self);
+	}
+
+	bool Delayed (float delay, float time) {
+		if ((Time.fixedTime - time) >= delay) {
+			return(true);
+		} 
+		else {
+			return(false);
+		}
+	}
+	void SetXShift () {
+		float xDelta = (self.transform.position.x - removalTarget.x);
+		xShift = (xDelta/200f);
+	}
+	void SetZShift () {
+		float zDelta = (self.transform.position.z - removalTarget.y);
+		zShift = (zDelta/200f);
+	}
+	void SetYShift () {
+		yShift = (heightDistance / 50f);
+	}
+	void MoveToken() {
+		//Horizontal Movement.
+		self.transform.position += new Vector3((xShift),(0),(zShift));
+		//Vertical Movement.
+		if (heightDirection == 1) {
+			self.transform.position += new Vector3 ((0), (yShift), (0));
+			if (self.transform.position.y >= heightDistance) {
+				heightDirection = -1;
+				self.transform.position = new Vector3 (self.transform.position.x, heightDistance, self.transform.position.z);
+			}
+		} else if (heightDirection == -1) {
+			self.transform.position += new Vector3 ((0), (-yShift), (0));
 		}
 	}
 }
