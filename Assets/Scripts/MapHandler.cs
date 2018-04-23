@@ -357,7 +357,7 @@ public class MapHandler : MonoBehaviour {
 					Debug.Log("James: a death animation is needed here.");
 
 					// Destroy this fan
-					DestroyFan(nextFan);
+					DestroyFanNew(nextFan);
 
 					return true;
 				}
@@ -383,13 +383,22 @@ public class MapHandler : MonoBehaviour {
 
 	public void DestroyFan(GameObject fan) {
 		fans.Remove (fan);
+		//fan.GetComponent<TokenHandler> ().RemoveToken();
+
 		//fan.GetComponent<TokenHandler> ().FlipToken ();
 		//Destroy (fan);
 	}
 
+	public void DestroyFanNew(GameObject fan) {
+		fans.Remove (fan);
+		fan.GetComponent<TokenHandler> ().RemoveToken();
+
+	}
+		
+
 	public void DestroyAllFans() {
 		while (fans.Count > 0) {
-			DestroyFan (fans [0]);
+			DestroyFanNew (fans [0]);
 		}
 	}
 

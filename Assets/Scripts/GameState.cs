@@ -208,6 +208,16 @@ public class GameState : MonoBehaviour {
 		}
 	}
 
+	public int GetAtmoMod(int val) {
+		Debug.Log ("TEST: " + MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere);
+		if (MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere == "A+") {
+			return 2 * val;
+		} else if (MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere == "B") {
+			return 1 * val;
+		}
+		return val;
+	}
+
 	private bool updateInterpolation() {
 		float distCovered = (Time.time - interpStartTime) * interpSpeed;
 		float fracJourney = distCovered / interpTotalLength;
@@ -338,12 +348,12 @@ public class GameState : MonoBehaviour {
 			LastDateResponse = new char[]{'G','B','N'}[rng.Next(3)];
 			if (LastDateResponse == 'G') {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
-				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 2;
+				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(2);
 			} else if (LastDateResponse == 'N') {
 				//int tileX = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileX;
 				//int tileY = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileY;
 				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
-				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 1;
+				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(1);
 				//MapHandler.GetComponent<MapHandler> ().CreateHeart (tileX, tileY);
 			} else {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
@@ -945,9 +955,9 @@ public class GameState : MonoBehaviour {
 					StoryTxt.text = dd.storyText;
 
 					if (LastDateResponse == 'G') {
-						StoryTxt.text += "\n\n  +2 Self Esteem";
+						StoryTxt.text += "\n\n  +" + (GetAtmoMod(2)) + " Self Esteem";
 					} else if (LastDateResponse == 'N') {
-						StoryTxt.text += "\n\n  +1 Self Esteem";
+						StoryTxt.text += "\n\n  +" + (GetAtmoMod(1)) + " Self Esteem";
 					} else {
 						StoryTxt.text += "\n\n  -1 Self Esteem";
 					}
