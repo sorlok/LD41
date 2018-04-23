@@ -713,7 +713,7 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.FadingTextIn) {
 			bool overflow = false;
 			float newAlpha = StoryTxt.color.a + 1.2f * Time.deltaTime;
-			if (newAlpha >= 1) {
+			if (newAlpha >= 0.85) {
 				newAlpha = 1;
 				overflow = true;
 			}
