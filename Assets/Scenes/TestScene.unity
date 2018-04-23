@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43748954, g: 0.48531282, b: 0.56558746, a: 1}
+  m_IndirectSpecularColor: {r: 0.4374898, g: 0.48531306, b: 0.56558794, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -22052,12 +22052,17 @@ MonoBehaviour:
   DateProgressBarBkg: {fileID: 812994288}
   DateProressBar: {fileID: 1188018629}
   DateProgressSkipBtn: {fileID: 716427883}
+  mainCamera: {fileID: 165503784}
+  soundSource: {fileID: 1749155426751750, guid: 1ce6de2deb45bf240aaa4648c715646a,
+    type: 2}
+  excitedSound: {fileID: 8300000, guid: 78a79adcae4f147719c6e1482434bb22, type: 3}
   GlobalCanvas: {fileID: 1367222992}
   MapHandler: {fileID: 1112720158}
   RespStamp1: {fileID: 1457615869}
   RespStamp2: {fileID: 815969740}
   RespStamp3: {fileID: 1260985628}
   tweetHandler: {fileID: 564113708}
+  preFanHP: 0
   CurrState: 0
   phaseName: 
   phaseHandler: {fileID: 1453999554}
