@@ -197,7 +197,7 @@ public class GameState : MonoBehaviour {
 		// Beginning of game: show the timer, show the dialogue box
 		if (CurrState == ActState.Nothing) {
 			//TEMP:DEBUG:TESTING
-			StartFansActionState();return;
+			//StartFansActionState();return;
 			//END:TEMP:DEBUG:TESTING
 
 
