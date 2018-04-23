@@ -354,7 +354,7 @@ public class GameState : MonoBehaviour {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
 
 
-				Debug.Log ("2 is " + GetAtmoMod(2));
+				//Debug.Log ("2 is " + GetAtmoMod(2));
 
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(2);
 			} else if (LastDateResponse == 'N') {
@@ -362,7 +362,7 @@ public class GameState : MonoBehaviour {
 				//int tileY = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileY;
 				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
 
-				Debug.Log ("1 is " + GetAtmoMod(1));
+				//Debug.Log ("1 is " + GetAtmoMod(1));
 
 
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(1);

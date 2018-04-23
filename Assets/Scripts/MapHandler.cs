@@ -366,6 +366,51 @@ public class MapHandler : MonoBehaviour {
 			// Ok, we're walking
 			bool didAWalk = fan.FanWalkTowards(LeadDate, LeadPlayer);
 
+			// Safety save
+			if (!didAWalk) {
+				// Find the two closest tiles, and choose between them (if moveable).
+				// Never move heuristically away
+				List<IntPoint> options = new List<IntPoint>();
+
+				// Horizontal
+				IntPoint eTile = IntPoint.FromCardinal (fan.TileX, fan.TileY, 'E');
+				IntPoint wTile = IntPoint.FromCardinal (fan.TileX, fan.TileY, 'W');
+				if (getMinDistFromPlayer (eTile) < getMinDistFromPlayer (wTile)) {
+					options.Add (eTile);
+				} else {
+					options.Add (wTile);
+				}
+
+
+
+				// Vertical
+				IntPoint nTile = IntPoint.FromCardinal (fan.TileX, fan.TileY, 'N');
+				IntPoint sTile = IntPoint.FromCardinal (fan.TileX, fan.TileY, 'S');
+				if (getMinDistFromPlayer (nTile) < getMinDistFromPlayer (sTile)) {
+					options.Add (nTile);
+				} else {
+					options.Add (sTile);
+				}
+
+				// Now check.
+				if (!CanMove (options [1])) {
+					options.RemoveAt (1);
+				}
+				if (!CanMove (options [0])) {
+					options.RemoveAt (0);
+				}
+
+				// Anything left?
+				if (options.Count > 0) {
+					IntPoint pt = options[GameState.rng.Next(options.Count)];
+					fan.MoveToTile (pt.x, pt.y);
+					didAWalk = true;
+					Debug.Log ("SAVE");
+				}
+
+
+			}
+
 			// Play movement SFX
 			if (didAWalk) {
 				GameObject source = Instantiate(soundSource, mainCamera.transform.position, Quaternion.identity);
