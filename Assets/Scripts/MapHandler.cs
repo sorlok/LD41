@@ -35,6 +35,10 @@ public class MapHandler : MonoBehaviour {
 	public int mapTileWidth = 10;
 	public int mapTileHeight = 10;
 
+	//Sound Source Spawn
+	public GameObject soundSource;
+	public Camera mainCamera;
+
 	//Destroying Tokens
 	//public List<TokenHandler> dyingTokens = new List<TextMesh>();
 
@@ -339,8 +343,12 @@ public class MapHandler : MonoBehaviour {
 					// TODO: Show animation
 
 					// TODO: Play damage sound (placeholder)
-					sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
-					sfxSource.Play();
+					//sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
+					//sfxSource.Play();
+					GameObject source = Instantiate(soundSource, mainCamera.transform.position, Quaternion.identity);
+					source.transform.SetParent (mainCamera.transform);
+					source.GetComponent<AudioSource>().clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
+					source.GetComponent<AudioSource> ().Play ();
 
 					// Damage player
 					LeadPlayerScript.SelfEsteem -= 1;
@@ -360,8 +368,10 @@ public class MapHandler : MonoBehaviour {
 
 			// Play movement SFX
 			if (didAWalk) {
-				sfxSource.clip = movementSFX [Random.Range (0, movementSFX.Length)];
-				sfxSource.Play ();
+				GameObject source = Instantiate(soundSource, mainCamera.transform.position, Quaternion.identity);
+				source.transform.SetParent (mainCamera.transform);
+				source.GetComponent<AudioSource>().clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
+				source.GetComponent<AudioSource> ().Play ();
 
 				return true;
 			} else {
