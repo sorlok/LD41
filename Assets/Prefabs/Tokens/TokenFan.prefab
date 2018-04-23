@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33528909014737652}
   - component: {fileID: 23688319621569980}
   - component: {fileID: 95062294414584340}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: TokenBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4803267913092950}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Render
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 4332563318136410}
   - component: {fileID: 33053566985276460}
   - component: {fileID: 23066162802159880}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: IconPlate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,9 +71,9 @@ GameObject:
   - component: {fileID: 4490697117192718}
   - component: {fileID: 114706115476870184}
   - component: {fileID: 135554274899981038}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: TokenFan
-  m_TagString: Untagged
+  m_TagString: Token
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -244,7 +244,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   self: {fileID: 1757949902173832}
+  selfRender: {fileID: 0}
   MapHandler: {fileID: 0}
+  tweetHandler: {fileID: 0}
+  tokenRender: {fileID: 23688319621569980}
+  fanMaterialOn: {fileID: 2100000, guid: 827936249647c984ebc94162fe5df59b, type: 2}
+  fanMaterialOff: {fileID: 2100000, guid: c3f21a6e872d3ac4fbd81cdc92cf8496, type: 2}
   MovedThisTurn: 0
 --- !u!135 &135554274899981038
 SphereCollider:
