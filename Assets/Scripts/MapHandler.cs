@@ -357,6 +357,9 @@ public class MapHandler : MonoBehaviour {
 					Debug.Log("James: a death animation is needed here.");
 
 					// Destroy this fan
+					leadPlayer.GetComponent<TokenHandler>().HighlightToken();
+					leadDate.GetComponent<TokenHandler> ().HighlightToken ();
+
 					DestroyFanNew(nextFan);
 
 					return true;
