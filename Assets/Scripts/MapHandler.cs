@@ -80,6 +80,9 @@ public class MapHandler : MonoBehaviour {
 		return fans [id].GetComponent<TokenHandler> ().FanObj;
 	}
 
+	public AudioSource sfxSource;
+	public AudioClip[] movementSFX;
+
 
 	// Helper
 	private void CallClearAllEvents(GameObject gobj) {
@@ -231,6 +234,9 @@ public class MapHandler : MonoBehaviour {
 				// Just move randomly.
 				fan.FanRandomWalk ();
 			}
+
+			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
+			sfxSource.Play();
 
 			return true;
 		}

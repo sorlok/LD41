@@ -9315,6 +9315,7 @@ Transform:
   m_Children:
   - {fileID: 123588094}
   - {fileID: 747617657}
+  - {fileID: 315532592}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 80, y: 0, z: 0}
@@ -13901,7 +13902,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &297781420
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14612,12 +14613,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 315532591}
-  m_LocalRotation: {x: 0.6427876, y: -0, z: -0, w: 0.7660445}
-  m_LocalPosition: {x: -285.5, y: -86, z: 20}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 430121450}
-  m_RootOrder: 0
+  m_Father: {fileID: 165503788}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &315532594
 AudioSource:
@@ -18499,8 +18500,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc08c20a8ee3e4146aed2f9a37cb039f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LeftPanel: {fileID: 798296889}
-  RightPanel: {fileID: 297781419}
   sfxSource: {fileID: 315532594}
   buttonSFX: {fileID: 8300000, guid: b126f52af89c948f3b8b23c2043057ab, type: 3}
   turnSFX: {fileID: 8300000, guid: 33eb4fd8b32e54d1faeb7d340364296d, type: 3}
@@ -18523,6 +18522,8 @@ MonoBehaviour:
   GlobalCanvas: {fileID: 1367222992}
   MapHandler: {fileID: 1112720158}
   CurrState: 0
+  phaseName: 
+  phaseHandler: {fileID: 1453999554}
 --- !u!4 &430121450
 Transform:
   m_ObjectHideFlags: 0
@@ -18532,8 +18533,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 325.5, y: 156, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 315532592}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -30160,7 +30160,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &798296890
 RectTransform:
   m_ObjectHideFlags: 0
@@ -40242,16 +40242,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7b47d26ff38c04fa83dee9e1f5395e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMoves: 1
   mapTileValues: 
   mapTileHeights: 
-  debugArray: []
   mapTileWidth: 10
   mapTileHeight: 10
   LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
   FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
-  DebugPrefab: {fileID: 1197471345975690, guid: a3fa1a4d4cc1f4dc59668d5f732c5dc8,
-    type: 2}
+  sfxSource: {fileID: 315532594}
+  movementSFX:
+  - {fileID: 8300000, guid: 38f36dd706ac9429398cebff173f7dc6, type: 3}
+  - {fileID: 8300000, guid: 3f652b4e124ab41b9a97ac759e4f31a6, type: 3}
+  - {fileID: 8300000, guid: 59df4cf2e86544c55b50efb962f044e6, type: 3}
+  - {fileID: 8300000, guid: aa0ba72e4a0534836838045ccf1505ec, type: 3}
+  - {fileID: 8300000, guid: 4076abd115c6c4e2a8ed0c4caa89a890, type: 3}
+  - {fileID: 8300000, guid: 9fe3bc5a5f72346cc9e4bd28e4e67f61, type: 3}
 --- !u!1 &1113601619
 GameObject:
   m_ObjectHideFlags: 0
@@ -48491,7 +48495,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1367222993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51490,6 +51494,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1453999553}
+  - component: {fileID: 1453999554}
   m_Layer: 5
   m_Name: Phases
   m_TagString: Untagged
@@ -51524,6 +51529,19 @@ RectTransform:
   m_AnchoredPosition: {x: 142, y: 132}
   m_SizeDelta: {x: 260, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1453999554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1453999552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a19842f5f5b4f4948abb13c9f16d061c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turnCountText: {fileID: 2138427639}
+  activeUserText: {fileID: 1601336289}
 --- !u!1 &1457615869
 GameObject:
   m_ObjectHideFlags: 0
@@ -56764,7 +56782,7 @@ GameObject:
   - component: {fileID: 1601336289}
   - component: {fileID: 1601336288}
   m_Layer: 5
-  m_Name: Text
+  m_Name: TextUser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75017,7 +75035,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 6:00pm
+  m_Text: 7:00pm
 --- !u!222 &2138427640
 CanvasRenderer:
   m_ObjectHideFlags: 0
