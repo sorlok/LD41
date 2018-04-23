@@ -23,10 +23,14 @@ public class IntPoint
 }
 
 public class MapHandler : MonoBehaviour {
+	public bool DebugMoves = true;
+
 	public List<int> mapTileValues = new List<int>();
 
 	// 
 	public List<int> mapTileHeights = new List<int>();
+
+	public List<TextMesh> debugArray = new List<TextMesh>();
 
 	public int mapTileWidth = 10;
 	public int mapTileHeight = 10;
@@ -34,6 +38,7 @@ public class MapHandler : MonoBehaviour {
 	// Used to create the lead/fan
 	public GameObject LeadPrefab;
 	public GameObject FanPrefab;
+	public GameObject DebugPrefab;
 
 	// Actual Lead tokens
 	private GameObject leadPlayer;
@@ -110,7 +115,20 @@ public class MapHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		// TEMP: Some useful debug code
+		if (DebugMoves) {
+			for (int i = 0; i < mapTileWidth * mapTileHeight; i++) {
+				debugArray.Add (null);
+			}
+			for (int y=0; y<mapTileHeight; y++) {
+				for (int x = 0; x < mapTileWidth; x++) {
+					GameObject res = Instantiate (DebugPrefab, new Vector3 (x*8, 1, y*8), Quaternion.identity);
+					TextMesh mesh = res.GetComponentInChildren<TextMesh> ();
+					mesh.text = "";
+					debugArray[GetTileIndex (x,y)] = mesh;
+				}
+			}
+		}
 		
 	}
 	
