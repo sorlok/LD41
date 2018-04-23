@@ -383,16 +383,11 @@ public class MapHandler : MonoBehaviour {
 
 	public void DestroyFan(GameObject fan) {
 		fans.Remove (fan);
-		//fan.GetComponent<TokenHandler> ().RemoveToken();
-
-		//fan.GetComponent<TokenHandler> ().FlipToken ();
-		//Destroy (fan);
 	}
 
 	public void DestroyFanNew(GameObject fan) {
 		fans.Remove (fan);
 		fan.GetComponent<TokenHandler> ().RemoveToken();
-
 	}
 		
 

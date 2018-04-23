@@ -209,11 +209,10 @@ public class GameState : MonoBehaviour {
 	}
 
 	public int GetAtmoMod(int val) {
-		Debug.Log ("TEST: " + MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere);
-		if (MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere == "A+") {
+		if (MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere.Equals("A+")) {
+			return 3 * val;
+		} else if (MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere.Equals("B")) {
 			return 2 * val;
-		} else if (MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere == "B") {
-			return 1 * val;
 		}
 		return val;
 	}
@@ -348,11 +347,19 @@ public class GameState : MonoBehaviour {
 			LastDateResponse = new char[]{'G','B','N'}[rng.Next(3)];
 			if (LastDateResponse == 'G') {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
+
+
+				Debug.Log ("2 is " + GetAtmoMod(2));
+
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(2);
 			} else if (LastDateResponse == 'N') {
 				//int tileX = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileX;
 				//int tileY = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileY;
 				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
+
+				Debug.Log ("1 is " + GetAtmoMod(1));
+
+
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(1);
 				//MapHandler.GetComponent<MapHandler> ().CreateHeart (tileX, tileY);
 			} else {
