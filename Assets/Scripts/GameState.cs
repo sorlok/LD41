@@ -331,8 +331,11 @@ public class GameState : MonoBehaviour {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 2;
 			} else if (LastDateResponse == 'N') {
+				//int tileX = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileX;
+				//int tileY = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileY;
 				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 1;
+				//MapHandler.GetComponent<MapHandler> ().CreateHeart (tileX, tileY);
 			} else {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem -= 1;
