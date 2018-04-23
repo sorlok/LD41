@@ -39,6 +39,7 @@ public class GameState : MonoBehaviour {
 	public AudioSource sfxSourceTurn;
 	public AudioClip turnSFX;
 
+	public AudioClip cashSFX;
 	public AudioClip buttonEvilLaugh;
 
 	// Page 1: Dating container object and text + options.
@@ -397,6 +398,11 @@ public class GameState : MonoBehaviour {
 
 	public void PlayEvilLaugh() {
 		sfxSourceBtn.clip = buttonEvilLaugh;
+		sfxSourceBtn.Play ();
+	}
+
+	public void PlayCashSound() {
+		sfxSourceBtn.clip = cashSFX;
 		sfxSourceBtn.Play ();
 	}
 

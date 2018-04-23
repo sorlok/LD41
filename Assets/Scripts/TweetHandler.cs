@@ -150,6 +150,7 @@ public class TweetHandler : MonoBehaviour {
 		ActivateTweetBurst ();
 
 		//Update State
+		gameState.PlayCashSound();
 		Invoke("AllTweetsDone", 2);
 
 	}

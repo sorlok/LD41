@@ -22132,6 +22132,7 @@ MonoBehaviour:
   buttonSFX: {fileID: 8300000, guid: b126f52af89c948f3b8b23c2043057ab, type: 3}
   sfxSourceTurn: {fileID: 315532594}
   turnSFX: {fileID: 8300000, guid: 33eb4fd8b32e54d1faeb7d340364296d, type: 3}
+  cashSFX: {fileID: 8300000, guid: f2b9b396bb79141b8ae180049dbae799, type: 3}
   buttonEvilLaugh: {fileID: 8300000, guid: b686fce2428bd43fe9c79850ee953440, type: 3}
   DialogueStoryTab: {fileID: 1692605043}
   StoryTxtHeader: {fileID: 278814681}
