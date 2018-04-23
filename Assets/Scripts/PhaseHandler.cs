@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PhaseHandler : MonoBehaviour {
 	//public GameState gameHandler;
+	public SunHandler sun;
 
 	public Text turnCountText, activeUserText;
 	private float thisMinute = 0, thisHour = 7;
@@ -23,10 +24,12 @@ public class PhaseHandler : MonoBehaviour {
 
 	public void UpdateMinute () {
 		thisMinute += 5;
+		sun.MoveSun (0);
 	}
 
 	public void UpdateHour () {
 		thisHour += 1;
+		sun.MoveSun (1);
 	}
 
 	public void UpdateTime () {
