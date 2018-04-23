@@ -240,7 +240,7 @@ public class TokenHandler : MonoBehaviour {
 		// No moves?
 		if (allowedTileMoves.Count == 0) {
 			// TEMP
-			gameObject.transform.RotateAround (gameObject.transform.position, Vector3.forward, 90f);
+			//gameObject.transform.RotateAround (gameObject.transform.position, Vector3.forward, 90f);
 			return;
 		}
 

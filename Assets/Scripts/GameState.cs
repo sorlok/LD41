@@ -64,6 +64,11 @@ public class GameState : MonoBehaviour {
 	public GameObject DateProressBar;
 	public GameObject DateProgressSkipBtn;
 
+	//Excited Date Sound
+	public GameObject mainCamera;
+	public GameObject soundSource;
+	public AudioClip excitedSound;
+
 	// Some Leads/Fans (TODO: actually add)
 	//private Lead testLead = new Lead();
 
@@ -76,6 +81,8 @@ public class GameState : MonoBehaviour {
 	public GameObject RespStamp3;
 
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
+
+	private bool GameOverFirstTime = true;
 
 	public TweetHandler tweetHandler;
 
@@ -186,8 +193,12 @@ public class GameState : MonoBehaviour {
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
-	private static float NPCMoveCountMax = 0.5f;
-	private float NPCMoveCount = NPCMoveCountMax;
+	private static float NPCMoveCountMaxSlow = 0.5f;
+	private static float NPCMoveCountMaxFast = 0.3f;
+	private float NPCMoveCount = NPCMoveCountMaxSlow;
+
+	// What max are we looking at now?
+	private static float NPCMoveCountMaxNow = NPCMoveCountMaxSlow;
 
 	private DateDialogues dateDialogues;
 
@@ -202,6 +213,15 @@ public class GameState : MonoBehaviour {
 			} 
 			comps [i].gameObject.SetActive (opts [i] != null);
 		}
+	}
+
+	public int GetAtmoMod(int val) {
+		if (MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere.Equals("A+")) {
+			return 3 * val;
+		} else if (MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere.Equals("B")) {
+			return 2 * val;
+		}
+		return val;
 	}
 
 	private bool updateInterpolation() {
@@ -334,12 +354,20 @@ public class GameState : MonoBehaviour {
 			LastDateResponse = new char[]{'G','B','N'}[rng.Next(3)];
 			if (LastDateResponse == 'G') {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
-				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 2;
+
+
+				//Debug.Log ("2 is " + GetAtmoMod(2));
+
+				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(2);
 			} else if (LastDateResponse == 'N') {
 				//int tileX = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileX;
 				//int tileY = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileY;
 				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
-				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 1;
+
+				//Debug.Log ("1 is " + GetAtmoMod(1));
+
+
+				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(1);
 				//MapHandler.GetComponent<MapHandler> ().CreateHeart (tileX, tileY);
 			} else {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
@@ -510,6 +538,16 @@ public class GameState : MonoBehaviour {
 		CurrState = ActState.DateAction;
 		phaseName = "Date's Turn";
 		phaseHandler.UpdateActiveUser (phaseName);
+
+		//Added Excited date audio.
+		//TODO
+		//int dateConnection = MapHandler.GetComponent<MapHandler>().LeadPlayerScript.Connection;
+		if (phaseHandler.thisHour > 7) {
+			GameObject source = Instantiate(soundSource, mainCamera.transform.position, Quaternion.identity);
+			source.transform.SetParent (mainCamera.transform);
+			source.GetComponent<AudioSource> ().clip = excitedSound;
+			source.GetComponent<AudioSource> ().Play ();
+		}
 	}
 
 	// What action will our date take?
@@ -637,6 +675,7 @@ public class GameState : MonoBehaviour {
 		phaseName = "Fans' Turns";
 		phaseHandler.UpdateActiveUser (phaseName);
 		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
+		NPCMoveCountMaxNow = NPCMoveCountMaxSlow;
 		NPCMoveCount = 0;
 	}
 
@@ -675,15 +714,18 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void GameoverTracker(int selfEsteem) {
+		Debug.Log ("Game Over check: " + selfEsteem);
+
 		if (selfEsteem <= 0) {
 			CurrState = ActState.GameOverFadein;
+
 			//Flip Leads
 			MapHandler.GetComponent<MapHandler>().LeadPlayer.GetComponent<TokenHandler>().RemoveToken();
 			MapHandler.GetComponent<MapHandler>().LeadDate.GetComponent<TokenHandler>().RemoveToken();
 
 			// Reset practically everything
 			DateActCount = DateActCountMax;
-			NPCMoveCount = NPCMoveCountMax;
+			NPCMoveCount = NPCMoveCountMaxSlow;
 		}
 	}
 
@@ -774,16 +816,24 @@ public class GameState : MonoBehaviour {
 		// TODO: Update NPC movement
 
 		// Trigger?
-		if (NPCMoveCount >= NPCMoveCountMax) {
+		if (NPCMoveCount >= NPCMoveCountMaxNow) {
 			// What were we in the middle of?
 			if (CurrState == ActState.FansAction) {
 				// Move a fan randomly, if one is next
 				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
 					NPCMoveCount = 0;
 				} else {
-					CurrState = ActState.WaitingFanAckFromPlayer;
-					NextStamp.GetComponent<StampHandler>().HideStamp ();
-					NextText.text = "Time Marches On...";
+					// Is the state done, or are we doing it again?
+					if (NPCMoveCountMaxNow == NPCMoveCountMaxSlow) {
+						NPCMoveCountMaxNow = NPCMoveCountMaxFast;
+						NPCMoveCount = 0;
+						MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
+					} else {
+						// Ok, we're actualy done
+						CurrState = ActState.WaitingFanAckFromPlayer;
+						NextStamp.GetComponent<StampHandler> ().HideStamp ();
+						NextText.text = "Time Marches On...";
+					}
 
 				}
 
@@ -827,13 +877,15 @@ public class GameState : MonoBehaviour {
 	void Update () {
 		// Gameover fading takes priority
 		if (CurrState == ActState.GameOverFadein) {
-			if (!GameOverObj.activeSelf) {
+			if (GameOverFirstTime) {
 				// Init
 				Color clr = GameOverObj.GetComponent<Image> ().color;
 				GameOverObj.GetComponent<Image> ().color = new Color (clr.r, clr.g, clr.b, 0);
 				GameOverObj.SetActive (true);
 
 				PlayEvilLaugh ();
+
+				GameOverFirstTime = false;
 			} else {
 				// Music fade out
 				float newVol = bgmSource.volume - 0.02f;
@@ -862,6 +914,10 @@ public class GameState : MonoBehaviour {
 				}
 			}
 
+			return;
+		}
+
+		if (CurrState == ActState.GameOverOnscreen) {
 			return;
 		}
 
@@ -927,9 +983,9 @@ public class GameState : MonoBehaviour {
 					StoryTxt.text = dd.storyText;
 
 					if (LastDateResponse == 'G') {
-						StoryTxt.text += "\n\n  +2 Self Esteem";
+						StoryTxt.text += "\n\n  +" + (GetAtmoMod(2)) + " Self Esteem";
 					} else if (LastDateResponse == 'N') {
-						StoryTxt.text += "\n\n  +1 Self Esteem";
+						StoryTxt.text += "\n\n  +" + (GetAtmoMod(1)) + " Self Esteem";
 					} else {
 						StoryTxt.text += "\n\n  -1 Self Esteem";
 					}
@@ -1014,6 +1070,10 @@ public class GameState : MonoBehaviour {
 
 						// Actually do our update
 						phaseHandler.UpdateHour();
+						phaseHandler.UpdateTime ();
+
+
+
 					}
 				} else {
 					// Standard date text
@@ -1081,7 +1141,7 @@ public class GameState : MonoBehaviour {
 		}
 
 		// Deal with NPCs
-		if (NPCMoveCount < NPCMoveCountMax) {
+		if (NPCMoveCount < NPCMoveCountMaxNow) {
 			AdvanceNPCMoveCounter (Time.deltaTime);
 		}
 	}
