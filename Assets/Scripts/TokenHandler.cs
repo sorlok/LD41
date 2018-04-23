@@ -120,7 +120,13 @@ public class TokenHandler : MonoBehaviour {
 				// Ok, enqueue it
 				todo.Add (newPos);
 				blacklist.Add (newPos, true);
-				lookup [mapHnd.GetTileIndex (newPos.x, newPos.y)]  = lookup [mapHnd.GetTileIndex (next.x, next.y)] + 1;
+				int newDist = lookup [mapHnd.GetTileIndex (next.x, next.y)] + 1;
+				lookup [mapHnd.GetTileIndex (newPos.x, newPos.y)]  = newDist;
+
+				// TEMP: Useful debugging
+				if (mapHnd.showDebugMoves) {
+					mapHnd.debugArray [mapHnd.GetTileIndex (newPos.x, newPos.y)].text = "" + newDist;
+				}
 			}
 		}
 
@@ -185,50 +191,6 @@ public class TokenHandler : MonoBehaviour {
 		return;
 		// END TEMP
 
-
-
-		// Pass the map to the search algorithm
-		MapHandler handler = MapHandler.GetComponent<MapHandler>();
-		TokenHandler other = handler.LeadDate.GetComponent<TokenHandler>();
-		BFSTree tree = new BFSTree (new Vector2Int(TileX, TileY), new Vector2Int(other.TileX,other.TileY), handler);
-
-		// Now walk down the tree and select a path (destination).
-		List<IntPoint> res = new List<IntPoint>();
-		BFSTreeNode curr = tree.root;
-		while (!curr.isDest) {
-			// Pick the smallest distance.
-			int minDistance = 100*100;
-			int[] distances = curr.distances.ToArray ();
-			foreach (int distance in distances) {
-				if (distance < minDistance) {
-					minDistance = distance;
-				}
-			}
-
-			// Pick the next direction
-			List<BFSTreeNode> possibleChoices = new List<BFSTreeNode>();
-			for (int i = 0; i < curr.children.Count; i++) {
-				if (distances[i] == minDistance) {
-					possibleChoices.Add (curr.children[i]);
-				}
-			}
-
-			// make choice
-			if (possibleChoices.Count > 0) {
-				curr = possibleChoices [GameState.rng.Next (possibleChoices.Count)];
-				res.Add (new IntPoint (curr.id.x, curr.id.y));
-			} else {
-				curr = null;
-				break;
-			}
-		}
-
-		// Did we find it?
-		if (curr != null) {
-			FanObj.TravelPlan = res;
-
-			Debug.Log ("FOUND: " + FanObj.TravelPlan);
-		}
 	}
 
 

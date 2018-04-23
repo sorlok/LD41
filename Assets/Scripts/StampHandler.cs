@@ -7,6 +7,9 @@ public class StampHandler : MonoBehaviour {
 	public GameObject thisStamp;
 	public Button buttonA, buttonB, buttonC;
 
+	// For calling back to GameState
+	public GameObject GameHandler;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -20,6 +23,9 @@ public class StampHandler : MonoBehaviour {
 	public void ShowStamp () {
 		DisableButtons ();
 		thisStamp.SetActive (true);
+
+		// Perform the expected action
+		GameHandler.GetComponent<GameState>().ReactToStamp();
 	}
 
 	public void HideStamp () {

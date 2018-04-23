@@ -11,6 +11,18 @@ public class GameState : MonoBehaviour {
 		throw new System.ArgumentException (msg);
 	}
 
+	public GameObject LeftPanel;
+	public GameObject AttributesPanel;
+	public GameObject PhasePanel;
+
+	public GameObject RightPanel;
+	public GameObject DialoguePanel;
+	public GameObject BigButtonPanel;
+
+	// Big button texts
+	public Text SkipText;
+	public Text NextText;
+
 	public AudioSource sfxSource;
 	public AudioClip buttonSFX;
 	public AudioClip turnSFX;
@@ -84,11 +96,42 @@ public class GameState : MonoBehaviour {
 		DateActSocialMedia,  // Date is ignoring you and interacting with their fans
 		DateActTalkToYou,  // Date is interacting with you
 		DateActShowReward, // We're looking at the "reward" the date got from talking to you or using social media.
+
+		// In the middle of some UI interpolation
+		DoingInterp,
 	}
+
+	// Current interpolation variables
+	private float interpStartTime;
+	private float interpTotalLength;
+	private float interpSpeed = 1.2f;
+
+	// Interpolation 1
+	private Transform interpTarget;
+	private Vector3 interpStartPos;
+	private Vector3 interpEndPos;
+	private Vector3 interpStartSz;
+	private Vector3 interpEndSz;
+
+	// Interpolation 2
+	private Transform interpTarget2;
+	private Vector3 interpStartPos2;
+	private Vector3 interpEndPos2;
+	private Vector3 interpStartSz2;
+	private Vector3 interpEndSz2;
+
+	// Interpolation 3
+	private Transform interpTarget3;
+	private Vector3 interpStartPos3;
+	private Vector3 interpEndPos3;
+	private Vector3 interpStartSz3;
+	private Vector3 interpEndSz3;
 		
 
 	// Current state tree entry. Sub-state(s) should be set to 0 on state change.
 	public ActState CurrState = ActState.Nothing;
+	public string phaseName = "";
+	public PhaseHandler phaseHandler;
 
 	// Countdown for whenever your date is acting
 	private static float DateActCountMax = 5; // How many seconds to complete an action
@@ -113,14 +156,68 @@ public class GameState : MonoBehaviour {
 		}
 	}
 
+	private bool updateInterpolation() {
+		float distCovered = (Time.time - interpStartTime) * interpSpeed;
+		float fracJourney = distCovered / interpTotalLength;
+
+		interpTarget.position = Vector3.Lerp(interpStartPos, interpEndPos, fracJourney);
+		interpTarget.localScale = Vector3.Lerp (interpStartSz, interpEndSz, fracJourney);
+
+		interpTarget2.position = Vector3.Lerp(interpStartPos2, interpEndPos2, fracJourney);
+		interpTarget2.localScale = Vector3.Lerp (interpStartSz2, interpEndSz2, fracJourney);
+
+		interpTarget3.position = Vector3.Lerp(interpStartPos3, interpEndPos3, fracJourney);
+		interpTarget3.localScale = Vector3.Lerp (interpStartSz3, interpEndSz3, fracJourney);
+
+		return distCovered >= 1;
+	}
+
+	public void ReactToStamp() {
+		// Beginning of game: show the timer, show the dialogue box
+		if (CurrState == ActState.Nothing) {
+			// First interpolation
+			interpEndPos = PhasePanel.transform.position;
+			interpStartPos = PhasePanel.transform.position + new Vector3 (1.3f, 0, 0);
+			interpEndSz = new Vector3 (1, 1, 1);
+			interpStartSz = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget = PhasePanel.transform;
+			PhasePanel.SetActive (true);
+
+			// Second interpolation
+			interpEndPos2 = DialoguePanel.transform.position;
+			interpStartPos2 = DialoguePanel.transform.position + new Vector3 (0, 0, -0.5f);
+			interpEndSz2 = new Vector3 (1, 1, 1);
+			interpStartSz2 = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget2 = DialoguePanel.transform;
+			DialoguePanel.SetActive (true);
+
+			// Third interpolation
+			interpEndPos3 = AttributesPanel.transform.position;
+			interpStartPos3 = AttributesPanel.transform.position + new Vector3 (0, 0, 1f);
+			interpEndSz3 = new Vector3 (1, 1, 1);
+			interpStartSz3 = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget3 = AttributesPanel.transform;
+			AttributesPanel.SetActive (true);
+
+			// Set up the interpolation
+			interpStartTime = Time.time;
+			interpTotalLength = Vector3.Distance (interpStartPos, interpEndPos);
+
+			// Update all
+			updateInterpolation ();
+
+			CurrState = ActState.DoingInterp;
+			return;
+		}
+	}
+
 	// TEST
 	public void TestFunction(uint val) {
 		Debug.Log ("TEST: " + val);
 	}
 
 	public void SetupChoosePlayerAction() {
-		//testLead.SelfEsteemTracker += TestFunction; // TEMP
-
+		/*
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
 			"Interact with Date",
@@ -128,13 +225,23 @@ public class GameState : MonoBehaviour {
 			"End Date"
 		);
 		DialogueStoryTab.SetActive (true);
-		CurrState = ActState.PlayerActionSelect;
+		CurrState = ActState.PlayerActionSelect;*/
+
+
+		// Choose dialogue options
+
+		// Set Next button text
+		SkipText.text = "Main Action";
+		NextText.text = "(In Story)";
+
+		// Reset button stamp statuses (but not for the bottom item).
+
+
+		phaseName = "Your Turn";
+		phaseHandler.UpdateActiveUser (phaseName);
 	}
 
 	public void SetupInteractWithDate() {
-		//testLead.SelfEsteem = 20;
-		//testLead.SelfEsteem = 100;
-
 		StoryTxt.text = "How will you interact with your date?";
 		ShowBoxes (
 			"Talk to Them",
@@ -174,6 +281,8 @@ public class GameState : MonoBehaviour {
 		DateActCount = 0;
 
 		CurrState = ActState.DateAction;
+		phaseName = "Date's Turn";
+		phaseHandler.UpdateActiveUser (phaseName);
 	}
 
 	// What action will our date take?
@@ -293,8 +402,14 @@ public class GameState : MonoBehaviour {
 	private void StartFansActionState() 
 	{
 		CurrState = ActState.FansAction;
+		phaseName = "Fan's Turn";
+		phaseHandler.UpdateActiveUser (phaseName);
 		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
 		NPCMoveCount = 0;
+
+		//Update Phase Clock
+		phaseHandler.UpdateMinute();
+		phaseHandler.UpdateTime ();
 	}
 
 	// Use this for initialization
@@ -309,7 +424,19 @@ public class GameState : MonoBehaviour {
 		MapHandler.GetComponent<MapHandler>().LoadMap1();
 
 		// TEMP: Testing fan actions
-		StartFansActionState();
+		//StartFansActionState();
+
+		// Start with stats, time hidden, just "next" button ready
+		LeftPanel.SetActive (true);
+		AttributesPanel.SetActive (false);
+		PhasePanel.SetActive (false);
+		RightPanel.SetActive (true);
+		DialoguePanel.SetActive (false);
+		BigButtonPanel.SetActive (true);
+
+		// Set up start text on Big Button Panel
+		SkipText.text = "Your Date Starts at 7pm";
+		NextText.text = "Begin Date";
 
 	}
 
@@ -394,13 +521,21 @@ public class GameState : MonoBehaviour {
 			SkipPhase = ActState.Nothing;
 		}
 
-		if (Input.GetKey (KeyCode.W)) {
+		/*if (Input.GetKey (KeyCode.W)) {
 			if (CurrState == GameState.ActState.Nothing) {
 				SetupChoosePlayerAction();
 				return;
 			}
-		}
+		}*/
 
+		//  Deal with interpolation?
+		if (CurrState == ActState.DoingInterp) {
+			if (updateInterpolation ()) {
+				SetupChoosePlayerAction ();
+
+			}
+		}
+			
 		// Test-driven development for heart animation... >3>
 		if (Input.GetKey (KeyCode.F)) {
 			MapHandler.GetComponent<MapHandler> ().CreateHeart(5,5);
