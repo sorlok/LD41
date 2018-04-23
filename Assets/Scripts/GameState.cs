@@ -150,7 +150,7 @@ public class GameState : MonoBehaviour {
 	public PhaseHandler phaseHandler;
 
 	// Countdown for whenever your date is acting
-	private static float DateActCountMax = 5; // How many seconds to complete an action
+	private static float DateActCountMax = 2; // How many seconds to complete an action
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
@@ -279,7 +279,9 @@ public class GameState : MonoBehaviour {
 
 		// Phase 1.B - Saw date react, move to next phase
 		if (CurrState == ActState.TalkDateViewResponse) {
-			SetupDateTurn ();
+			CurrState = ActState.FadingTextOut;
+			AfterFadeState = ActState.DateAction;
+			//SetupDateTurn ();
 		}
 	}
 
@@ -343,14 +345,15 @@ public class GameState : MonoBehaviour {
 
 		// todo: migrate over to the right
 		DateProressBar.SetActive (true);
-		DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 70, 0);
+		//DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 70, 0);
 		DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Skip";
 		ResultTxt.gameObject.SetActive (false);
-		StoryTxt.text = "Your date is deciding what to do...";
+		//StoryTxt.text = "Your date is deciding what to do...";
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
 
+		//NextText.text = "(Date Acting)";
 		CurrState = ActState.DateAction;
 		phaseName = "Date's Turn";
 		phaseHandler.UpdateActiveUser (phaseName);
@@ -361,10 +364,12 @@ public class GameState : MonoBehaviour {
 		// TODO : More structured randomness, incorporate Pablo's actors
 		if (rng.Next (100) < 50) {
 			CurrState = ActState.DateActSocialMedia;
-			DateActTxt.text = "Your date is tweeting a picture of their food...";
+			string txt = dateDialogues.DateToFansInteractions [rng.Next(dateDialogues.DateToFansInteractions.Count)];
+			StoryTxt.text += "\n" + txt;
 		} else {
 			CurrState = ActState.DateActTalkToYou;
-			DateActTxt.text = "Your date explains their view on current events...";
+			string txt = dateDialogues.DateToYouInteractions [rng.Next(dateDialogues.DateToYouInteractions.Count)];
+			StoryTxt.text += "\n" + txt;
 		}
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
@@ -530,7 +535,7 @@ public class GameState : MonoBehaviour {
 				// Show "rewards"
 				DateProgressBarBkg.SetActive (false);
 				DateProressBar.SetActive (false);
-				DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 120, 0);
+				//DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 120, 0);
 				DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
 				ResultTxt.gameObject.SetActive (true);
 
@@ -634,7 +639,7 @@ public class GameState : MonoBehaviour {
 						resp = dateDialogues.DialogueNeutralResponses;
 					}
 
-					DateDialogue dd = resp [rng.Next(resp.Count)];
+					DateDialogue dd = resp [rng.Next (resp.Count)];
 					StoryTxtHeader.text = "Date Dialogue";
 					StoryTxt.text = dd.storyText;
 
@@ -644,6 +649,13 @@ public class GameState : MonoBehaviour {
 						dd.option2,
 						dd.option3
 					);		
+				} else if (AfterFadeState == ActState.DateAction) {
+					StoryTxtHeader.text = "Date Dialogue";
+					StoryTxt.text = "Your date is deciding what to do...";
+					NextText.text = "(Date Acting)";
+
+					// No responses here
+					ShowBoxes (null, null, null);	
 				} else {
 					// Standard date text
 					DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];
@@ -681,7 +693,11 @@ public class GameState : MonoBehaviour {
 			Response2.GetComponentInChildren <Text> ().color = newAlphaColor;
 			Response3.GetComponentInChildren <Text> ().color = newAlphaColor;
 			if (overflow) {
-				CurrState = AfterFadeState;
+				if (AfterFadeState == ActState.DateAction) {
+					SetupDateTurn ();
+				} else {
+					CurrState = AfterFadeState;
+				}
 			}
 		}
 			

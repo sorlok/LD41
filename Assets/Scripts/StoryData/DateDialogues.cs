@@ -25,6 +25,10 @@ public class DateDialogues {
 	public List<DateDialogue> DialogueNeutralResponses = MakeNeutralResponses();
 	public List<DateDialogue> DialogueBadResponses = MakeBadResponses();
 
+	// Things your date can be doing when interacting with you vs. fans
+	public List<string> DateToYouInteractions = MakeDateToYouInteractions();
+	public List<string> DateToFansInteractions = MakeDateToFansInteractions();
+
 
 	private static List<DateDialogue> MakeDialogueOptions() {
 		List<DateDialogue> res = new List<DateDialogue> ();
@@ -59,6 +63,24 @@ public class DateDialogues {
 		List<DateDialogue> res = new List<DateDialogue> ();
 
 		res.Add ( new DateDialogue("Your date looks upset\n\n\"Are you even TRYING to make a good impression?\"", null, "Eh, not really", null) );
+
+		return res;
+	}
+
+	private static List<string> MakeDateToYouInteractions() {
+		List<string> res = new List<string> ();
+
+		res.Add ("Your date explains their view on current events...");
+		res.Add ("Your date talks about something they think is interesting...");
+
+		return res;
+	}
+
+	private static List<string> MakeDateToFansInteractions() {
+		List<string> res = new List<string> ();
+
+		res.Add ("Your date is tweeting a picture of their food...");
+		res.Add ("Your date is searching for the perfect instagram filter...");
 
 		return res;
 	}

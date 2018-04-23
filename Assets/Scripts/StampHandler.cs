@@ -22,6 +22,12 @@ public class StampHandler : MonoBehaviour {
 	}
 
 	public void ShowStamp () {
+		// Hack: wait for button fading to be done.
+		GameState.ActState state = GameHandler.GetComponent<GameState>().CurrState;
+		if (state == GameState.ActState.FadingTextIn || state == GameState.ActState.FadingTextOut || state == GameState.ActState.DoingInterp) {
+			return;
+		}
+
 		DisableButtons ();
 		thisStamp.SetActive (true);
 
