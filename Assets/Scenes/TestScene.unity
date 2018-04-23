@@ -9157,6 +9157,7 @@ GameObject:
   - component: {fileID: 163452696}
   - component: {fileID: 163452695}
   - component: {fileID: 163452694}
+  - component: {fileID: 163452697}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -9235,6 +9236,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 163452692}
+--- !u!114 &163452697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 163452692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42253307f8d304eb3a4a42d591b8e868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextTrack: {fileID: 163452695}
+  StatTrack: 2
+  MapHandler: {fileID: 1112720158}
 --- !u!1 &165503784
 GameObject:
   m_ObjectHideFlags: 0
@@ -13902,7 +13917,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &297781420
 RectTransform:
   m_ObjectHideFlags: 0
@@ -40244,7 +40259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7b47d26ff38c04fa83dee9e1f5395e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugMoves: 1
+  showDebugMoves: 1
   mapTileValues: 
   mapTileHeights: 
   debugArray: []
@@ -46715,6 +46730,7 @@ GameObject:
   - component: {fileID: 1311253865}
   - component: {fileID: 1311253864}
   - component: {fileID: 1311253863}
+  - component: {fileID: 1311253866}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -46793,6 +46809,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1311253861}
+--- !u!114 &1311253866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1311253861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42253307f8d304eb3a4a42d591b8e868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextTrack: {fileID: 1311253864}
+  StatTrack: 1
+  MapHandler: {fileID: 1112720158}
 --- !u!1 &1311591850
 GameObject:
   m_ObjectHideFlags: 0
@@ -48501,7 +48531,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1367222993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57767,6 +57797,7 @@ GameObject:
   - component: {fileID: 1632961016}
   - component: {fileID: 1632961015}
   - component: {fileID: 1632961014}
+  - component: {fileID: 1632961017}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -57845,6 +57876,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1632961012}
+--- !u!114 &1632961017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1632961012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42253307f8d304eb3a4a42d591b8e868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextTrack: {fileID: 1632961015}
+  StatTrack: 0
+  MapHandler: {fileID: 1112720158}
 --- !u!1 &1633197627
 GameObject:
   m_ObjectHideFlags: 0
@@ -63124,6 +63169,7 @@ GameObject:
   - component: {fileID: 1773235748}
   - component: {fileID: 1773235747}
   - component: {fileID: 1773235746}
+  - component: {fileID: 1773235749}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -63202,6 +63248,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1773235744}
+--- !u!114 &1773235749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1773235744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42253307f8d304eb3a4a42d591b8e868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextTrack: {fileID: 1773235747}
+  StatTrack: 3
+  MapHandler: {fileID: 1112720158}
 --- !u!1001 &1773496476
 Prefab:
   m_ObjectHideFlags: 0

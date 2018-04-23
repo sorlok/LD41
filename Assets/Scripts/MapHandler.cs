@@ -23,7 +23,7 @@ public class IntPoint
 }
 
 public class MapHandler : MonoBehaviour {
-	public bool showDebugMoves = false;
+	public bool showDebugMoves = true;
 
 	public List<int> mapTileValues = new List<int>();
 

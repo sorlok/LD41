@@ -124,8 +124,6 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupChoosePlayerAction() {
-		//testLead.SelfEsteemTracker += TestFunction; // TEMP
-
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
 			"Interact with Date",
@@ -139,9 +137,6 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupInteractWithDate() {
-		//testLead.SelfEsteem = 20;
-		//testLead.SelfEsteem = 100;
-
 		StoryTxt.text = "How will you interact with your date?";
 		ShowBoxes (
 			"Talk to Them",
