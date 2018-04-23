@@ -1049,6 +1049,10 @@ public class GameState : MonoBehaviour {
 
 						// Actually do our update
 						phaseHandler.UpdateHour();
+						phaseHandler.UpdateTime ();
+
+
+
 					}
 				} else {
 					// Standard date text
