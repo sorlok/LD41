@@ -114,10 +114,7 @@ public class MapHandler : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
-		
-		
-	}
+	void Start () {}
 	
 	// Update is called once per frame
 	void Update () {
@@ -219,8 +216,18 @@ public class MapHandler : MonoBehaviour {
 			// TODO: Check if it knows about the players or not
 			fan.FanRandomWalk();
 
+			// Play movement SFX
 			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
 			sfxSource.Play();
+
+			// Do damage to player
+			Debug.Log (leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem);
+			foreach (char s in "NSEW") {
+				IntPoint next = IntPoint.FromCardinal (fan.TileX, fan.TileY, s);
+				if (SingleCollide (leadPlayer, next)) {
+					leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem -= 1;
+				}
+			}
 
 			return true;
 		}

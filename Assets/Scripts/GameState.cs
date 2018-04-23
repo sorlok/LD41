@@ -421,7 +421,5 @@ public class GameState : MonoBehaviour {
 		if (NPCMoveCount < NPCMoveCountMax) {
 			AdvanceNPCMoveCounter (Time.deltaTime);
 		}
-
-		
 	}
 }
