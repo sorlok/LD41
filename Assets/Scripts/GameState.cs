@@ -29,6 +29,7 @@ public class GameState : MonoBehaviour {
 
 	// Page 1: Dating container object and text + options.
 	public GameObject DialogueStoryTab;
+	public Text StoryTxtHeader;
 	public Text StoryTxt;
 	public Button Response1;
 	public Button Response2;
@@ -53,6 +54,9 @@ public class GameState : MonoBehaviour {
 
 	public GameObject GlobalCanvas;
 	public GameObject MapHandler;
+
+	// Used to reset stamps
+	public GameObject RespStamp1;
 
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
@@ -99,6 +103,10 @@ public class GameState : MonoBehaviour {
 
 		// In the middle of some UI interpolation
 		DoingInterp,
+
+		// Fading the text out/in for a story text transition
+		FadingTextOut,
+		FadingTextIn,
 	}
 
 	// Current interpolation variables
@@ -169,12 +177,17 @@ public class GameState : MonoBehaviour {
 		interpTarget3.position = Vector3.Lerp(interpStartPos3, interpEndPos3, fracJourney);
 		interpTarget3.localScale = Vector3.Lerp (interpStartSz3, interpEndSz3, fracJourney);
 
-		return distCovered >= 1;
+		return interpTarget.position == interpEndPos;
 	}
 
-	public void ReactToStamp() {
+	public void ReactToStamp(int stampId) { // 1, 2, 3 for stamp ID
 		// Beginning of game: show the timer, show the dialogue box
 		if (CurrState == ActState.Nothing) {
+			// Start Invisible
+			StoryTxtHeader.text = "Date Action";
+			StoryTxt.text = "";
+			ShowBoxes (null, null, null);
+
 			// First interpolation
 			interpEndPos = PhasePanel.transform.position;
 			interpStartPos = PhasePanel.transform.position + new Vector3 (1.3f, 0, 0);
@@ -209,6 +222,25 @@ public class GameState : MonoBehaviour {
 			CurrState = ActState.DoingInterp;
 			return;
 		}
+
+		// Phase 1: Select talk, tweet, or move
+		if (CurrState == ActState.PlayerActionSelect) {
+			if (stampId == 1) {
+				// Talk to date
+				// Fade out text, fade in new text
+				CurrState = ActState.FadingTextOut;
+
+
+			} else if (stampId == 2) {
+				// Tweet @ fans
+			} else if (stampId == 3) {
+				// Move date location
+				// TEMP: should restrict this to turns 3+
+				StoryTxt.text = "You can't move to a new date location yet; you just arrived at this one!";
+			}
+
+			return;
+		}
 	}
 
 	// TEST
@@ -217,26 +249,23 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupChoosePlayerAction() {
-		/*
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
-			"Interact with Date",
-			"Interact with Fans",
-			"End Date"
+			"Talk to Date",
+			"Tweet @Fans",
+			"Change Date Location"
 		);
-		DialogueStoryTab.SetActive (true);
-		CurrState = ActState.PlayerActionSelect;*/
-
-
-		// Choose dialogue options
+		//DialogueStoryTab.SetActive (true);
+		CurrState = ActState.PlayerActionSelect;
 
 		// Set Next button text
 		SkipText.text = "Main Action";
 		NextText.text = "(In Story)";
 
 		// Reset button stamp statuses (but not for the bottom item).
+		// TODO
 
-
+		// Update Phase name
 		phaseName = "Your Turn";
 		phaseHandler.UpdateActiveUser (phaseName);
 	}
@@ -531,8 +560,48 @@ public class GameState : MonoBehaviour {
 		//  Deal with interpolation?
 		if (CurrState == ActState.DoingInterp) {
 			if (updateInterpolation ()) {
+				// What to do next?
 				SetupChoosePlayerAction ();
+			}
+		}
 
+		// Deal with text fading?
+		if (CurrState == ActState.FadingTextOut) {
+			bool overflow = false;
+			float newAlpha = StoryTxt.color.a - 1f * Time.deltaTime;
+			if (newAlpha <= 0) {
+				newAlpha = 0;
+				overflow = true;
+			}
+			Color newAlphaColor = new Color (StoryTxt.color.r, StoryTxt.color.g, StoryTxt.color.b, newAlpha);
+			StoryTxt.color = newAlphaColor;
+			StoryTxtHeader.color = newAlphaColor;
+			if (overflow) {
+				// TODO: Set story text
+				StoryTxtHeader.text = "Date Dialogue";
+				StoryTxt.text = "Here's your date's story";
+
+				// TODO: Set response text
+				ShowBoxes("Ok", "Ok", "Ok");
+				RespStamp1.GetComponent<StampHandler>().HideStamp ();
+
+				CurrState = ActState.FadingTextIn;
+			}
+		}
+
+		// Deal with text fading?
+		if (CurrState == ActState.FadingTextIn) {
+			bool overflow = false;
+			float newAlpha = StoryTxt.color.a + 1f * Time.deltaTime;
+			if (newAlpha >= 1) {
+				newAlpha = 1;
+				overflow = true;
+			}
+			Color newAlphaColor = new Color (StoryTxt.color.r, StoryTxt.color.g, StoryTxt.color.b, newAlpha);
+			StoryTxt.color = newAlphaColor;
+			StoryTxtHeader.color = newAlphaColor;
+			if (overflow) {
+				CurrState = ActState.TalkDateSelectReact;
 			}
 		}
 

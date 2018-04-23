@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class StampHandler : MonoBehaviour {
 	public GameObject thisStamp;
 	public Button buttonA, buttonB, buttonC;
+	public int MyStampId;
 
 	// For calling back to GameState
 	public GameObject GameHandler;
@@ -25,7 +26,7 @@ public class StampHandler : MonoBehaviour {
 		thisStamp.SetActive (true);
 
 		// Perform the expected action
-		GameHandler.GetComponent<GameState>().ReactToStamp();
+		GameHandler.GetComponent<GameState>().ReactToStamp(MyStampId);
 	}
 
 	public void HideStamp () {

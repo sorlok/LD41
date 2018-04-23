@@ -15020,12 +15020,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 323882353}
   m_Mesh: {fileID: 4300000, guid: 346e6344cc8e5b341b9636ebc1363d21, type: 3}
---- !u!114 &324918888 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114955290914524020, guid: bbfc63a2f775d453195e9a4b23f8d037,
-    type: 2}
-  m_PrefabInternal: {fileID: 793812731}
-  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &325075849
 GameObject:
   m_ObjectHideFlags: 0
@@ -18527,10 +18521,11 @@ MonoBehaviour:
   buttonSFX: {fileID: 8300000, guid: b126f52af89c948f3b8b23c2043057ab, type: 3}
   turnSFX: {fileID: 8300000, guid: 33eb4fd8b32e54d1faeb7d340364296d, type: 3}
   DialogueStoryTab: {fileID: 1692605043}
-  StoryTxt: {fileID: 1353009971}
-  Response1: {fileID: 1754246150}
-  Response2: {fileID: 1809682767}
-  Response3: {fileID: 324918888}
+  StoryTxtHeader: {fileID: 278814681}
+  StoryTxt: {fileID: 446030202}
+  Response1: {fileID: 1360999572}
+  Response2: {fileID: 1829300823}
+  Response3: {fileID: 280840260}
   ChoiceParticles: {fileID: 123588093}
   GoodOptionTexture: {fileID: 2100000, guid: 5a5929fe436b74360aff6f3dff05616b, type: 2}
   NeutralOptionTexture: {fileID: 2100000, guid: 86dc989846e524b5d8c5a2a10dd60d03,
@@ -18544,6 +18539,7 @@ MonoBehaviour:
   DateProgressSkipBtn: {fileID: 716427883}
   GlobalCanvas: {fileID: 1367222992}
   MapHandler: {fileID: 1112720158}
+  RespStamp1: {fileID: 1457615869}
   CurrState: 0
   phaseName: 
   phaseHandler: {fileID: 1453999554}
@@ -30796,6 +30792,7 @@ MonoBehaviour:
   buttonA: {fileID: 1360999572}
   buttonB: {fileID: 1829300823}
   buttonC: {fileID: 280840260}
+  MyStampId: 2
   GameHandler: {fileID: 430121448}
 --- !u!1 &819758463
 GameObject:
@@ -45323,6 +45320,7 @@ MonoBehaviour:
   buttonA: {fileID: 1360999572}
   buttonB: {fileID: 1829300823}
   buttonC: {fileID: 280840260}
+  MyStampId: 3
   GameHandler: {fileID: 430121448}
 --- !u!1 &1262617898
 GameObject:
@@ -51670,6 +51668,7 @@ MonoBehaviour:
   buttonA: {fileID: 1360999572}
   buttonB: {fileID: 1829300823}
   buttonC: {fileID: 280840260}
+  MyStampId: 1
   GameHandler: {fileID: 430121448}
 --- !u!1 &1458877984
 GameObject:
@@ -56187,6 +56186,7 @@ MonoBehaviour:
   buttonA: {fileID: 0}
   buttonB: {fileID: 1915069268}
   buttonC: {fileID: 0}
+  MyStampId: 1
   GameHandler: {fileID: 430121448}
 --- !u!114 &1586779895
 MonoBehaviour:
@@ -62582,12 +62582,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1753373640}
   m_Mesh: {fileID: 4300000, guid: 192240efa1e00fa46adc8cef055ef614, type: 3}
---- !u!114 &1754246150 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114955290914524020, guid: bbfc63a2f775d453195e9a4b23f8d037,
-    type: 2}
-  m_PrefabInternal: {fileID: 1776113003}
-  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &1755110798
 GameObject:
   m_ObjectHideFlags: 0
@@ -64449,12 +64443,6 @@ Transform:
   m_Father: {fileID: 654180452}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &1809682767 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114955290914524020, guid: bbfc63a2f775d453195e9a4b23f8d037,
-    type: 2}
-  m_PrefabInternal: {fileID: 1390244964}
-  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &1811105038
 GameObject:
   m_ObjectHideFlags: 0
