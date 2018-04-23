@@ -377,6 +377,12 @@ public class MapHandler : MonoBehaviour {
 		//Destroy (fan);
 	}
 
+	public void DestroyAllFans() {
+		while (fans.Count > 0) {
+			DestroyFan (fans [0]);
+		}
+	}
+
 	private bool SingleCollide(GameObject other, IntPoint dest) {
 		return dest.x == other.GetComponent<TokenHandler> ().TileX && dest.y == other.GetComponent<TokenHandler> ().TileY;
 	}

@@ -8,7 +8,7 @@ public class PhaseHandler : MonoBehaviour {
 	public SunHandler sun;
 
 	public Text turnCountText, activeUserText;
-	private float thisMinute = 0, thisHour = 7;
+	public float thisMinute = 0, thisHour = 7;
 
 	//private string you, 
 
@@ -30,6 +30,10 @@ public class PhaseHandler : MonoBehaviour {
 	public void UpdateHour () {
 		thisHour += 1;
 		sun.MoveSun (1);
+	}
+
+	public void UpdateColoring() {
+		//sun.RecolorSun (false); // not needed
 	}
 
 	public void UpdateTime () {

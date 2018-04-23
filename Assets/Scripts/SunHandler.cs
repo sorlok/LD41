@@ -54,27 +54,24 @@ public class SunHandler : MonoBehaviour {
 		sun.transform.LookAt (sunTarget.transform);
 	}
 
-	void RecolorSun () {
+	public void RecolorSun (bool updateState=true) {
+		Debug.Log ("Sun: " + sunState);
 		switch (sunState) {
 		case 0:
-			//print ("Sun 0");
 			sun.GetComponent<Light> ().color = sunColor0;
-			sunState += 1;
+			if (updateState) { sunState += 1; }
 			break;
 		case 1:
-			//print ("Sun 1");
 			sun.GetComponent<Light> ().color = sunColor1;
-			sunState += 1;
+			if (updateState) { sunState += 1; }
 			break;
 		case 2:
-			//print ("Sun 2");
 			sun.GetComponent<Light> ().color = sunColor2;
-			sunState += 1;
+			if (updateState) { sunState += 1; }
 			break;
 		case 3:
-			//print ("Sun 3");
 			sun.GetComponent<Light> ().color = sunColor3;
-			sunState += 1;
+			if (updateState) { sunState += 1; }
 			break;
 		}
 	}

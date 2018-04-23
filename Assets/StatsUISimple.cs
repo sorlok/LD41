@@ -25,7 +25,10 @@ public class StatsUISimple : MonoBehaviour {
 	// The associated MapHandler
 	public GameObject MapHandler;
 
-	public void CallbackUpdate(uint val) {
+	public void CallbackUpdate(int val) {
+		TextTrack.text = StatName + ": " + (val < 0 ? 0 : val);
+	}
+	public void CallbackUpdate(string val) {
 		TextTrack.text = StatName + ": " + val;
 	}
 
@@ -52,10 +55,9 @@ public class StatsUISimple : MonoBehaviour {
 				lead.FanCountTracker += CallbackUpdate;
 				CallbackUpdate (lead.FanCount);
 			} else if (StatTrack == StatToTrack.PlayerAtmosphere) {
-				// TODO
-				//StatName = "Atmosphere";
-				//lead.AtmosphereTracker += CallbackUpdate;
-				//CallbackUpdate (lead.Atmosphere);
+				StatName = "Atmosphere";
+				lead.AtmosphereTracker += CallbackUpdate;
+				CallbackUpdate (lead.Atmosphere);
 			} else if (StatTrack == StatToTrack.PlayerConnection) {
 				StatName = "Connection";
 				lead.ConnectionTracker += CallbackUpdate;

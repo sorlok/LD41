@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 public class GameState : MonoBehaviour {
 
@@ -10,6 +12,12 @@ public class GameState : MonoBehaviour {
 	public static void ThrowException(string msg) {
 		throw new System.ArgumentException (msg);
 	}
+
+	public GameObject GameOverObj;
+	public GameObject GameOverTxt;
+
+	public GameObject FinalScreenObj;
+	public GameObject FinalScreenTxt;
 
 	public GameObject LeftPanel;
 	public GameObject AttributesPanel;
@@ -24,10 +32,14 @@ public class GameState : MonoBehaviour {
 	public Text NextText;
 	public GameObject NextStamp;
 
+	public AudioSource bgmSource;
+
 	public AudioSource sfxSourceBtn;
 	public AudioClip buttonSFX;
 	public AudioSource sfxSourceTurn;
 	public AudioClip turnSFX;
+
+	public AudioClip buttonEvilLaugh;
 
 	// Page 1: Dating container object and text + options.
 	public GameObject DialogueStoryTab;
@@ -116,6 +128,16 @@ public class GameState : MonoBehaviour {
 
 		// Waiting for the player to acknowledge the damage all fans have done
 		WaitingFanAckFromPlayer,
+
+		// Confirm move
+		MoveToNewLocation,
+
+		// Gameover stuff
+		GameOverFadein,
+		GameOverOnscreen,
+
+		// Final screen stuff
+		FinalScreenOnscreen,
 	}
 
 	// The state to set after the next fade?
@@ -161,7 +183,7 @@ public class GameState : MonoBehaviour {
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
-	private static float NPCMoveCountMax = 0.5f;
+	private static float NPCMoveCountMax = 0.9f;
 	private float NPCMoveCount = NPCMoveCountMax;
 
 	private DateDialogues dateDialogues;
@@ -241,7 +263,32 @@ public class GameState : MonoBehaviour {
 			// Update all
 			updateInterpolation ();
 
+			// Temp
+			phaseHandler.UpdateColoring();
+
 			CurrState = ActState.DoingInterp;
+			return;
+		}
+
+		// Phase 1C: Try to move to new location
+		if (CurrState == ActState.MoveToNewLocation) {
+			// Go back
+			if (TooSoonToMove ()) {
+				// Fade text to player's turn
+				CurrState = ActState.FadingTextOut;
+				AfterFadeState = ActState.PlayerActionSelect;
+			} else {
+				if (phaseHandler.thisHour == 10) {
+					// TODO: End date code here.
+					ShowFinalScreen();
+				} else {
+					// Fade back to start
+					CurrState = ActState.FadingTextOut;
+					AfterFadeState = ActState.PlayerActionSelect;
+				}
+			}
+
+			PlayButtonSound ();
 			return;
 		}
 
@@ -262,8 +309,8 @@ public class GameState : MonoBehaviour {
 				tweetHandler.StartTweeting();
 			} else if (stampId == 3) {
 				// Move date location
-				// TEMP: should restrict this to turns 3+
-				StoryTxt.text = "You can't move to a new date location yet; you just arrived at this one!";
+				CurrState = ActState.FadingTextOut;
+				AfterFadeState = ActState.MoveToNewLocation;
 			}
 
 			return;
@@ -290,6 +337,10 @@ public class GameState : MonoBehaviour {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem -= 1;
 			}
+
+			// TODO:TEMP:DEBUG
+			//MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem -= 99;
+
 
 			PlayButtonSound ();
 
@@ -339,6 +390,11 @@ public class GameState : MonoBehaviour {
 		sfxSourceBtn.Play ();
 	}
 
+	public void PlayEvilLaugh() {
+		sfxSourceBtn.clip = buttonEvilLaugh;
+		sfxSourceBtn.Play ();
+	}
+
 	// TEST
 	/*public void TestFunction(uint val) {
 		Debug.Log ("TEST: " + val);
@@ -347,10 +403,11 @@ public class GameState : MonoBehaviour {
 	public void SetupChoosePlayerAction() {
 		StoryTxtHeader.text = "Date Action";
 		StoryTxt.text = "What will you do this turn?";
+		string changeStr = phaseHandler.thisHour<9 ? "Change Date Location" : "End Date";
 		ShowBoxes (
 			"Talk to Date",
 			"Tweet @Fans",
-			"Change Date Location"
+			changeStr
 		);
 		//DialogueStoryTab.SetActive (true);
 		CurrState = ActState.PlayerActionSelect;
@@ -377,6 +434,16 @@ public class GameState : MonoBehaviour {
 
 		DialogueStoryTab.SetActive (true);
 		CurrState = ActState.ChooseInteractWithDate;
+	}
+
+	private void ShowFinalScreen() {
+		Lead player = MapHandler.GetComponent<MapHandler> ().LeadPlayerScript;
+		int score = player.Connection * 1000 + player.SelfEsteem * 100 + player.FanCount;
+
+		FinalScreenObj.SetActive (true);
+		FinalScreenTxt.GetComponent<Text> ().text = "Final Score: " + score;
+
+		CurrState = ActState.FinalScreenOnscreen;
 	}
 
 /*	public void SetupTalkToDate() {
@@ -563,20 +630,70 @@ public class GameState : MonoBehaviour {
 		RightPanel.SetActive (true);
 		DialoguePanel.SetActive (false);
 		BigButtonPanel.SetActive (true);
+		GameOverObj.SetActive (false);
+		GameOverTxt.SetActive (false);
+		FinalScreenObj.SetActive (false);
+
 
 		// Set up start text on Big Button Panel
 		SkipText.text = "Your Date Starts at 7pm";
 		NextText.text = "Begin Date";
 
+		// Add a listener for gameovers
+		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteemTracker += GameoverTracker;
 	}
 
-	// Modify the stat and return a string describing it.
-	private string RandomlyModifyStats() {
-		// Can add other stuff here.
-		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem += 1;
-		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount += 2;
+	public void GameoverTracker(int selfEsteem) {
+		if (selfEsteem <= 0) {
+			CurrState = ActState.GameOverFadein;
 
-		return "\n  +1 Self Esteem" + "\n  +2 Fans";
+			// Reset practically everything
+			DateActCount = DateActCountMax;
+			NPCMoveCount = NPCMoveCountMax;
+		}
+	}
+
+
+	// Modify the stat and return a string describing it.
+	private string RandomlyModifyStatsFromTweet() {
+		return RandomlyModifyStatsAny (40);
+	}
+
+	private string RandomlyModifyStatsAny(int fanCutoff) {
+		// Basically, favor additions and fans; sometimes negations and self esteem.
+		string res = "";
+		int count = rng.Next(100) > 75 ? 2 : 1;
+		for (int i = 0; i < count; i++) {
+			bool positive = rng.Next (100) > 75;
+			int amt = rng.Next (100) > 75 ? 2 : 1;
+			if (rng.Next (100) > fanCutoff) {
+				// Fans
+				amt *= 10;
+				if (positive) {
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount += amt;
+					res += "\n  +" + amt + " Fans";
+				} else {
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount -= amt;
+					res += "\n  -" + amt + " Fans";
+				}
+			} else {
+				// Self Esteem
+				if (positive) {
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem += amt;
+					res += "\n  +" + amt + " Self Esteem";
+				} else {
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem -= amt;
+					res += "\n  -" + amt + " Self Esteem";
+				}
+			}
+		}
+			
+		return res;
+	}
+
+	// Similar to above, but reversed in some aspects
+	private string RandomlyModifyStatsFromPersonal() {
+		return RandomlyModifyStatsAny (60);
 	}
 
 	private void AdvanceCounter(float amt) {
@@ -600,7 +717,11 @@ public class GameState : MonoBehaviour {
 				//DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
 				//ResultTxt.gameObject.SetActive (true);
 
-				StoryTxt.text += "\n" + RandomlyModifyStats();
+				if (CurrState == ActState.DateActSocialMedia) {
+					StoryTxt.text += "\n" + RandomlyModifyStatsFromTweet ();
+				} else {
+					StoryTxt.text += "\n" + RandomlyModifyStatsFromPersonal ();
+				}
 
 				// Set up next button again
 				NextStamp.GetComponent<StampHandler>().HideStamp ();
@@ -648,8 +769,61 @@ public class GameState : MonoBehaviour {
 		}
 	}
 
+	private bool TooSoonToMove() {
+		//TEMP: DEBUG
+		//return false;
+
+
+		return phaseHandler.thisMinute <= 10;
+	}
+
+	public void DoNewGame() {
+		SceneManager.LoadScene( SceneManager.GetActiveScene().name );
+	}
+
 	// Update is called once per frame
 	void Update () {
+		// Gameover fading takes priority
+		if (CurrState == ActState.GameOverFadein) {
+			if (!GameOverObj.activeSelf) {
+				// Init
+				Color clr = GameOverObj.GetComponent<Image> ().color;
+				GameOverObj.GetComponent<Image> ().color = new Color (clr.r, clr.g, clr.b, 0);
+				GameOverObj.SetActive (true);
+
+				PlayEvilLaugh ();
+			} else {
+				// Music fade out
+				float newVol = bgmSource.volume - 0.02f;
+				if (newVol < 0) {
+					newVol = 0;
+				}
+				bgmSource.volume = newVol;
+
+
+				// Fade in
+				Color clr = GameOverObj.GetComponent<Image> ().color;
+				float newAlpha = clr.a += 0.01f;
+				bool overflow = false;
+				if (newAlpha >= 0.98f) {
+					newAlpha = 1;
+					overflow = true;
+				}
+				GameOverObj.GetComponent<Image> ().color = new Color (clr.r, clr.g, clr.b, newAlpha);
+
+				if (overflow) {
+					// Show text
+					GameOverTxt.SetActive(true);
+
+					// Done
+					CurrState = ActState.GameOverOnscreen;
+				}
+			}
+
+			return;
+		}
+
+
 		// Hack to avoid double-clicking
 		if (Input.GetMouseButtonDown (0)) {
 			if (EventSystem.current.IsPointerOverGameObject()) {
@@ -710,6 +884,15 @@ public class GameState : MonoBehaviour {
 					StoryTxtHeader.text = "Date Dialogue";
 					StoryTxt.text = dd.storyText;
 
+					if (LastDateResponse == 'G') {
+						StoryTxt.text += "\n\n  +2 Self Esteem";
+					} else if (LastDateResponse == 'N') {
+						StoryTxt.text += "\n\n  +1 Self Esteem";
+					} else {
+						StoryTxt.text += "\n\n  -1 Self Esteem";
+					}
+
+
 					// Set response text
 					ShowBoxes (
 						dd.option1,
@@ -738,6 +921,56 @@ public class GameState : MonoBehaviour {
 
 					// No responses here
 					ShowBoxes (null, null, null);	
+				} else if (AfterFadeState == ActState.MoveToNewLocation) {
+					StoryTxtHeader.text = "Date Action";
+					SkipText.text = "Main Action";
+					NextText.text = "(Moving Locations)";
+
+					if (TooSoonToMove()) {
+						StoryTxt.text = "You can't move to a new date location yet; you basically just arrived here!";
+						ShowBoxes (null, "Ok", null);
+					} else {
+						TokenHandler leadPlayer = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ();
+						TokenHandler leadDate = MapHandler.GetComponent<MapHandler> ().LeadDate.GetComponent<TokenHandler> ();
+						if (phaseHandler.thisHour == 7) {
+							StoryTxt.text = "You leave the romantic highway overlook behind, and move to your backyard, doding fans along the way.";
+							StoryTxt.text += "\n\n  +25 Atmosphere";
+							MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere = "B";
+							ShowBoxes (null, "Resume Date", null);
+
+							// Actually move
+							leadPlayer.MoveToTile(9, 5);
+							leadDate.MoveToTile(9, 4);
+						} else if (phaseHandler.thisHour == 8) { 
+							StoryTxt.text = "Your friend with the fancy house invites you both to hang out by the pool.";
+							StoryTxt.text += "\n\n  +50 Atmosphere";
+							MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere = "A+";
+							ShowBoxes (null, "Resume Date", null);
+
+							// Actually move
+							leadPlayer.MoveToTile(4, 9);
+							leadDate.MoveToTile(5, 9);
+						} else if (phaseHandler.thisHour == 9) { 
+							StoryTxt.text = "You both had a great time! You part and go your separate ways.";
+							ShowBoxes (null, "Date Complete!", null);
+
+							// Actually move ("home")
+							leadPlayer.MoveToTile(3, 4);
+							leadDate.MoveToTile(8, 8);
+						}
+
+						// Kill all fans
+						MapHandler.GetComponent<MapHandler>().DestroyAllFans();
+						if (phaseHandler.thisHour == 7) {
+							MapHandler.GetComponent<MapHandler> ().SpawnFans (4);
+						} else if (phaseHandler.thisHour == 8) {
+							MapHandler.GetComponent<MapHandler> ().SpawnFans (5);
+						} // No fans when going home
+
+
+						// Actually do our update
+						phaseHandler.UpdateHour();
+					}
 				} else {
 					// Standard date text
 					DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];

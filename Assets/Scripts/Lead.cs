@@ -9,10 +9,16 @@ public class Lead {
 	public bool isPC = false;
 
 	// Delegate for all resources
-	public delegate void ValueChanged(uint newval);
+	public delegate void ValueChanged(int newval);
+	public delegate void ValueChanged2(string newval);
 
 	// Helper
-	private void FireChanged(ValueChanged tracker, uint value) {
+	private void FireChanged(ValueChanged tracker, int value) {
+		if (tracker != null) {
+			tracker (value);
+		}
+	}
+	private void FireChanged(ValueChanged2 tracker, string value) {
 		if (tracker != null) {
 			tracker (value);
 		}
@@ -26,16 +32,24 @@ public class Lead {
 	}
 
 	/* basic resources */
-	private uint selfEsteem = 3;
-	public uint SelfEsteem
+	private string atmosphere = "C-";
+	public string Atmosphere 
+	{
+		get { return atmosphere; }
+		set { atmosphere = value; FireChanged (AtmosphereTracker, value); }
+	}
+	public event ValueChanged2 AtmosphereTracker;
+
+	private int selfEsteem = 3;
+	public int SelfEsteem
 	{
 		get { return selfEsteem; }
 		set { selfEsteem = value; FireChanged (SelfEsteemTracker, value); }
 	}
 	public event ValueChanged SelfEsteemTracker;
 
-	private uint fanCount = 300;
-	public uint FanCount
+	private int fanCount = 300;
+	public int FanCount
 	{
 		get { return fanCount; }
 		set { fanCount = value; FireChanged (FanCountTracker, value); }
@@ -44,16 +58,16 @@ public class Lead {
 
 
 	/* date resources */
-	private uint connection = 50;	// range: 0-100
-	public uint Connection
+	private int connection = 50;	// range: 0-100
+	public int Connection
 	{
 		get { return connection; }
 		set { connection = value; FireChanged (ConnectionTracker, value); }
 	}
 	public event ValueChanged ConnectionTracker;
 
-	private uint moves = 2;
-	public uint Moves
+	private int moves = 2;
+	public int Moves
 	{
 		get { return moves; }
 		set { moves = value; FireChanged (MovesTracker, value); }
@@ -99,15 +113,15 @@ public class Lead {
 
 		if (affectYou) {
 			if (affectEsteem) {
-				date.SelfEsteem = date.SelfEsteem + (uint)(rollTalk < connection ? 1 : -1);
+				date.SelfEsteem = date.SelfEsteem + (int)(rollTalk < connection ? 1 : -1);
 			} else {
-				date.FanCount = date.FanCount + (uint)(rollTalk < connection ? 100 : -100);
+				date.FanCount = date.FanCount + (int)(rollTalk < connection ? 100 : -100);
 			}
 		} else {
 			if (affectEsteem) {
-				SelfEsteem = SelfEsteem + (uint)(rollTalk < connection ? 1 : -1);
+				SelfEsteem = SelfEsteem + (int)(rollTalk < connection ? 1 : -1);
 			} else {
-				FanCount = FanCount + (uint)(rollTalk < connection ? 100 : -100);
+				FanCount = FanCount + (int)(rollTalk < connection ? 100 : -100);
 			}
 		}
 	}
