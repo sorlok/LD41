@@ -24,8 +24,9 @@ public class GameState : MonoBehaviour {
 	public Text NextText;
 	public GameObject NextStamp;
 
-	public AudioSource sfxSource;
+	public AudioSource sfxSourceBtn;
 	public AudioClip buttonSFX;
+	public AudioSource sfxSourceTurn;
 	public AudioClip turnSFX;
 
 	// Page 1: Dating container object and text + options.
@@ -195,6 +196,8 @@ public class GameState : MonoBehaviour {
 	public void ReactToStamp(int stampId) { // 1, 2, 3 for stamp ID
 		// Beginning of game: show the timer, show the dialogue box
 		if (CurrState == ActState.Nothing) {
+			PlayButtonSound ();
+
 			// Start Invisible
 			StoryTxtHeader.text = "Date Action";
 			StoryTxt.text = "";
@@ -237,6 +240,9 @@ public class GameState : MonoBehaviour {
 
 		// Phase 1: Select talk, tweet, or move
 		if (CurrState == ActState.PlayerActionSelect) {
+			PlayButtonSound ();
+
+
 			if (stampId == 1) {
 				// Talk to date
 				// Fade out text, fade in new text
@@ -257,6 +263,7 @@ public class GameState : MonoBehaviour {
 
 		// Phase 1.A - Date reacts to dialogue choice
 		if (CurrState == ActState.ChooseInteractTalk) {
+
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.TalkDateViewResponse;
 
@@ -276,8 +283,7 @@ public class GameState : MonoBehaviour {
 			PlayButtonSound ();
 
 			ChoiceParticles.Play();
-			//Invoke("ChoiceParticlesDone", 2);
-		
+			return;
 		}
 
 		// Phase 1.B - Saw date react, move to next phase
@@ -285,6 +291,8 @@ public class GameState : MonoBehaviour {
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.DateAction;
 			PlayButtonSound ();
+			return;
+
 		}
 
 		// Phase 2 - Ready to switch to fan phase?
@@ -292,6 +300,7 @@ public class GameState : MonoBehaviour {
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.FansAction;
 			PlayButtonSound ();
+			return;
 
 		}
 
@@ -305,20 +314,21 @@ public class GameState : MonoBehaviour {
 			CurrState = ActState.FadingTextOut;
 			AfterFadeState = ActState.PlayerActionSelect;
 			PlayButtonSound ();
+			return;
 
 		}
 
 	}
 
 	public void PlayButtonSound() {
-		sfxSource.clip = buttonSFX;
-		sfxSource.Play ();
+		sfxSourceBtn.clip = buttonSFX;
+		sfxSourceBtn.Play ();
 	}
 
 	// TEST
-	public void TestFunction(uint val) {
+	/*public void TestFunction(uint val) {
 		Debug.Log ("TEST: " + val);
-	}
+	}*/
 
 	public void SetupChoosePlayerAction() {
 		StoryTxtHeader.text = "Date Action";
@@ -549,8 +559,8 @@ public class GameState : MonoBehaviour {
 	// Modify the stat and return a string describing it.
 	private string RandomlyModifyStats() {
 		// Can add other stuff here.
-		MapHandler.GetComponent<MapHandler>().LeadDateScript.SelfEsteem += 1;
-		MapHandler.GetComponent<MapHandler>().LeadDateScript.FanCount += 1;
+		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem += 1;
+		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount += 2;
 
 		return "\n  +1 Self Esteem" + "\n  +2 Fans";
 	}
@@ -619,8 +629,8 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.DateActShowReward) {
 			DateCollectsReward ();
 
-			sfxSource.clip = turnSFX;
-			sfxSource.Play ();
+			sfxSourceTurn.clip = turnSFX;
+			sfxSourceTurn.Play ();
 		}
 	}
 
@@ -674,7 +684,7 @@ public class GameState : MonoBehaviour {
 			if (overflow) {
 
 				// Set Story text or response text
-				if (AfterFadeState == ActState.TalkDateSelectReact) {
+				if (AfterFadeState == ActState.TalkDateViewResponse) {
 					List<DateDialogue> resp = dateDialogues.DialogueBadResponses;
 					if (LastDateResponse == 'G') {
 						resp = dateDialogues.DialogueGoodResponses;
