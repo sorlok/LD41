@@ -12,7 +12,16 @@ public class GameState : MonoBehaviour {
 	}
 
 	public GameObject LeftPanel;
+	public GameObject AttributesPanel;
+	public GameObject PhasePanel;
+
 	public GameObject RightPanel;
+	public GameObject DialoguePanel;
+	public GameObject BigButtonPanel;
+
+	// Big button texts
+	public Text SkipText;
+	public Text NextText;
 
 	public AudioSource sfxSource;
 	public AudioClip buttonSFX;
@@ -87,7 +96,29 @@ public class GameState : MonoBehaviour {
 		DateActSocialMedia,  // Date is ignoring you and interacting with their fans
 		DateActTalkToYou,  // Date is interacting with you
 		DateActShowReward, // We're looking at the "reward" the date got from talking to you or using social media.
+
+		// In the middle of some UI interpolation
+		DoingInterp,
 	}
+
+	// Current interpolation variables
+	private float interpStartTime;
+	private float interpTotalLength;
+	private float interpSpeed = 1.2f;
+
+	// Interpolation 1
+	private Transform interpTarget;
+	private Vector3 interpStartPos;
+	private Vector3 interpEndPos;
+	private Vector3 interpStartSz;
+	private Vector3 interpEndSz;
+
+	// Interpolation 2
+	private Transform interpTarget2;
+	private Vector3 interpStartPos2;
+	private Vector3 interpEndPos2;
+	private Vector3 interpStartSz2;
+	private Vector3 interpEndSz2;
 		
 
 	// Current state tree entry. Sub-state(s) should be set to 0 on state change.
@@ -115,6 +146,50 @@ public class GameState : MonoBehaviour {
 				comps [i].GetComponentInChildren <Text> ().text = opts [i];
 			} 
 			comps [i].gameObject.SetActive (opts [i] != null);
+		}
+	}
+
+	private bool updateInterpolation() {
+		float distCovered = (Time.time - interpStartTime) * interpSpeed;
+		float fracJourney = distCovered / interpTotalLength;
+
+		interpTarget.position = Vector3.Lerp(interpStartPos, interpEndPos, fracJourney);
+		interpTarget.localScale = Vector3.Lerp (interpStartSz, interpEndSz, fracJourney);
+
+		interpTarget2.position = Vector3.Lerp(interpStartPos2, interpEndPos2, fracJourney);
+		interpTarget2.localScale = Vector3.Lerp (interpStartSz2, interpEndSz2, fracJourney);
+
+		return distCovered >= 1;
+	}
+
+	public void ReactToStamp() {
+		// Beginning of game: show the timer, show the dialogue box
+		if (CurrState == ActState.Nothing) {
+			// First interpolation
+			interpEndPos = PhasePanel.transform.position;
+			interpStartPos = PhasePanel.transform.position + new Vector3 (1.3f, 0, 0);
+			interpEndSz = new Vector3 (1, 1, 1);
+			interpStartSz = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget = PhasePanel.transform;
+			PhasePanel.SetActive (true);
+
+			// Second interpolation
+			interpEndPos2 = DialoguePanel.transform.position;
+			interpStartPos2 = DialoguePanel.transform.position + new Vector3 (0, 0, -0.5f);
+			interpEndSz2 = new Vector3 (1, 1, 1);
+			interpStartSz2 = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget2 = DialoguePanel.transform;
+			DialoguePanel.SetActive (true);
+
+			// Set up the interpolation
+			interpStartTime = Time.time;
+			interpTotalLength = Vector3.Distance (interpStartPos, interpEndPos);
+
+			// Update all
+			updateInterpolation ();
+
+			CurrState = ActState.DoingInterp;
+			return;
 		}
 	}
 
@@ -321,8 +396,18 @@ public class GameState : MonoBehaviour {
 		// TEMP: Testing fan actions
 		//StartFansActionState();
 
+		// Start with stats, time hidden, just "next" button ready
 		LeftPanel.SetActive (true);
+		AttributesPanel.SetActive (false);
+		PhasePanel.SetActive (false);
 		RightPanel.SetActive (true);
+		DialoguePanel.SetActive (false);
+		BigButtonPanel.SetActive (true);
+
+		// Set up start text on Big Button Panel
+		SkipText.text = "Your Date Starts at 7pm";
+		NextText.text = "Begin Date";
+
 	}
 
 	private void AdvanceCounter(float amt) {
@@ -406,14 +491,23 @@ public class GameState : MonoBehaviour {
 			SkipPhase = ActState.Nothing;
 		}
 
-		if (Input.GetKey (KeyCode.W)) {
+		/*if (Input.GetKey (KeyCode.W)) {
 			if (CurrState == GameState.ActState.Nothing) {
 				SetupChoosePlayerAction();
 				return;
 			}
+		}*/
+
+		//  Deal with interpolation?
+		if (CurrState == ActState.DoingInterp) {
+			if (updateInterpolation ()) {
+				// TODO: done with interp; actually set up the dialogue text
+				// Also reset buttons
+
+			}
 		}
 
-		// Deal with counter
+		// Deal with counter			
 		if (DateActCount < DateActCountMax) {
 			// Any key will advance the counter 100%
 			if (Input.anyKeyDown && SkipPhase == ActState.Nothing) {
