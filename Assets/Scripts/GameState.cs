@@ -256,6 +256,13 @@ public class GameState : MonoBehaviour {
 				CurrState = ActState.FadingTextOut;
 				AfterFadeState = ActState.PlayerActionSelect;
 			} else {
+				if (phaseHandler.thisHour == 10) {
+					// TODO: End date code here.
+				} else {
+					// Fade back to start
+					CurrState = ActState.FadingTextOut;
+					AfterFadeState = ActState.PlayerActionSelect;
+				}
 			}
 
 			PlayButtonSound ();
@@ -364,10 +371,11 @@ public class GameState : MonoBehaviour {
 	public void SetupChoosePlayerAction() {
 		StoryTxtHeader.text = "Date Action";
 		StoryTxt.text = "What will you do this turn?";
+		string changeStr = phaseHandler.thisHour<9 ? "Change Date Location" : "End Date";
 		ShowBoxes (
 			"Talk to Date",
 			"Tweet @Fans",
-			"Change Date Location"
+			changeStr
 		);
 		//DialogueStoryTab.SetActive (true);
 		CurrState = ActState.PlayerActionSelect;
@@ -814,20 +822,46 @@ public class GameState : MonoBehaviour {
 						StoryTxt.text = "You can't move to a new date location yet; you basically just arrived here!";
 						ShowBoxes (null, "Ok", null);
 					} else {
+						TokenHandler leadPlayer = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ();
+						TokenHandler leadDate = MapHandler.GetComponent<MapHandler> ().LeadDate.GetComponent<TokenHandler> ();
 						if (phaseHandler.thisHour == 7) {
-							StoryTxt.text = "You leave the romantic highway overlook behind, and move to your backyard.";
+							StoryTxt.text = "You leave the romantic highway overlook behind, and move to your backyard, doding fans along the way.";
 							StoryTxt.text += "\n\n  +25 Atmosphere";
 							MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere = "B";
 							ShowBoxes (null, "Resume Date", null);
+
+							// Actually move
+							leadPlayer.MoveToTile(9, 5);
+							leadDate.MoveToTile(9, 4);
 						} else if (phaseHandler.thisHour == 8) { 
-							StoryTxt.text = "Your friend with the fancy house invites you both to hang out by the pool";
+							StoryTxt.text = "Your friend with the fancy house invites you both to hang out by the pool.";
 							StoryTxt.text += "\n\n  +50 Atmosphere";
 							MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere = "A+";
 							ShowBoxes (null, "Resume Date", null);
+
+							// Actually move
+							leadPlayer.MoveToTile(4, 9);
+							leadDate.MoveToTile(5, 9);
 						} else if (phaseHandler.thisHour == 9) { 
 							StoryTxt.text = "You both had a great time! You part and go your separate ways.";
 							ShowBoxes (null, "Date Complete!", null);
+
+							// Actually move ("home")
+							leadPlayer.MoveToTile(3, 4);
+							leadDate.MoveToTile(8, 8);
 						}
+
+						// Kill all fans
+						MapHandler.GetComponent<MapHandler>().DestroyAllFans();
+						if (phaseHandler.thisHour == 7) {
+							MapHandler.GetComponent<MapHandler> ().SpawnFans (4);
+						} else if (phaseHandler.thisHour == 8) {
+							MapHandler.GetComponent<MapHandler> ().SpawnFans (5);
+						} // No fans when going home
+
+
+						// Actually do our update
+						phaseHandler.UpdateHour();
 					}
 				} else {
 					// Standard date text
