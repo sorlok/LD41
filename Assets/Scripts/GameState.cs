@@ -64,6 +64,11 @@ public class GameState : MonoBehaviour {
 	public GameObject DateProressBar;
 	public GameObject DateProgressSkipBtn;
 
+	//Excited Date Sound
+	public GameObject mainCamera;
+	public GameObject soundSource;
+	public AudioClip excitedSound;
+
 	// Some Leads/Fans (TODO: actually add)
 	//private Lead testLead = new Lead();
 
@@ -510,6 +515,16 @@ public class GameState : MonoBehaviour {
 		CurrState = ActState.DateAction;
 		phaseName = "Date's Turn";
 		phaseHandler.UpdateActiveUser (phaseName);
+
+		//Added Excited date audio.
+		//TODO
+		//int dateConnection = MapHandler.GetComponent<MapHandler>().LeadPlayerScript.Connection;
+		if (phaseHandler.thisHour > 7) {
+			GameObject source = Instantiate(soundSource, mainCamera.transform.position, Quaternion.identity);
+			source.transform.SetParent (mainCamera.transform);
+			source.GetComponent<AudioSource> ().clip = excitedSound;
+			source.GetComponent<AudioSource> ().Play ();
+		}
 	}
 
 	// What action will our date take?
