@@ -345,7 +345,7 @@ public class GameState : MonoBehaviour {
 
 		// todo: migrate over to the right
 		DateProressBar.SetActive (true);
-		//DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 70, 0);
+		DateActionTab.transform.localPosition = new Vector3 (0, 0, 0);
 		DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Skip";
 		ResultTxt.gameObject.SetActive (false);
 		//StoryTxt.text = "Your date is deciding what to do...";
@@ -371,6 +371,7 @@ public class GameState : MonoBehaviour {
 			string txt = dateDialogues.DateToYouInteractions [rng.Next(dateDialogues.DateToYouInteractions.Count)];
 			StoryTxt.text += "\n" + txt;
 		}
+		DateActionTab.transform.localPosition = new Vector3 (0, -100, 0);
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
