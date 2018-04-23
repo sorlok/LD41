@@ -6,17 +6,17 @@ public class Fan {
 	public GameObject fan;
 
 	/* basic resources */
-	private bool aware = false;
-	private bool enraged = false;
-	private bool influenced = false;
-	private bool isTraveling = false;
+	//private bool aware = false;
+	//private bool enraged = false;
+	//private bool influenced = false;
+	//private bool isTraveling = false;
 
 	/* movement */
-	private uint speed = 2;
+	//private uint speed = 2;
 
-	private Vector2Int currentLoc;
-	private Vector2Int dateLoc;
-	private Vector2Int promotionLoc;
+	//private Vector2Int currentLoc;
+	//private Vector2Int dateLoc;
+	//private Vector2Int promotionLoc;
 
 	private List<int> tiles;
 
@@ -27,20 +27,21 @@ public class Fan {
 	/* combat */
 	public Lead lead;
 
-	private uint damage = 1;
+	//private uint damage = 1;
 
 
 	/* --- Methods --- */
-	void DoDamage () {
+	/*void DoDamage () {
+		bool enraged = false;
 		if (IsPCAdjacent()) {
 			lead.SelfEsteem = lead.SelfEsteem - (damage * (enraged ? 2u : 1u)); 
 		}
-	}
+	}*/
 
-	bool IsPCAdjacent () {
+	/*bool IsPCAdjacent () {
 		Vector2Int result = currentLoc - lead.currentLoc;
 		return (result.magnitude == 1);
-	}
+	}*/
 		
 
 	// Return the list of valid choices that are the shortest move away.
@@ -123,10 +124,10 @@ public class Fan {
 		currentLoc = choiceLoc; // TODO: do actual movement later
 	}
 	*/
-
+	/*
 	public void SetAwareness (bool awareness, Vector2Int dateLocation) {
 		aware = awareness;
 		dateLoc = dateLocation;
-	}
+	}*/
 
 }

@@ -10,6 +10,8 @@
 *.exe
 *.dll
 
+Maya.meta
+
 TestBuild_Data/
 
 # Visual Studio 2015 cache directory

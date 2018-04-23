@@ -22,6 +22,7 @@ public class GameState : MonoBehaviour {
 	// Big button texts
 	public Text SkipText;
 	public Text NextText;
+	public GameObject NextStamp;
 
 	public AudioSource sfxSource;
 	public AudioClip buttonSFX;
@@ -109,6 +110,9 @@ public class GameState : MonoBehaviour {
 		// Fading the text out/in for a story text transition
 		FadingTextOut,
 		FadingTextIn,
+
+		// Waiting for the player to acknowledge the damage all fans have done
+		WaitingFanAckFromPlayer,
 	}
 
 	// The state to set after the next fade?
@@ -150,7 +154,7 @@ public class GameState : MonoBehaviour {
 	public PhaseHandler phaseHandler;
 
 	// Countdown for whenever your date is acting
-	private static float DateActCountMax = 5; // How many seconds to complete an action
+	private static float DateActCountMax = 2; // How many seconds to complete an action
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
@@ -276,6 +280,31 @@ public class GameState : MonoBehaviour {
 			Invoke("ChoiceParticlesDone", 2);
 		
 		}
+
+		// Phase 1.B - Saw date react, move to next phase
+		if (CurrState == ActState.TalkDateViewResponse) {
+			CurrState = ActState.FadingTextOut;
+			AfterFadeState = ActState.DateAction;
+			//SetupDateTurn ();
+		}
+
+		// Phase 2 - Ready to switch to fan phase?
+		if (CurrState == ActState.DateActShowReward) {
+			CurrState = ActState.FadingTextOut;
+			AfterFadeState = ActState.FansAction;
+		}
+
+		// Phase 3 - Ready to switch back to player phase?
+		if (CurrState == ActState.WaitingFanAckFromPlayer) {
+			//Update Phase Clock
+			phaseHandler.UpdateMinute();
+			phaseHandler.UpdateTime ();
+
+			// Fade text to player's turn
+			CurrState = ActState.FadingTextOut;
+			AfterFadeState = ActState.PlayerActionSelect;
+		}
+
 	}
 
 	// TEST
@@ -284,6 +313,7 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void SetupChoosePlayerAction() {
+		StoryTxtHeader.text = "Date Action";
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
 			"Talk to Date",
@@ -332,18 +362,21 @@ public class GameState : MonoBehaviour {
 	}*/
 
 	public void SetupDateTurn() {
-		DialogueStoryTab.SetActive (false);
+		// unused
+		//DialogueStoryTab.SetActive (false);
+		//DateProgressBarBkg.SetActive (true);
 
-		DateProgressBarBkg.SetActive (true);
+		// todo: migrate over to the right
 		DateProressBar.SetActive (true);
-		DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 70, 0);
+		DateActionTab.transform.localPosition = new Vector3 (0, 0, 0);
 		DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Skip";
 		ResultTxt.gameObject.SetActive (false);
-		DateActTxt.text = "Your date is deciding what to do...";
+		//StoryTxt.text = "Your date is deciding what to do...";
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
 
+		//NextText.text = "(Date Acting)";
 		CurrState = ActState.DateAction;
 		phaseName = "Date's Turn";
 		phaseHandler.UpdateActiveUser (phaseName);
@@ -354,11 +387,14 @@ public class GameState : MonoBehaviour {
 		// TODO : More structured randomness, incorporate Pablo's actors
 		if (rng.Next (100) < 50) {
 			CurrState = ActState.DateActSocialMedia;
-			DateActTxt.text = "Your date is tweeting a picture of their food...";
+			string txt = dateDialogues.DateToFansInteractions [rng.Next(dateDialogues.DateToFansInteractions.Count)];
+			StoryTxt.text += "\n" + txt;
 		} else {
 			CurrState = ActState.DateActTalkToYou;
-			DateActTxt.text = "Your date explains their view on current events...";
+			string txt = dateDialogues.DateToYouInteractions [rng.Next(dateDialogues.DateToYouInteractions.Count)];
+			StoryTxt.text += "\n" + txt;
 		}
+		DateActionTab.transform.localPosition = new Vector3 (0, -100, 0);
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
@@ -458,8 +494,9 @@ public class GameState : MonoBehaviour {
 
 	void DateCollectsReward() {
 		// TODO: actually increase values.
+		// TODO: skipping this phase isn't hooked up correctly right now
 
-		DateActionTab.SetActive (false);
+		//DateActionTab.SetActive (false);
 
 		// TMP: move to next state
 		StartFansActionState();
@@ -468,14 +505,10 @@ public class GameState : MonoBehaviour {
 	private void StartFansActionState() 
 	{
 		CurrState = ActState.FansAction;
-		phaseName = "Fan's Turn";
+		phaseName = "Fans' Turns";
 		phaseHandler.UpdateActiveUser (phaseName);
 		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
 		NPCMoveCount = 0;
-
-		//Update Phase Clock
-		phaseHandler.UpdateMinute();
-		phaseHandler.UpdateTime ();
 	}
 
 	// Use this for initialization
@@ -506,6 +539,15 @@ public class GameState : MonoBehaviour {
 
 	}
 
+	// Modify the stat and return a string describing it.
+	private string RandomlyModifyStats() {
+		// Can add other stuff here.
+		MapHandler.GetComponent<MapHandler>().LeadDateScript.SelfEsteem += 1;
+		MapHandler.GetComponent<MapHandler>().LeadDateScript.FanCount += 1;
+
+		return "\n  +1 Self Esteem" + "\n  +2 Fans";
+	}
+
 	private void AdvanceCounter(float amt) {
 		DateActCount += amt;
 
@@ -521,13 +563,17 @@ public class GameState : MonoBehaviour {
 				MakeDateDecision ();
 			} else if (CurrState == ActState.DateActSocialMedia || CurrState == ActState.DateActTalkToYou) {
 				// Show "rewards"
-				DateProgressBarBkg.SetActive (false);
-				DateProressBar.SetActive (false);
-				DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 120, 0);
-				DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
-				ResultTxt.gameObject.SetActive (true);
+				DateActionTab.SetActive (false);
+				//DateProressBar.SetActive (false);
+				//DateProgressSkipBtn.transform.localPosition = new Vector3 (165, 120, 0);
+				//DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
+				//ResultTxt.gameObject.SetActive (true);
 
-				ResultTxt.text = "You gained 1 Self-Confidence\nYour date gained 2k fans";
+				StoryTxt.text += "\n" + RandomlyModifyStats();
+
+				// Set up next button again
+				NextStamp.GetComponent<StampHandler>().HideStamp ();
+				NextText.text = "Fan Phase";
 
 				CurrState = ActState.DateActShowReward;
 			} else {
@@ -549,8 +595,10 @@ public class GameState : MonoBehaviour {
 				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
 					NPCMoveCount = 0;
 				} else {
-					//MapHandler.GetComponent<MapHandler> ().ResetNPCMoves (); // TODO: Redundant
-					SetupChoosePlayerAction ();
+					CurrState = ActState.WaitingFanAckFromPlayer;
+					NextStamp.GetComponent<StampHandler>().HideStamp ();
+					NextText.text = "Time Marches On...";
+
 				}
 			} else {
 				ThrowException ("Bad NPC current state: " + CurrState);
@@ -627,7 +675,7 @@ public class GameState : MonoBehaviour {
 						resp = dateDialogues.DialogueNeutralResponses;
 					}
 
-					DateDialogue dd = resp [rng.Next(resp.Count)];
+					DateDialogue dd = resp [rng.Next (resp.Count)];
 					StoryTxtHeader.text = "Date Dialogue";
 					StoryTxt.text = dd.storyText;
 
@@ -637,6 +685,28 @@ public class GameState : MonoBehaviour {
 						dd.option2,
 						dd.option3
 					);		
+				} else if (AfterFadeState == ActState.DateAction) {
+					StoryTxtHeader.text = "Date Dialogue";
+					StoryTxt.text = "Your date is deciding what to do...";
+					NextText.text = "(Date Acting)";
+
+					// No responses here
+					ShowBoxes (null, null, null);	
+				} else if (AfterFadeState == ActState.FansAction) {
+					StoryTxtHeader.text = "Fan Reactions";
+					StoryTxt.text = "";
+					NextText.text = "(Fan Phase)";
+
+					// No responses here
+					ShowBoxes (null, null, null);	
+				} else if (AfterFadeState == ActState.PlayerActionSelect) {
+					StoryTxtHeader.text = "Date Action";
+					StoryTxt.text = "";
+					SkipText.text = "Main Action";
+					NextText.text = "(In Story)";
+
+					// No responses here
+					ShowBoxes (null, null, null);	
 				} else {
 					// Standard date text
 					DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];
@@ -663,7 +733,7 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.FadingTextIn) {
 			bool overflow = false;
 			float newAlpha = StoryTxt.color.a + 1.2f * Time.deltaTime;
-			if (newAlpha >= 1) {
+			if (newAlpha >= 0.85) {
 				newAlpha = 1;
 				overflow = true;
 			}
@@ -674,7 +744,15 @@ public class GameState : MonoBehaviour {
 			Response2.GetComponentInChildren <Text> ().color = newAlphaColor;
 			Response3.GetComponentInChildren <Text> ().color = newAlphaColor;
 			if (overflow) {
-				CurrState = AfterFadeState;
+				if (AfterFadeState == ActState.DateAction) {
+					SetupDateTurn ();
+				} else if (AfterFadeState == ActState.FansAction) {
+					StartFansActionState ();
+				} else if (AfterFadeState == ActState.PlayerActionSelect) {
+					SetupChoosePlayerAction ();	
+				} else {
+					CurrState = AfterFadeState;
+				}
 			}
 		}
 			

@@ -64,7 +64,7 @@ public class Lead {
 
 
 	/* special resources */
-	private uint promotions = 3;
+	//private uint promotions = 3;
 	private string[] perks;
 
 	/* movement */

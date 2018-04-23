@@ -176,7 +176,7 @@ public class TokenHandler : MonoBehaviour {
 				curr = next;
 			} else {
 				// Shouldn't happen
-				return null;
+				break;
 			}
 		}
 
