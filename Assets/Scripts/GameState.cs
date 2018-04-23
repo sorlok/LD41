@@ -11,12 +11,25 @@ public class GameState : MonoBehaviour {
 		throw new System.ArgumentException (msg);
 	}
 
+	public GameObject LeftPanel;
+	public GameObject AttributesPanel;
+	public GameObject PhasePanel;
+
+	public GameObject RightPanel;
+	public GameObject DialoguePanel;
+	public GameObject BigButtonPanel;
+
+	// Big button texts
+	public Text SkipText;
+	public Text NextText;
+
 	public AudioSource sfxSource;
 	public AudioClip buttonSFX;
 	public AudioClip turnSFX;
 
 	// Page 1: Dating container object and text + options.
 	public GameObject DialogueStoryTab;
+	public Text StoryTxtHeader;
 	public Text StoryTxt;
 	public Button Response1;
 	public Button Response2;
@@ -41,6 +54,11 @@ public class GameState : MonoBehaviour {
 
 	public GameObject GlobalCanvas;
 	public GameObject MapHandler;
+
+	// Used to reset stamps
+	public GameObject RespStamp1;
+	public GameObject RespStamp2;
+	public GameObject RespStamp3;
 
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
@@ -84,7 +102,46 @@ public class GameState : MonoBehaviour {
 		DateActSocialMedia,  // Date is ignoring you and interacting with their fans
 		DateActTalkToYou,  // Date is interacting with you
 		DateActShowReward, // We're looking at the "reward" the date got from talking to you or using social media.
+
+		// In the middle of some UI interpolation
+		DoingInterp,
+
+		// Fading the text out/in for a story text transition
+		FadingTextOut,
+		FadingTextIn,
 	}
+
+	// The state to set after the next fade?
+	private ActState AfterFadeState;
+
+	// Whether or not our date liked the last response
+	private char LastDateResponse;
+
+	// Current interpolation variables
+	private float interpStartTime;
+	private float interpTotalLength;
+	private float interpSpeed = 1.2f;
+
+	// Interpolation 1
+	private Transform interpTarget;
+	private Vector3 interpStartPos;
+	private Vector3 interpEndPos;
+	private Vector3 interpStartSz;
+	private Vector3 interpEndSz;
+
+	// Interpolation 2
+	private Transform interpTarget2;
+	private Vector3 interpStartPos2;
+	private Vector3 interpEndPos2;
+	private Vector3 interpStartSz2;
+	private Vector3 interpEndSz2;
+
+	// Interpolation 3
+	private Transform interpTarget3;
+	private Vector3 interpStartPos3;
+	private Vector3 interpEndPos3;
+	private Vector3 interpStartSz3;
+	private Vector3 interpEndSz3;
 		
 
 	// Current state tree entry. Sub-state(s) should be set to 0 on state change.
@@ -115,30 +172,140 @@ public class GameState : MonoBehaviour {
 		}
 	}
 
+	private bool updateInterpolation() {
+		float distCovered = (Time.time - interpStartTime) * interpSpeed;
+		float fracJourney = distCovered / interpTotalLength;
+
+		interpTarget.position = Vector3.Lerp(interpStartPos, interpEndPos, fracJourney);
+		interpTarget.localScale = Vector3.Lerp (interpStartSz, interpEndSz, fracJourney);
+
+		interpTarget2.position = Vector3.Lerp(interpStartPos2, interpEndPos2, fracJourney);
+		interpTarget2.localScale = Vector3.Lerp (interpStartSz2, interpEndSz2, fracJourney);
+
+		interpTarget3.position = Vector3.Lerp(interpStartPos3, interpEndPos3, fracJourney);
+		interpTarget3.localScale = Vector3.Lerp (interpStartSz3, interpEndSz3, fracJourney);
+
+		return interpTarget.position == interpEndPos;
+	}
+
+	public void ReactToStamp(int stampId) { // 1, 2, 3 for stamp ID
+		// Beginning of game: show the timer, show the dialogue box
+		if (CurrState == ActState.Nothing) {
+			// Start Invisible
+			StoryTxtHeader.text = "Date Action";
+			StoryTxt.text = "";
+			ShowBoxes (null, null, null);
+
+			// First interpolation
+			interpEndPos = PhasePanel.transform.position;
+			interpStartPos = PhasePanel.transform.position + new Vector3 (1.3f, 0, 0);
+			interpEndSz = new Vector3 (1, 1, 1);
+			interpStartSz = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget = PhasePanel.transform;
+			PhasePanel.SetActive (true);
+
+			// Second interpolation
+			interpEndPos2 = DialoguePanel.transform.position;
+			interpStartPos2 = DialoguePanel.transform.position + new Vector3 (0, 0, -0.5f);
+			interpEndSz2 = new Vector3 (1, 1, 1);
+			interpStartSz2 = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget2 = DialoguePanel.transform;
+			DialoguePanel.SetActive (true);
+
+			// Third interpolation
+			interpEndPos3 = AttributesPanel.transform.position;
+			interpStartPos3 = AttributesPanel.transform.position + new Vector3 (0, 0, 1f);
+			interpEndSz3 = new Vector3 (1, 1, 1);
+			interpStartSz3 = new Vector3 (0.1f, 0.1f, 0.1f);
+			interpTarget3 = AttributesPanel.transform;
+			AttributesPanel.SetActive (true);
+
+			// Set up the interpolation
+			interpStartTime = Time.time;
+			interpTotalLength = Vector3.Distance (interpStartPos, interpEndPos);
+
+			// Update all
+			updateInterpolation ();
+
+			CurrState = ActState.DoingInterp;
+			return;
+		}
+
+		// Phase 1: Select talk, tweet, or move
+		if (CurrState == ActState.PlayerActionSelect) {
+			if (stampId == 1) {
+				// Talk to date
+				// Fade out text, fade in new text
+				CurrState = ActState.FadingTextOut;
+				AfterFadeState = ActState.ChooseInteractTalk;
+
+
+			} else if (stampId == 2) {
+				// Tweet @ fans
+			} else if (stampId == 3) {
+				// Move date location
+				// TEMP: should restrict this to turns 3+
+				StoryTxt.text = "You can't move to a new date location yet; you just arrived at this one!";
+			}
+
+			return;
+		}
+
+		// Phase 1.A - Date reacts to dialogue choice
+		if (CurrState == ActState.ChooseInteractTalk) {
+			CurrState = ActState.FadingTextOut;
+			AfterFadeState = ActState.TalkDateSelectReact;
+
+			ChoiceParticles.GetComponent<ParticleOrientor>().OrientParticles ();
+			ChoiceParticles.Clear ();
+			ChoiceParticles.gameObject.SetActive (true);
+			// Particles
+			LastDateResponse = new char[]{'G','B','N'}[rng.Next(3)];
+			if (LastDateResponse == 'G') {
+				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
+			} else if (LastDateResponse == 'N') {
+				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
+			} else {
+				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
+			}
+
+			sfxSource.clip = buttonSFX;
+			sfxSource.Play ();
+
+			ChoiceParticles.Play();
+			Invoke("ChoiceParticlesDone", 2);
+		
+		}
+	}
+
 	// TEST
 	public void TestFunction(uint val) {
 		Debug.Log ("TEST: " + val);
 	}
 
 	public void SetupChoosePlayerAction() {
-		//testLead.SelfEsteemTracker += TestFunction; // TEMP
-
 		StoryTxt.text = "What will you do this turn?";
 		ShowBoxes (
-			"Interact with Date",
-			"Interact with Fans",
-			"End Date"
+			"Talk to Date",
+			"Tweet @Fans",
+			"Change Date Location"
 		);
-		DialogueStoryTab.SetActive (true);
+		//DialogueStoryTab.SetActive (true);
 		CurrState = ActState.PlayerActionSelect;
+
+		// Set Next button text
+		SkipText.text = "Main Action";
+		NextText.text = "(In Story)";
+
+		// Reset button stamp statuses (but not for the bottom item).
+		// TODO
+
+		// Update Phase name
 		phaseName = "Your Turn";
 		phaseHandler.UpdateActiveUser (phaseName);
 	}
 
 	public void SetupInteractWithDate() {
-		//testLead.SelfEsteem = 20;
-		//testLead.SelfEsteem = 100;
-
 		StoryTxt.text = "How will you interact with your date?";
 		ShowBoxes (
 			"Talk to Them",
@@ -150,7 +317,7 @@ public class GameState : MonoBehaviour {
 		CurrState = ActState.ChooseInteractWithDate;
 	}
 
-	public void SetupTalkToDate() {
+/*	public void SetupTalkToDate() {
 		DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(4)];
 
 		StoryTxt.text = dd.storyText;
@@ -162,7 +329,7 @@ public class GameState : MonoBehaviour {
 
 		DialogueStoryTab.SetActive (true);
 		CurrState = ActState.ChooseInteractTalk;
-	}
+	}*/
 
 	public void SetupDateTurn() {
 		DialogueStoryTab.SetActive (false);
@@ -198,6 +365,7 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void ChooseOption(int opt) {
+		/*
 		// Being asked to select the interaction method.
 		if (CurrState == ActState.PlayerActionSelect) {
 			if (opt == 1) {
@@ -218,7 +386,7 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.ChooseInteractWithDate) {
 			if (opt == 1) {
 				// Talk to your date
-				SetupTalkToDate ();
+				CurrState = ActState.ChooseInteractTalk;
 			} else if (opt == 2) {
 				// Interact with them
 			} else if (opt == 3) {
@@ -273,16 +441,17 @@ public class GameState : MonoBehaviour {
 
 		// Comment out on release.
 		ThrowException ("Bad option: " + opt);
+		*/
 	}
 
 	public void ChoiceParticlesDone() {
-		ShowBoxes (
+		/*ShowBoxes (
 			"Done Talking"
 		);
 
 		// Set Response
 		StoryTxt.text = "Wow, what a...\nnice? thing to say...";
-
+*/
 		// Need to move the state along.
 		CurrState = ActState.TalkDateViewResponse;
 	}
@@ -322,6 +491,18 @@ public class GameState : MonoBehaviour {
 
 		// TEMP: Testing fan actions
 		//StartFansActionState();
+
+		// Start with stats, time hidden, just "next" button ready
+		LeftPanel.SetActive (true);
+		AttributesPanel.SetActive (false);
+		PhasePanel.SetActive (false);
+		RightPanel.SetActive (true);
+		DialoguePanel.SetActive (false);
+		BigButtonPanel.SetActive (true);
+
+		// Set up start text on Big Button Panel
+		SkipText.text = "Your Date Starts at 7pm";
+		NextText.text = "Begin Date";
 
 	}
 
@@ -406,11 +587,101 @@ public class GameState : MonoBehaviour {
 			SkipPhase = ActState.Nothing;
 		}
 
-		if (Input.GetKey (KeyCode.W)) {
+		/*if (Input.GetKey (KeyCode.W)) {
 			if (CurrState == GameState.ActState.Nothing) {
 				SetupChoosePlayerAction();
 				return;
 			}
+		}*/
+
+		//  Deal with interpolation?
+		if (CurrState == ActState.DoingInterp) {
+			if (updateInterpolation ()) {
+				// What to do next?
+				SetupChoosePlayerAction ();
+			}
+		}
+
+		// Deal with text fading?
+		if (CurrState == ActState.FadingTextOut) {
+			bool overflow = false;
+			float newAlpha = StoryTxt.color.a - 1.2f * Time.deltaTime;
+			if (newAlpha <= 0) {
+				newAlpha = 0;
+				overflow = true;
+			}
+			Color newAlphaColor = new Color (StoryTxt.color.r, StoryTxt.color.g, StoryTxt.color.b, newAlpha);
+			StoryTxt.color = newAlphaColor;
+			StoryTxtHeader.color = newAlphaColor;
+			Response1.GetComponentInChildren <Text> ().color = newAlphaColor;
+			Response2.GetComponentInChildren <Text> ().color = newAlphaColor;
+			Response3.GetComponentInChildren <Text> ().color = newAlphaColor;
+			if (overflow) {
+
+				// Set Story text or response text
+				if (AfterFadeState == ActState.TalkDateSelectReact) {
+					List<DateDialogue> resp = dateDialogues.DialogueBadResponses;
+					if (LastDateResponse == 'G') {
+						resp = dateDialogues.DialogueGoodResponses;
+					} else if (LastDateResponse == 'N') {
+						resp = dateDialogues.DialogueNeutralResponses;
+					}
+
+					DateDialogue dd = resp [rng.Next(resp.Count)];
+					StoryTxtHeader.text = "Date Dialogue";
+					StoryTxt.text = dd.storyText;
+
+					// Set response text
+					ShowBoxes (
+						dd.option1,
+						dd.option2,
+						dd.option3
+					);		
+				} else {
+					// Standard date text
+					DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];
+					StoryTxtHeader.text = "Date Dialogue";
+					StoryTxt.text = dd.storyText;
+
+					// Set response text
+					ShowBoxes (
+						dd.option1,
+						dd.option2,
+						dd.option3
+					);
+				}
+					
+				// Hide stamps; change to fade-in
+				RespStamp1.GetComponent<StampHandler>().HideStamp ();
+				RespStamp2.GetComponent<StampHandler>().HideStamp ();
+				RespStamp3.GetComponent<StampHandler>().HideStamp ();
+				CurrState = ActState.FadingTextIn;
+			}
+		}
+
+		// Deal with text fading?
+		if (CurrState == ActState.FadingTextIn) {
+			bool overflow = false;
+			float newAlpha = StoryTxt.color.a + 1.2f * Time.deltaTime;
+			if (newAlpha >= 1) {
+				newAlpha = 1;
+				overflow = true;
+			}
+			Color newAlphaColor = new Color (StoryTxt.color.r, StoryTxt.color.g, StoryTxt.color.b, newAlpha);
+			StoryTxt.color = newAlphaColor;
+			StoryTxtHeader.color = newAlphaColor;
+			Response1.GetComponentInChildren <Text> ().color = newAlphaColor;
+			Response2.GetComponentInChildren <Text> ().color = newAlphaColor;
+			Response3.GetComponentInChildren <Text> ().color = newAlphaColor;
+			if (overflow) {
+				CurrState = AfterFadeState;
+			}
+		}
+			
+		// Test-driven development for heart animation... >3>
+		if (Input.GetKey (KeyCode.F)) {
+			MapHandler.GetComponent<MapHandler> ().CreateHeart(5,5);
+			return;
 		}
 
 		// Deal with counter
@@ -427,7 +698,5 @@ public class GameState : MonoBehaviour {
 		if (NPCMoveCount < NPCMoveCountMax) {
 			AdvanceNPCMoveCounter (Time.deltaTime);
 		}
-
-		
 	}
 }

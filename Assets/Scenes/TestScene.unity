@@ -9157,6 +9157,7 @@ GameObject:
   - component: {fileID: 163452696}
   - component: {fileID: 163452695}
   - component: {fileID: 163452694}
+  - component: {fileID: 163452697}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -9235,6 +9236,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 163452692}
+--- !u!114 &163452697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 163452692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42253307f8d304eb3a4a42d591b8e868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextTrack: {fileID: 163452695}
+  StatTrack: 2
+  MapHandler: {fileID: 1112720158}
 --- !u!1 &165503784
 GameObject:
   m_ObjectHideFlags: 0
@@ -15005,12 +15020,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 323882353}
   m_Mesh: {fileID: 4300000, guid: 346e6344cc8e5b341b9636ebc1363d21, type: 3}
---- !u!114 &324918888 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114955290914524020, guid: bbfc63a2f775d453195e9a4b23f8d037,
-    type: 2}
-  m_PrefabInternal: {fileID: 793812731}
-  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &325075849
 GameObject:
   m_ObjectHideFlags: 0
@@ -18500,14 +18509,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc08c20a8ee3e4146aed2f9a37cb039f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LeftPanel: {fileID: 798296889}
+  AttributesPanel: {fileID: 808978413}
+  PhasePanel: {fileID: 1453999552}
+  RightPanel: {fileID: 297781419}
+  DialoguePanel: {fileID: 1169713386}
+  BigButtonPanel: {fileID: 694917656}
+  SkipText: {fileID: 90171496}
+  NextText: {fileID: 146942557}
   sfxSource: {fileID: 315532594}
   buttonSFX: {fileID: 8300000, guid: b126f52af89c948f3b8b23c2043057ab, type: 3}
   turnSFX: {fileID: 8300000, guid: 33eb4fd8b32e54d1faeb7d340364296d, type: 3}
   DialogueStoryTab: {fileID: 1692605043}
-  StoryTxt: {fileID: 1353009971}
-  Response1: {fileID: 1754246150}
-  Response2: {fileID: 1809682767}
-  Response3: {fileID: 324918888}
+  StoryTxtHeader: {fileID: 278814681}
+  StoryTxt: {fileID: 446030202}
+  Response1: {fileID: 1360999572}
+  Response2: {fileID: 1829300823}
+  Response3: {fileID: 280840260}
   ChoiceParticles: {fileID: 123588093}
   GoodOptionTexture: {fileID: 2100000, guid: 5a5929fe436b74360aff6f3dff05616b, type: 2}
   NeutralOptionTexture: {fileID: 2100000, guid: 86dc989846e524b5d8c5a2a10dd60d03,
@@ -18521,6 +18539,9 @@ MonoBehaviour:
   DateProgressSkipBtn: {fileID: 716427883}
   GlobalCanvas: {fileID: 1367222992}
   MapHandler: {fileID: 1112720158}
+  RespStamp1: {fileID: 1457615869}
+  RespStamp2: {fileID: 815969740}
+  RespStamp3: {fileID: 1260985628}
   CurrState: 0
   phaseName: 
   phaseHandler: {fileID: 1453999554}
@@ -30803,6 +30824,8 @@ MonoBehaviour:
   buttonA: {fileID: 1360999572}
   buttonB: {fileID: 1829300823}
   buttonC: {fileID: 280840260}
+  MyStampId: 2
+  GameHandler: {fileID: 430121448}
 --- !u!1 &819758463
 GameObject:
   m_ObjectHideFlags: 0
@@ -40272,12 +40295,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7b47d26ff38c04fa83dee9e1f5395e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDebugMoves: 1
   mapTileValues: 
   mapTileHeights: 
+  debugArray: []
   mapTileWidth: 10
   mapTileHeight: 10
   LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
   FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
+  DebugPrefab: {fileID: 1197471345975690, guid: a3fa1a4d4cc1f4dc59668d5f732c5dc8,
+    type: 2}
+  heartPrefab: {fileID: 1189565663332404, guid: 9e0c4c4a24e634a02ba85cf0de0e1d44,
+    type: 2}
   sfxSource: {fileID: 315532594}
   movementSFX:
   - {fileID: 8300000, guid: 38f36dd706ac9429398cebff173f7dc6, type: 3}
@@ -45353,6 +45382,8 @@ MonoBehaviour:
   buttonA: {fileID: 1360999572}
   buttonB: {fileID: 1829300823}
   buttonC: {fileID: 280840260}
+  MyStampId: 3
+  GameHandler: {fileID: 430121448}
 --- !u!1 &1262617898
 GameObject:
   m_ObjectHideFlags: 0
@@ -46767,6 +46798,7 @@ GameObject:
   - component: {fileID: 1311253865}
   - component: {fileID: 1311253864}
   - component: {fileID: 1311253863}
+  - component: {fileID: 1311253866}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -46845,6 +46877,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1311253861}
+--- !u!114 &1311253866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1311253861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42253307f8d304eb3a4a42d591b8e868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextTrack: {fileID: 1311253864}
+  StatTrack: 1
+  MapHandler: {fileID: 1112720158}
 --- !u!1 &1311591850
 GameObject:
   m_ObjectHideFlags: 0
@@ -48553,7 +48599,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1367222993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51685,6 +51731,8 @@ MonoBehaviour:
   buttonA: {fileID: 1360999572}
   buttonB: {fileID: 1829300823}
   buttonC: {fileID: 280840260}
+  MyStampId: 1
+  GameHandler: {fileID: 430121448}
 --- !u!1 &1458877984
 GameObject:
   m_ObjectHideFlags: 0
@@ -56201,6 +56249,8 @@ MonoBehaviour:
   buttonA: {fileID: 0}
   buttonB: {fileID: 1915069268}
   buttonC: {fileID: 0}
+  MyStampId: 1
+  GameHandler: {fileID: 430121448}
 --- !u!114 &1586779895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57838,6 +57888,7 @@ GameObject:
   - component: {fileID: 1632961016}
   - component: {fileID: 1632961015}
   - component: {fileID: 1632961014}
+  - component: {fileID: 1632961017}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -57916,6 +57967,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1632961012}
+--- !u!114 &1632961017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1632961012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42253307f8d304eb3a4a42d591b8e868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextTrack: {fileID: 1632961015}
+  StatTrack: 0
+  MapHandler: {fileID: 1112720158}
 --- !u!1 &1633197627
 GameObject:
   m_ObjectHideFlags: 0
@@ -62598,12 +62663,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1753373640}
   m_Mesh: {fileID: 4300000, guid: 192240efa1e00fa46adc8cef055ef614, type: 3}
---- !u!114 &1754246150 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114955290914524020, guid: bbfc63a2f775d453195e9a4b23f8d037,
-    type: 2}
-  m_PrefabInternal: {fileID: 1776113003}
-  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &1755110798
 GameObject:
   m_ObjectHideFlags: 0
@@ -63195,6 +63254,7 @@ GameObject:
   - component: {fileID: 1773235748}
   - component: {fileID: 1773235747}
   - component: {fileID: 1773235746}
+  - component: {fileID: 1773235749}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -63273,6 +63333,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1773235744}
+--- !u!114 &1773235749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1773235744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42253307f8d304eb3a4a42d591b8e868, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TextTrack: {fileID: 1773235747}
+  StatTrack: 3
+  MapHandler: {fileID: 1112720158}
 --- !u!1001 &1773496476
 Prefab:
   m_ObjectHideFlags: 0
@@ -64450,12 +64524,6 @@ Transform:
   m_Father: {fileID: 654180452}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &1809682767 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114955290914524020, guid: bbfc63a2f775d453195e9a4b23f8d037,
-    type: 2}
-  m_PrefabInternal: {fileID: 1390244964}
-  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!1 &1811105038
 GameObject:
   m_ObjectHideFlags: 0

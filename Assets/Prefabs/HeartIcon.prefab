@@ -37,8 +37,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4863628341252638}
+  - component: {fileID: 114620331650406176}
+  - component: {fileID: 114573020676630458}
   m_Layer: 0
-  m_Name: Heart
+  m_Name: HeartIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -114,7 +116,7 @@ Transform:
   m_GameObject: {fileID: 1189565663332404}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 35, y: 100, z: 50}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children:
   - {fileID: 4503077570149258}
   - {fileID: 4911568202303696}
@@ -270,6 +272,31 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114573020676630458
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1189565663332404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 290b6c172403c479698509ae9ecb8e38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114620331650406176
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1189565663332404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65ad6852bef8f0e40b2ca83ecba7bb8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  self: {fileID: 0}
+  MapHandler: {fileID: 0}
+  MovedThisTurn: 0
 --- !u!135 &135048281330819644
 SphereCollider:
   m_ObjectHideFlags: 1
