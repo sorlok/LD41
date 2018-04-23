@@ -161,7 +161,7 @@ public class GameState : MonoBehaviour {
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
-	private static float NPCMoveCountMax = 0.5f;
+	private static float NPCMoveCountMax = 0.9f;
 	private float NPCMoveCount = NPCMoveCountMax;
 
 	private DateDialogues dateDialogues;
@@ -571,12 +571,45 @@ public class GameState : MonoBehaviour {
 	}
 
 	// Modify the stat and return a string describing it.
-	private string RandomlyModifyStats() {
-		// Can add other stuff here.
-		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem += 1;
-		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount += 2;
+	private string RandomlyModifyStatsFromTweet() {
+		return RandomlyModifyStatsAny (40);
+	}
 
-		return "\n  +1 Self Esteem" + "\n  +2 Fans";
+	private string RandomlyModifyStatsAny(int fanCutoff) {
+		// Basically, favor additions and fans; sometimes negations and self esteem.
+		string res = "";
+		int count = rng.Next(100) > 75 ? 2 : 1;
+		for (int i = 0; i < count; i++) {
+			bool positive = rng.Next (100) > 75;
+			uint amt = rng.Next (100) > 75 ? 2u : 1u;
+			if (rng.Next (100) > fanCutoff) {
+				// Fans
+				amt *= 10;
+				if (positive) {
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount += amt;
+					res += "\n  +" + amt + " Fans";
+				} else {
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount -= amt;
+					res += "\n  -" + amt + " Fans";
+				}
+			} else {
+				// Self Esteem
+				if (positive) {
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem += amt;
+					res += "\n  +" + amt + " Self Esteem";
+				} else {
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem -= amt;
+					res += "\n  -" + amt + " Self Esteem";
+				}
+			}
+		}
+			
+		return res;
+	}
+
+	// Similar to above, but reversed in some aspects
+	private string RandomlyModifyStatsFromPersonal() {
+		return RandomlyModifyStatsAny (60);
 	}
 
 	private void AdvanceCounter(float amt) {
@@ -600,7 +633,11 @@ public class GameState : MonoBehaviour {
 				//DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Ok";
 				//ResultTxt.gameObject.SetActive (true);
 
-				StoryTxt.text += "\n" + RandomlyModifyStats();
+				if (CurrState == ActState.DateActSocialMedia) {
+					StoryTxt.text += "\n" + RandomlyModifyStatsFromTweet ();
+				} else {
+					StoryTxt.text += "\n" + RandomlyModifyStatsFromPersonal ();
+				}
 
 				// Set up next button again
 				NextStamp.GetComponent<StampHandler>().HideStamp ();
