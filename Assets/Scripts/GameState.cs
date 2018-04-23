@@ -186,8 +186,12 @@ public class GameState : MonoBehaviour {
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
-	private static float NPCMoveCountMax = 0.5f;
-	private float NPCMoveCount = NPCMoveCountMax;
+	private static float NPCMoveCountMaxSlow = 0.5f;
+	private static float NPCMoveCountMaxFast = 0.3f;
+	private float NPCMoveCount = NPCMoveCountMaxSlow;
+
+	// What max are we looking at now?
+	private static float NPCMoveCountMaxNow = NPCMoveCountMaxSlow;
 
 	private DateDialogues dateDialogues;
 
@@ -637,6 +641,7 @@ public class GameState : MonoBehaviour {
 		phaseName = "Fans' Turns";
 		phaseHandler.UpdateActiveUser (phaseName);
 		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
+		NPCMoveCountMaxNow = NPCMoveCountMaxSlow;
 		NPCMoveCount = 0;
 	}
 
@@ -683,7 +688,7 @@ public class GameState : MonoBehaviour {
 
 			// Reset practically everything
 			DateActCount = DateActCountMax;
-			NPCMoveCount = NPCMoveCountMax;
+			NPCMoveCount = NPCMoveCountMaxSlow;
 		}
 	}
 
@@ -769,21 +774,34 @@ public class GameState : MonoBehaviour {
 	}
 
 	private void AdvanceNPCMoveCounter(float amt) {
+		if (CurrState == ActState.GameOverFadein || CurrState == ActState.GameOverOnscreen) {
+			NPCMoveCount = NPCMoveCountMaxNow;
+			return;
+		}
+
 		NPCMoveCount += amt;
 
 		// TODO: Update NPC movement
 
 		// Trigger?
-		if (NPCMoveCount >= NPCMoveCountMax) {
+		if (NPCMoveCount >= NPCMoveCountMaxNow) {
 			// What were we in the middle of?
 			if (CurrState == ActState.FansAction) {
 				// Move a fan randomly, if one is next
 				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
 					NPCMoveCount = 0;
 				} else {
-					CurrState = ActState.WaitingFanAckFromPlayer;
-					NextStamp.GetComponent<StampHandler>().HideStamp ();
-					NextText.text = "Time Marches On...";
+					// Is the state done, or are we doing it again?
+					if (NPCMoveCountMaxNow == NPCMoveCountMaxSlow) {
+						NPCMoveCountMaxNow = NPCMoveCountMaxFast;
+						NPCMoveCount = 0;
+						MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
+					} else {
+						// Ok, we're actualy done
+						CurrState = ActState.WaitingFanAckFromPlayer;
+						NextStamp.GetComponent<StampHandler> ().HideStamp ();
+						NextText.text = "Time Marches On...";
+					}
 
 				}
 
@@ -1081,7 +1099,7 @@ public class GameState : MonoBehaviour {
 		}
 
 		// Deal with NPCs
-		if (NPCMoveCount < NPCMoveCountMax) {
+		if (NPCMoveCount < NPCMoveCountMaxNow) {
 			AdvanceNPCMoveCounter (Time.deltaTime);
 		}
 	}

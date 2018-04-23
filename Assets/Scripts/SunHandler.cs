@@ -55,7 +55,7 @@ public class SunHandler : MonoBehaviour {
 	}
 
 	public void RecolorSun (bool updateState=true) {
-		Debug.Log ("Sun: " + sunState);
+		//Debug.Log ("Sun: " + sunState);
 		switch (sunState) {
 		case 0:
 			sun.GetComponent<Light> ().color = sunColor0;
