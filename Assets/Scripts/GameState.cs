@@ -39,6 +39,7 @@ public class GameState : MonoBehaviour {
 	public AudioSource sfxSourceTurn;
 	public AudioClip turnSFX;
 
+	public AudioClip cashSFX;
 	public AudioClip buttonEvilLaugh;
 
 	// Page 1: Dating container object and text + options.
@@ -77,6 +78,8 @@ public class GameState : MonoBehaviour {
 	private ActState SkipPhase = ActState.Nothing; 	// Hack to avoid double-clicking
 
 	public TweetHandler tweetHandler;
+
+	public int preFanHP;
 
 	// General random generator
 	public static System.Random rng = new System.Random();
@@ -306,6 +309,8 @@ public class GameState : MonoBehaviour {
 
 			} else if (stampId == 2) {
 				// Tweet @ fans
+				StoryTxt.text += "\n\nUse the mouse to aim; click to fire off a tweet.";
+
 				tweetHandler.StartTweeting();
 			} else if (stampId == 3) {
 				// Move date location
@@ -331,8 +336,11 @@ public class GameState : MonoBehaviour {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 2;
 			} else if (LastDateResponse == 'N') {
+				//int tileX = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileX;
+				//int tileY = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileY;
 				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 1;
+				//MapHandler.GetComponent<MapHandler> ().CreateHeart (tileX, tileY);
 			} else {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem -= 1;
@@ -392,6 +400,11 @@ public class GameState : MonoBehaviour {
 
 	public void PlayEvilLaugh() {
 		sfxSourceBtn.clip = buttonEvilLaugh;
+		sfxSourceBtn.Play ();
+	}
+
+	public void PlayCashSound() {
+		sfxSourceBtn.clip = cashSFX;
 		sfxSourceBtn.Play ();
 	}
 
@@ -460,6 +473,25 @@ public class GameState : MonoBehaviour {
 		CurrState = ActState.ChooseInteractTalk;
 	}*/
 
+	public void SetupDateTurnAfterTwee() {
+		if (CurrState == ActState.PlayerActionSelect) {
+			StoryTxtHeader.text = "Date Dialogue";
+			StoryTxt.text = "Your date is deciding what to do...";
+			NextText.text = "(Date Acting)";
+
+			// No responses here
+			ShowBoxes (null, null, null);
+
+			// Hack
+			RespStamp1.GetComponent<StampHandler>().HideStamp ();
+			RespStamp2.GetComponent<StampHandler>().HideStamp ();
+			RespStamp3.GetComponent<StampHandler>().HideStamp ();
+
+			// Done
+			SetupDateTurn ();
+		}
+	}
+
 	public void SetupDateTurn() {
 		// unused
 		//DialogueStoryTab.SetActive (false);
@@ -470,7 +502,6 @@ public class GameState : MonoBehaviour {
 		DateActionTab.transform.localPosition = new Vector3 (0, 0, 0);
 		DateProgressSkipBtn.GetComponentInChildren <Text> ().text = "Skip";
 		ResultTxt.gameObject.SetActive (false);
-		//StoryTxt.text = "Your date is deciding what to do...";
 		DateProressBar.gameObject.transform.localScale = new Vector3 (0, 1, 1);
 		DateActionTab.SetActive (true);
 		DateActCount = 0;
@@ -755,6 +786,14 @@ public class GameState : MonoBehaviour {
 					NextText.text = "Time Marches On...";
 
 				}
+
+				// Update HP
+				int totalDmg = preFanHP - MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem;
+				if (totalDmg > 0) {
+					StoryTxt.text = "Fans have done a total of " + totalDmg + " damage to your self esteem.";
+				} else if (CurrState == ActState.WaitingFanAckFromPlayer) {
+					StoryTxt.text = "You have weathered the onslaught of your fans with your self esteem intact (for now).";
+				}
 			} else {
 				ThrowException ("Bad NPC current state: " + CurrState);
 			}
@@ -916,6 +955,8 @@ public class GameState : MonoBehaviour {
 
 					// No responses here
 					ShowBoxes (null, null, null);	
+
+					preFanHP = MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem;
 				} else if (AfterFadeState == ActState.PlayerActionSelect) {
 					StoryTxtHeader.text = "Date Action";
 					StoryTxt.text = "";
@@ -936,7 +977,7 @@ public class GameState : MonoBehaviour {
 						TokenHandler leadPlayer = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ();
 						TokenHandler leadDate = MapHandler.GetComponent<MapHandler> ().LeadDate.GetComponent<TokenHandler> ();
 						if (phaseHandler.thisHour == 7) {
-							StoryTxt.text = "You leave the romantic highway overlook behind, and move to your backyard, doding fans along the way.";
+							StoryTxt.text = "You leave the romantic highway overlook behind, and move to your backyard, dodging fans along the way.";
 							StoryTxt.text += "\n\n  +25 Atmosphere";
 							MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.Atmosphere = "B";
 							ShowBoxes (null, "Resume Date", null);
