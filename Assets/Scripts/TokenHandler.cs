@@ -133,7 +133,7 @@ public class TokenHandler : MonoBehaviour {
 				lookup [mapHnd.GetTileIndex (newPos.x, newPos.y)]  = newDist;
 
 				// TEMP: Useful debugging
-				if (mapHnd.showDebugMoves) {
+				if (false) { //mapHnd.showDebugMoves
 					mapHnd.debugArray [mapHnd.GetTileIndex (newPos.x, newPos.y)].text = "" + newDist;
 				}
 			}

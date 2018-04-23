@@ -279,10 +279,13 @@ public class GameState : MonoBehaviour {
 			LastDateResponse = new char[]{'G','B','N'}[rng.Next(3)];
 			if (LastDateResponse == 'G') {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
+				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 2;
 			} else if (LastDateResponse == 'N') {
 				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
+				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += 1;
 			} else {
 				ChoiceParticles.GetComponent<Renderer> ().material = BadOptionTexture;
+				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem -= 1;
 			}
 
 			PlayButtonSound ();

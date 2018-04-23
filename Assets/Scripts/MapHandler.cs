@@ -23,7 +23,7 @@ public class IntPoint
 }
 
 public class MapHandler : MonoBehaviour {
-	public bool showDebugMoves = false;
+	//public bool showDebugMoves = false;
 
 	public List<int> mapTileValues = new List<int>();
 
@@ -36,7 +36,12 @@ public class MapHandler : MonoBehaviour {
 	public int mapTileHeight = 10;
 
 	// Used to create the lead/fan
-	public GameObject LeadPrefab;
+	public GameObject LeadPrefab0M;
+	public GameObject LeadPrefab1M;
+	public GameObject LeadPrefab2M;
+	public GameObject LeadPrefab0W;
+	public GameObject LeadPrefab1W;
+	public GameObject LeadPrefab2W;
 	public GameObject FanPrefab;
 	public GameObject DebugPrefab;
 
@@ -121,7 +126,7 @@ public class MapHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		// TEMP: Some useful debug code
-		if (showDebugMoves) {
+		if (false) { //showDebugMoves
 			for (int i = 0; i < mapTileWidth * mapTileHeight; i++) {
 				debugArray.Add (null);
 			}
@@ -198,7 +203,21 @@ public class MapHandler : MonoBehaviour {
 	}
 
 	public GameObject CreateLead(int tileX, int tileY) {
-		GameObject res = Instantiate(LeadPrefab, new Vector3(0, 2, 0), Quaternion.identity);
+		int nxt = GameState.rng.Next (6);
+		GameObject res = null;
+		if (nxt == 0) {
+			res = Instantiate(LeadPrefab0M, new Vector3(0, 2, 0), Quaternion.identity);
+		} else if (nxt == 1) {
+			res = Instantiate(LeadPrefab0W, new Vector3(0, 2, 0), Quaternion.identity);
+		} else if (nxt == 2) {
+			res = Instantiate(LeadPrefab1M, new Vector3(0, 2, 0), Quaternion.identity);
+		} else if (nxt == 3) {
+			res = Instantiate(LeadPrefab1W, new Vector3(0, 2, 0), Quaternion.identity);
+		} else if (nxt == 4) {
+			res = Instantiate(LeadPrefab2M, new Vector3(0, 2, 0), Quaternion.identity);
+		} else {
+			res = Instantiate(LeadPrefab2W, new Vector3(0, 2, 0), Quaternion.identity);
+		}
 		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
 		res.GetComponent<TokenHandler> ().self = res;
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);

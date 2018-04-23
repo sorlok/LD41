@@ -43975,13 +43975,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7b47d26ff38c04fa83dee9e1f5395e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showDebugMoves: 1
   mapTileValues: 
   mapTileHeights: 
   debugArray: []
   mapTileWidth: 10
   mapTileHeight: 10
-  LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
+  LeadPrefab0M: {fileID: 1246347295431032, guid: bab9a269b6f069a4992deecd5ff5fbf0,
+    type: 2}
+  LeadPrefab1M: {fileID: 1281141579995176, guid: 605ad52894b278848bc3d7e29b29a3e1,
+    type: 2}
+  LeadPrefab2M: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17,
+    type: 2}
+  LeadPrefab0W: {fileID: 1556384447486060, guid: b8d9e98ae1b03cf49a9bbe855d354edd,
+    type: 2}
+  LeadPrefab1W: {fileID: 1304647860247352, guid: 14deded3ee137db41ba2ef487bce816c,
+    type: 2}
+  LeadPrefab2W: {fileID: 1927573566200972, guid: 795c3a15ebcdce641a42312f35fcc02a,
+    type: 2}
   FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
   DebugPrefab: {fileID: 1197471345975690, guid: a3fa1a4d4cc1f4dc59668d5f732c5dc8,
     type: 2}
