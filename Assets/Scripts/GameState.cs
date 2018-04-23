@@ -401,6 +401,12 @@ public class GameState : MonoBehaviour {
 			}
 		}
 
+		// Test-driven development for heart animation... >3>
+		if (Input.GetKey (KeyCode.F)) {
+			MapHandler.GetComponent<MapHandler> ().CreateHeart(5,5);
+			return;
+		}
+
 		// Deal with counter
 		if (DateActCount < DateActCountMax) {
 			// Any key will advance the counter 100%

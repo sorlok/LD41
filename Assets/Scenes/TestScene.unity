@@ -40246,6 +40246,8 @@ MonoBehaviour:
   mapTileHeight: 10
   LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
   FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
+  heartPrefab: {fileID: 1189565663332404, guid: 9e0c4c4a24e634a02ba85cf0de0e1d44,
+    type: 2}
   sfxSource: {fileID: 315532594}
   movementSFX:
   - {fileID: 8300000, guid: 38f36dd706ac9429398cebff173f7dc6, type: 3}
