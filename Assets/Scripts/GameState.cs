@@ -183,7 +183,7 @@ public class GameState : MonoBehaviour {
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
-	private static float NPCMoveCountMax = 0.9f;
+	private static float NPCMoveCountMax = 0.5f;
 	private float NPCMoveCount = NPCMoveCountMax;
 
 	private DateDialogues dateDialogues;
@@ -646,6 +646,9 @@ public class GameState : MonoBehaviour {
 	public void GameoverTracker(int selfEsteem) {
 		if (selfEsteem <= 0) {
 			CurrState = ActState.GameOverFadein;
+			//Flip Leads
+			MapHandler.GetComponent<MapHandler>().LeadPlayer.GetComponent<TokenHandler>().RemoveToken();
+			MapHandler.GetComponent<MapHandler>().LeadDate.GetComponent<TokenHandler>().RemoveToken();
 
 			// Reset practically everything
 			DateActCount = DateActCountMax;
