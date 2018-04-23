@@ -109,6 +109,9 @@ public class GameState : MonoBehaviour {
 		FadingTextIn,
 	}
 
+	// The state to set after the next fade?
+	private ActState AfterFadeState;
+
 	// Current interpolation variables
 	private float interpStartTime;
 	private float interpTotalLength;
@@ -229,6 +232,7 @@ public class GameState : MonoBehaviour {
 				// Talk to date
 				// Fade out text, fade in new text
 				CurrState = ActState.FadingTextOut;
+				AfterFadeState = ActState.ChooseInteractTalk;
 
 
 			} else if (stampId == 2) {
@@ -282,7 +286,7 @@ public class GameState : MonoBehaviour {
 		CurrState = ActState.ChooseInteractWithDate;
 	}
 
-	public void SetupTalkToDate() {
+/*	public void SetupTalkToDate() {
 		DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(4)];
 
 		StoryTxt.text = dd.storyText;
@@ -294,7 +298,7 @@ public class GameState : MonoBehaviour {
 
 		DialogueStoryTab.SetActive (true);
 		CurrState = ActState.ChooseInteractTalk;
-	}
+	}*/
 
 	public void SetupDateTurn() {
 		DialogueStoryTab.SetActive (false);
@@ -350,7 +354,7 @@ public class GameState : MonoBehaviour {
 		if (CurrState == ActState.ChooseInteractWithDate) {
 			if (opt == 1) {
 				// Talk to your date
-				SetupTalkToDate ();
+				CurrState = ActState.ChooseInteractTalk;
 			} else if (opt == 2) {
 				// Interact with them
 			} else if (opt == 3) {
@@ -568,7 +572,7 @@ public class GameState : MonoBehaviour {
 		// Deal with text fading?
 		if (CurrState == ActState.FadingTextOut) {
 			bool overflow = false;
-			float newAlpha = StoryTxt.color.a - 1f * Time.deltaTime;
+			float newAlpha = StoryTxt.color.a - 1.2f * Time.deltaTime;
 			if (newAlpha <= 0) {
 				newAlpha = 0;
 				overflow = true;
@@ -576,15 +580,25 @@ public class GameState : MonoBehaviour {
 			Color newAlphaColor = new Color (StoryTxt.color.r, StoryTxt.color.g, StoryTxt.color.b, newAlpha);
 			StoryTxt.color = newAlphaColor;
 			StoryTxtHeader.color = newAlphaColor;
+			Response1.GetComponentInChildren <Text> ().color = newAlphaColor;
+			Response2.GetComponentInChildren <Text> ().color = newAlphaColor;
+			Response3.GetComponentInChildren <Text> ().color = newAlphaColor;
 			if (overflow) {
-				// TODO: Set story text
+				DateDialogue dd = dateDialogues.DialogueOptions [rng.Next(dateDialogues.DialogueOptions.Count)];
+
+				// Set Story text
 				StoryTxtHeader.text = "Date Dialogue";
-				StoryTxt.text = "Here's your date's story";
+				StoryTxt.text = dd.storyText;
 
-				// TODO: Set response text
-				ShowBoxes("Ok", "Ok", "Ok");
+				// Set response text
+				ShowBoxes (
+					dd.option1,
+					dd.option2,
+					dd.option3
+				);
+					
+				// Hide stamps; change to fade-in
 				RespStamp1.GetComponent<StampHandler>().HideStamp ();
-
 				CurrState = ActState.FadingTextIn;
 			}
 		}
@@ -592,7 +606,7 @@ public class GameState : MonoBehaviour {
 		// Deal with text fading?
 		if (CurrState == ActState.FadingTextIn) {
 			bool overflow = false;
-			float newAlpha = StoryTxt.color.a + 1f * Time.deltaTime;
+			float newAlpha = StoryTxt.color.a + 1.2f * Time.deltaTime;
 			if (newAlpha >= 1) {
 				newAlpha = 1;
 				overflow = true;
@@ -600,8 +614,11 @@ public class GameState : MonoBehaviour {
 			Color newAlphaColor = new Color (StoryTxt.color.r, StoryTxt.color.g, StoryTxt.color.b, newAlpha);
 			StoryTxt.color = newAlphaColor;
 			StoryTxtHeader.color = newAlphaColor;
+			Response1.GetComponentInChildren <Text> ().color = newAlphaColor;
+			Response2.GetComponentInChildren <Text> ().color = newAlphaColor;
+			Response3.GetComponentInChildren <Text> ().color = newAlphaColor;
 			if (overflow) {
-				CurrState = ActState.TalkDateSelectReact;
+				CurrState = AfterFadeState;
 			}
 		}
 
