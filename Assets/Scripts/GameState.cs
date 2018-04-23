@@ -196,6 +196,11 @@ public class GameState : MonoBehaviour {
 	public void ReactToStamp(int stampId) { // 1, 2, 3 for stamp ID
 		// Beginning of game: show the timer, show the dialogue box
 		if (CurrState == ActState.Nothing) {
+			//TEMP:DEBUG:TESTING
+			StartFansActionState();return;
+			//END:TEMP:DEBUG:TESTING
+
+
 			PlayButtonSound ();
 
 			// Start Invisible

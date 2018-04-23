@@ -23,7 +23,7 @@ public class IntPoint
 }
 
 public class MapHandler : MonoBehaviour {
-	public bool showDebugMoves = true;
+	public bool showDebugMoves = false;
 
 	public List<int> mapTileValues = new List<int>();
 
@@ -191,8 +191,8 @@ public class MapHandler : MonoBehaviour {
 		leadPlayer = CreateLead (1, 3);
 		leadDate = CreateLead (2, 3);
 
-		for (int i = 2; i < 10; i++) {
-			CreateFan (i, i);
+		for (int i = 2; i < 8; i++) {
+			CreateFan (i+2, i);
 		}
 
 	}
@@ -239,18 +239,20 @@ public class MapHandler : MonoBehaviour {
 
 			fan.MovedThisTurn = true;
 
-			// TODO: Check if it knows about the players or not
-			fan.FanRandomWalk();
-
-			// Play movement SFX
-			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
-			sfxSource.Play();
-
-			// Do damage to player
+			// Are we moving or attacking?
 			foreach (char s in "NSEW") {
 				IntPoint next = IntPoint.FromCardinal (fan.TileX, fan.TileY, s);
-				if (SingleCollide (leadPlayer, next)) {
+				if (SingleCollide (leadPlayer, next) || SingleCollide (leadDate, next)) {
 					leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem -= 1;
+
+					// TODO: Show animation
+
+					// TODO: Play damage sound (placeholder)
+					sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
+					sfxSource.Play();
+
+					// Damage player
+					LeadPlayerScript.SelfEsteem -= 1;
 
 					// James: death animation
 					Debug.Log("James: a death animation is needed here.");
@@ -258,8 +260,17 @@ public class MapHandler : MonoBehaviour {
 					// Destroy this fan
 					fans.Remove (fanObj);
 					Destroy (fanObj);
+
+					return true;
 				}
 			}
+
+			// Ok, we're walking
+			fan.FanWalkTowards(LeadDate, LeadPlayer);
+
+			// Play movement SFX
+			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
+			sfxSource.Play();
 
 			return true;
 		}
