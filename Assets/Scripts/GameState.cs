@@ -89,6 +89,8 @@ public class GameState : MonoBehaviour {
 
 	// Current state tree entry. Sub-state(s) should be set to 0 on state change.
 	public ActState CurrState = ActState.Nothing;
+	public string phaseName = "";
+	public PhaseHandler phaseHandler;
 
 	// Countdown for whenever your date is acting
 	private static float DateActCountMax = 5; // How many seconds to complete an action
@@ -129,6 +131,8 @@ public class GameState : MonoBehaviour {
 		);
 		DialogueStoryTab.SetActive (true);
 		CurrState = ActState.PlayerActionSelect;
+		phaseName = "Your Turn";
+		phaseHandler.UpdateActiveUser (phaseName);
 	}
 
 	public void SetupInteractWithDate() {
@@ -174,6 +178,8 @@ public class GameState : MonoBehaviour {
 		DateActCount = 0;
 
 		CurrState = ActState.DateAction;
+		phaseName = "Date's Turn";
+		phaseHandler.UpdateActiveUser (phaseName);
 	}
 
 	// What action will our date take?
@@ -293,8 +299,14 @@ public class GameState : MonoBehaviour {
 	private void StartFansActionState() 
 	{
 		CurrState = ActState.FansAction;
+		phaseName = "Fan's Turn";
+		phaseHandler.UpdateActiveUser (phaseName);
 		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
 		NPCMoveCount = 0;
+
+		//Update Phase Clock
+		phaseHandler.UpdateMinute();
+		phaseHandler.UpdateTime ();
 	}
 
 	// Use this for initialization
@@ -309,7 +321,7 @@ public class GameState : MonoBehaviour {
 		MapHandler.GetComponent<MapHandler>().LoadMap1();
 
 		// TEMP: Testing fan actions
-		StartFansActionState();
+		//StartFansActionState();
 
 	}
 
