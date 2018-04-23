@@ -41,15 +41,15 @@ public class TokenHandler : MonoBehaviour {
 	}
 
 	// As a fan, walk towards a given other fan or player
-	public void FanWalkTowards(GameObject otherObj) {
+	public bool FanWalkTowards(GameObject otherObj1, GameObject otherObj2) {
 		// Try to take 1 step in our plan.
 		if (FanMakeNextMove ()) {
-			return;
+			return true;
 		}
 
 		// TEMP
-		gameObject.transform.RotateAround (gameObject.transform.position, Vector3.forward, 90f);
-		return;
+		//gameObject.transform.RotateAround (gameObject.transform.position, Vector3.forward, 90f);
+		return false;
 	}
 
 	// Try to make the next move in the current plan, recalculating once.
@@ -83,9 +83,15 @@ public class TokenHandler : MonoBehaviour {
 	// More accurate BFS lookup
 	private List<IntPoint> MakeNewTravelPlan() {
 		MapHandler mapHnd = MapHandler.GetComponent<MapHandler>();
-		TokenHandler other = mapHnd.LeadDate.GetComponent<TokenHandler>();
+
+
+		// TODO: Allow appearing NEXT to either of these.
+		TokenHandler other1 = mapHnd.LeadDate.GetComponent<TokenHandler>();
+		TokenHandler other2 = mapHnd.LeadPlayer.GetComponent<TokenHandler>();
+
+
 		Vector2Int start = new Vector2Int (TileX, TileY);
-		Vector2Int dest = new Vector2Int (other.TileX, other.TileY);
+		Vector2Int dest = new Vector2Int (other1.TileX, other1.TileY);
 		int infinity = 100 * 100;
 
 		// Step 1: Make a new array with the "moves from destination" count.
@@ -127,7 +133,7 @@ public class TokenHandler : MonoBehaviour {
 				lookup [mapHnd.GetTileIndex (newPos.x, newPos.y)]  = newDist;
 
 				// TEMP: Useful debugging
-				if (mapHnd.showDebugMoves) {
+				if (false) { //mapHnd.showDebugMoves
 					mapHnd.debugArray [mapHnd.GetTileIndex (newPos.x, newPos.y)].text = "" + newDist;
 				}
 			}

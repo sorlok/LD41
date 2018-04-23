@@ -23,7 +23,7 @@ public class IntPoint
 }
 
 public class MapHandler : MonoBehaviour {
-	public bool showDebugMoves = true;
+	//public bool showDebugMoves = false;
 
 	public List<int> mapTileValues = new List<int>();
 
@@ -36,7 +36,12 @@ public class MapHandler : MonoBehaviour {
 	public int mapTileHeight = 10;
 
 	// Used to create the lead/fan
-	public GameObject LeadPrefab;
+	public GameObject LeadPrefab0M;
+	public GameObject LeadPrefab1M;
+	public GameObject LeadPrefab2M;
+	public GameObject LeadPrefab0W;
+	public GameObject LeadPrefab1W;
+	public GameObject LeadPrefab2W;
 	public GameObject FanPrefab;
 	public GameObject DebugPrefab;
 
@@ -121,7 +126,7 @@ public class MapHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		// TEMP: Some useful debug code
-		if (showDebugMoves) {
+		if (false) { //showDebugMoves
 			for (int i = 0; i < mapTileWidth * mapTileHeight; i++) {
 				debugArray.Add (null);
 			}
@@ -166,16 +171,16 @@ public class MapHandler : MonoBehaviour {
 		// 5 = on a hill, or on a house
 		// 8 = on a house that's on a hill (shouldn't happen)
 		mapTileHeights = new List<int> {
-			2,2,2,2,2,2,2,2,2,2,  //0
-			2,2,2,2,2,2,2,5,2,2,  //1
-			2,2,2,2,2,5,5,2,2,2,  //2
-			5,5,5,2,2,2,2,2,2,2,  //3
-			2,2,2,5,2,5,2,2,5,2,  //4
-			2,2,2,5,2,5,5,2,5,2,  //5
-			2,2,2,5,2,5,5,2,5,2,  //6
-			2,2,2,2,2,2,2,2,2,2,  //7
-			2,2,2,2,5,5,5,2,5,2,  //8
-			2,2,2,2,2,2,2,2,2,2,  //9
+			2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  //0
+			2, 2, 2, 2, 2, 2, 2, 5, 2, 2,  //1
+			2, 2, 2, 2, 2, 5, 5, 2, 2, 2,  //2
+			5, 5, 5, 2, 2, 2, 2, 2, 2, 2,  //3
+			2, 2, 2, 5, 2, 5, 2, 2, 5, 2,  //4
+			2, 2, 2, 5, 2, 5, 5, 2, 5, 2,  //5
+			2, 2, 2, 5, 2, 5, 5, 2, 5, 2,  //6
+			2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  //7
+			2, 2, 2, 2, 5, 5, 5, 2, 5, 2,  //8
+			2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  //9
 		};
 
 		// Sanity check
@@ -186,19 +191,74 @@ public class MapHandler : MonoBehaviour {
 			throw new System.ArgumentException ("Bad map width/height and array sizes [2]");
 		}
 
-
 		// Create the players, and some fans
 		leadPlayer = CreateLead (1, 3);
 		leadDate = CreateLead (2, 3);
 
-		for (int i = 2; i < 10; i++) {
-			CreateFan (i, i);
+		SpawnFans (3);
+	}
+
+
+	private int getMinDistFromPlayer(IntPoint fan) {
+		int dist1 = Mathf.Abs(fan.x - LeadDate.GetComponent<TokenHandler>().TileX) + Mathf.Abs(fan.y - LeadDate.GetComponent<TokenHandler>().TileY);
+		int dist2 = Mathf.Abs(fan.x - LeadPlayer.GetComponent<TokenHandler>().TileX) + Mathf.Abs(fan.y - LeadPlayer.GetComponent<TokenHandler>().TileY);
+		if (dist1 < dist2) {
+			return dist1;
+		} else {
+			return dist2;
+		}
+	}
+
+
+	public void SpawnFans(int count) {
+		// Save allowed fan locations
+		List<IntPoint> fanSpawns = new List<IntPoint>();
+		for (int y = 0; y < mapTileHeight; y++) {
+			for (int x = 0; x < mapTileWidth; x++) {
+				IntPoint res = new IntPoint (x, y);
+				if (CanMove (res)) {
+					// Additional safety: not too close to dates
+					int amt = 4;
+					int dist = getMinDistFromPlayer (res);
+					if (dist >= amt) {
+						fanSpawns.Add (res);
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < count; i++) {
+			// Safety
+			if (fanSpawns.Count == 0) {
+				break;
+			}
+
+			// Make a fan at a random position
+			int id = GameState.rng.Next(fanSpawns.Count);
+			IntPoint pt = fanSpawns [id];
+			fanSpawns.RemoveAt (id);
+
+			CreateFan (pt.x, pt.y);
 		}
 
 	}
 
 	public GameObject CreateLead(int tileX, int tileY) {
-		GameObject res = Instantiate(LeadPrefab, new Vector3(0, 2, 0), Quaternion.identity);
+		int nxt = GameState.rng.Next (6);
+		GameObject res = null;
+		if (nxt == 0) {
+			res = Instantiate(LeadPrefab0M, new Vector3(0, 2, 0), Quaternion.identity);
+		} else if (nxt == 1) {
+			res = Instantiate(LeadPrefab0W, new Vector3(0, 2, 0), Quaternion.identity);
+		} else if (nxt == 2) {
+			res = Instantiate(LeadPrefab1M, new Vector3(0, 2, 0), Quaternion.identity);
+		} else if (nxt == 3) {
+			res = Instantiate(LeadPrefab1W, new Vector3(0, 2, 0), Quaternion.identity);
+		} else if (nxt == 4) {
+			res = Instantiate(LeadPrefab2M, new Vector3(0, 2, 0), Quaternion.identity);
+		} else {
+			res = Instantiate(LeadPrefab2W, new Vector3(0, 2, 0), Quaternion.identity);
+		}
 		res.GetComponent<TokenHandler>().MapHandler = this.gameObject;
 		res.GetComponent<TokenHandler> ().self = res;
 		res.GetComponent<TokenHandler>().MoveToTile (tileX, tileY);
@@ -231,39 +291,77 @@ public class MapHandler : MonoBehaviour {
 	// Return true if an NPC moved
 	// TEMP function
 	public bool MoveNextNPC() {
+		// Find the NEAREST fan that hasn't moved
+		GameObject nextFan = null;
+
 		foreach (GameObject fanObj in fans) {
 			TokenHandler fan = fanObj.GetComponent<TokenHandler> ();
 			if (fan.MovedThisTurn) {
 				continue;
 			}
 
+			// Set/compare it
+			if (nextFan == null) {
+				nextFan = fanObj;
+			} else {
+				TokenHandler curr = nextFan.GetComponent<TokenHandler> ();
+				int currDist = getMinDistFromPlayer (new IntPoint (curr.TileX, curr.TileY));
+				int nxtDist = getMinDistFromPlayer (new IntPoint (fan.TileX, fan.TileY));
+				if (nxtDist < currDist) {
+					nextFan = fanObj;
+				}
+			}
+		}
+
+		// Anything?
+		if (nextFan != null) {
+			TokenHandler fan = nextFan.GetComponent<TokenHandler> ();
 			fan.MovedThisTurn = true;
 
-			// TODO: Check if it knows about the players or not
-			fan.FanRandomWalk();
-
-			// Play movement SFX
-			sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
-			sfxSource.Play();
-
-			// Do damage to player
+			// Are we moving or attacking?
 			foreach (char s in "NSEW") {
 				IntPoint next = IntPoint.FromCardinal (fan.TileX, fan.TileY, s);
-				if (SingleCollide (leadPlayer, next)) {
+				if (SingleCollide (leadPlayer, next) || SingleCollide (leadDate, next)) {
 					leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem -= 1;
+
+					// TODO: Show animation
+
+					// TODO: Play damage sound (placeholder)
+					sfxSource.clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
+					sfxSource.Play();
+
+					// Damage player
+					LeadPlayerScript.SelfEsteem -= 1;
 
 					// James: death animation
 					Debug.Log("James: a death animation is needed here.");
 
 					// Destroy this fan
-					fans.Remove (fanObj);
-					Destroy (fanObj);
+					DestroyFan(nextFan);
+
+					return true;
 				}
 			}
 
-			return true;
+			// Ok, we're walking
+			bool didAWalk = fan.FanWalkTowards(LeadDate, LeadPlayer);
+
+			// Play movement SFX
+			if (didAWalk) {
+				sfxSource.clip = movementSFX [Random.Range (0, movementSFX.Length)];
+				sfxSource.Play ();
+
+				return true;
+			} else {
+				return false;
+			}
 		}
 		return false;
+	}
+
+	public void DestroyFan(GameObject fan) {
+		fans.Remove (fan);
+		Destroy (fan);
 	}
 
 	private bool SingleCollide(GameObject other, IntPoint dest) {

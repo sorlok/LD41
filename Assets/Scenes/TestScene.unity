@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4374898, g: 0.48531306, b: 0.56558794, a: 1}
+  m_IndirectSpecularColor: {r: 0.43748954, g: 0.48531282, b: 0.56558746, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -22282,8 +22282,9 @@ MonoBehaviour:
   SkipText: {fileID: 90171496}
   NextText: {fileID: 146942557}
   NextStamp: {fileID: 1586779893}
-  sfxSource: {fileID: 315532594}
+  sfxSourceBtn: {fileID: 315532594}
   buttonSFX: {fileID: 8300000, guid: b126f52af89c948f3b8b23c2043057ab, type: 3}
+  sfxSourceTurn: {fileID: 315532594}
   turnSFX: {fileID: 8300000, guid: 33eb4fd8b32e54d1faeb7d340364296d, type: 3}
   DialogueStoryTab: {fileID: 1692605043}
   StoryTxtHeader: {fileID: 278814681}
@@ -25060,7 +25061,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 528981654}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalPosition: {x: -21.61, y: 5, z: -1.23}
   m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_Children: []
   m_Father: {fileID: 2015402250}
@@ -44166,13 +44167,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7b47d26ff38c04fa83dee9e1f5395e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showDebugMoves: 1
   mapTileValues: 
   mapTileHeights: 
   debugArray: []
   mapTileWidth: 10
   mapTileHeight: 10
-  LeadPrefab: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17, type: 2}
+  LeadPrefab0M: {fileID: 1246347295431032, guid: bab9a269b6f069a4992deecd5ff5fbf0,
+    type: 2}
+  LeadPrefab1M: {fileID: 1281141579995176, guid: 605ad52894b278848bc3d7e29b29a3e1,
+    type: 2}
+  LeadPrefab2M: {fileID: 1373886656943672, guid: 4b817aaaa7f37c4449d5162410317f17,
+    type: 2}
+  LeadPrefab0W: {fileID: 1556384447486060, guid: b8d9e98ae1b03cf49a9bbe855d354edd,
+    type: 2}
+  LeadPrefab1W: {fileID: 1304647860247352, guid: 14deded3ee137db41ba2ef487bce816c,
+    type: 2}
+  LeadPrefab2W: {fileID: 1927573566200972, guid: 795c3a15ebcdce641a42312f35fcc02a,
+    type: 2}
   FanPrefab: {fileID: 1757949902173832, guid: f69442f1bb98f0445a6ce03f3b30b0e6, type: 2}
   DebugPrefab: {fileID: 1197471345975690, guid: a3fa1a4d4cc1f4dc59668d5f732c5dc8,
     type: 2}
@@ -59158,7 +59169,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4386685869273750, guid: bab9a269b6f069a4992deecd5ff5fbf0, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 48.2
       objectReference: {fileID: 0}
     - target: {fileID: 4386685869273750, guid: bab9a269b6f069a4992deecd5ff5fbf0, type: 2}
       propertyPath: m_LocalPosition.y
@@ -59166,7 +59177,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4386685869273750, guid: bab9a269b6f069a4992deecd5ff5fbf0, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -58.4
       objectReference: {fileID: 0}
     - target: {fileID: 4386685869273750, guid: bab9a269b6f069a4992deecd5ff5fbf0, type: 2}
       propertyPath: m_LocalRotation.x
