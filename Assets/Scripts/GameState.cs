@@ -440,11 +440,21 @@ public class GameState : MonoBehaviour {
 		StoryTxtHeader.text = "Date Action";
 		StoryTxt.text = "What will you do this turn?";
 		string changeStr = phaseHandler.thisHour<9 ? "Change Date Location" : "End Date";
-		ShowBoxes (
-			"Talk to Date",
-			"Tweet @Fans",
-			changeStr
-		);
+
+		if (TooLateMustMove ()) {
+			ShowBoxes (
+				null,
+				null,
+				changeStr
+			);
+		} else {
+			ShowBoxes (
+				"Talk to Date",
+				"Tweet @Fans",
+				changeStr
+			);
+		}
+
 		//DialogueStoryTab.SetActive (true);
 		CurrState = ActState.PlayerActionSelect;
 
@@ -879,6 +889,14 @@ public class GameState : MonoBehaviour {
 			sfxSourceTurn.clip = turnSFX;
 			sfxSourceTurn.Play ();
 		}
+	}
+
+	private bool TooLateMustMove() {
+		//TEMP: DEBUG
+		//return true;
+
+		return phaseHandler.thisMinute >= 50;
+
 	}
 
 	private bool TooSoonToMove() {
