@@ -290,6 +290,8 @@ public class TokenHandler : MonoBehaviour {
 	}
 
 	public void HighlightToken () {
+		//print ("Highlighting.");
+
 		highlighting = true;
 		tokenRender.material = fanMaterialOn;
 		highlightTime = Time.fixedTime;

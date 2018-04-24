@@ -248,8 +248,10 @@ MonoBehaviour:
   MapHandler: {fileID: 0}
   tweetHandler: {fileID: 0}
   tokenRender: {fileID: 23099162857686696}
-  fanMaterialOn: {fileID: 2100000, guid: 827936249647c984ebc94162fe5df59b, type: 2}
-  fanMaterialOff: {fileID: 2100000, guid: c3f21a6e872d3ac4fbd81cdc92cf8496, type: 2}
+  fanMaterialOn: {fileID: 2100000, guid: b8ca91753c4995d4ea6bdc956ffdb8e8, type: 2}
+  fanMaterialOff: {fileID: 2100000, guid: de5cf8dff999bcb41bee5741c59ee6b8, type: 2}
+  leadMaterialOn: {fileID: 0}
+  leadMaterialOff: {fileID: 0}
   MovedThisTurn: 0
 --- !u!135 &135260817606883312
 SphereCollider:

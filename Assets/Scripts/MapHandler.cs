@@ -354,7 +354,7 @@ public class MapHandler : MonoBehaviour {
 					LeadPlayerScript.SelfEsteem -= 1;
 
 					// James: death animation
-					Debug.Log("James: a death animation is needed here.");
+					//Debug.Log("James: a death animation is needed here.");
 
 					// Destroy this fan
 					leadPlayer.GetComponent<TokenHandler>().HighlightToken();
