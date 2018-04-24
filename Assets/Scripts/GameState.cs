@@ -929,6 +929,11 @@ public class GameState : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			Exit ();
+		}
+
 		// Gameover fading takes priority
 		if (CurrState == ActState.GameOverFadein) {
 			if (GameOverFirstTime) {
@@ -1203,5 +1208,10 @@ public class GameState : MonoBehaviour {
 		if (NPCMoveCount < NPCMoveCountMaxNow) {
 			AdvanceNPCMoveCounter (Time.deltaTime);
 		}
+	}
+
+	public void Exit () {
+		print ("Exit.");
+		Application.Quit();
 	}
 }
