@@ -193,12 +193,13 @@ public class GameState : MonoBehaviour {
 	private float DateActCount = DateActCountMax;  // When < max, counts up
 
 	// Temporary hack for moving NPCs
-	private static float NPCMoveCountMaxSlow = 0.5f;
-	private static float NPCMoveCountMaxFast = 0.3f;
-	private float NPCMoveCount = NPCMoveCountMaxSlow;
+	//private static float NPCMoveCountMaxSlow = 0.5f;
+	//private static float NPCMoveCountMaxFast = 0.3f;
+	private float NPCMoveCount = 9999;
 
 	// What max are we looking at now?
-	private static float NPCMoveCountMaxNow = NPCMoveCountMaxSlow;
+	private static float NPCMoveCountMaxNow = 0.5f;
+	private static bool firstTurnMoveNPC = true;
 
 	private DateDialogues dateDialogues;
 
@@ -356,15 +357,9 @@ public class GameState : MonoBehaviour {
 				ChoiceParticles.GetComponent<Renderer> ().material = GoodOptionTexture;
 
 
-				//Debug.Log ("2 is " + GetAtmoMod(2));
-
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(2);
 			} else if (LastDateResponse == 'N') {
-				//int tileX = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileX;
-				//int tileY = MapHandler.GetComponent<MapHandler> ().LeadPlayer.GetComponent<TokenHandler> ().TileY;
 				ChoiceParticles.GetComponent<Renderer> ().material = NeutralOptionTexture;
-
-				//Debug.Log ("1 is " + GetAtmoMod(1));
 
 
 				MapHandler.GetComponent<MapHandler> ().LeadPlayerScript.SelfEsteem += GetAtmoMod(1);
@@ -669,14 +664,38 @@ public class GameState : MonoBehaviour {
 		StartFansActionState();
 	}
 
+	private float MakeMaxCount(char item) {
+		int count = MapHandler.GetComponent<MapHandler> ().FanCount;
+		float res = 0.5f;
+		if (count <= 3) {
+			res = 0.5f;
+		} else if (count <= 6) {
+			res = 0.25f;
+		} else if (count <= 12) {
+			res = 0.125f;
+		} else if (count <= 24) {
+			res = 0.0625f;
+		} else {
+			res = 0.03125f;
+		}
+
+		//TODO
+		//if (item == 'F') {
+		//	res /= 2;
+		//}
+
+		return res;
+	}
+
 	private void StartFansActionState() 
 	{
 		CurrState = ActState.FansAction;
 		phaseName = "Fans' Turns";
 		phaseHandler.UpdateActiveUser (phaseName);
 		MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
-		NPCMoveCountMaxNow = NPCMoveCountMaxSlow;
+		NPCMoveCountMaxNow = MakeMaxCount('S');
 		NPCMoveCount = 0;
+		firstTurnMoveNPC = true;
 	}
 
 	// Use this for initialization
@@ -725,7 +744,7 @@ public class GameState : MonoBehaviour {
 
 			// Reset practically everything
 			DateActCount = DateActCountMax;
-			NPCMoveCount = NPCMoveCountMaxSlow;
+			NPCMoveCount = 9999;
 		}
 	}
 
@@ -824,10 +843,11 @@ public class GameState : MonoBehaviour {
 					NPCMoveCount = 0;
 				} else {
 					// Is the state done, or are we doing it again?
-					if (NPCMoveCountMaxNow == NPCMoveCountMaxSlow) {
-						NPCMoveCountMaxNow = NPCMoveCountMaxFast;
+					if (firstTurnMoveNPC) {
+						MakeMaxCount('F');
 						NPCMoveCount = 0;
 						MapHandler.GetComponent<MapHandler> ().ResetNPCMoves ();
+						firstTurnMoveNPC = false;
 					} else {
 						// Ok, we're actualy done
 						CurrState = ActState.WaitingFanAckFromPlayer;
@@ -989,6 +1009,11 @@ public class GameState : MonoBehaviour {
 					} else {
 						StoryTxt.text += "\n\n  -1 Self Esteem";
 					}
+
+					// Add connection
+					int conn = GetAtmoMod(MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem);
+					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.Connection += conn;
+					StoryTxt.text += "\n  + " + conn + " Connection";
 
 
 					// Set response text
