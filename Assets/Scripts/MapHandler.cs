@@ -338,7 +338,7 @@ public class MapHandler : MonoBehaviour {
 			foreach (char s in "NSEW") {
 				IntPoint next = IntPoint.FromCardinal (fan.TileX, fan.TileY, s);
 				if (SingleCollide (leadPlayer, next) || SingleCollide (leadDate, next)) {
-					leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem -= 1;
+					//leadPlayer.GetComponent<TokenHandler> ().LeadObj.SelfEsteem -= 1;
 
 					// TODO: Show animation
 
@@ -350,11 +350,10 @@ public class MapHandler : MonoBehaviour {
 					source.GetComponent<AudioSource>().clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
 					source.GetComponent<AudioSource> ().Play ();
 
+					//Debug.Log ("About to DAMAGE");
+
 					// Damage player
 					LeadPlayerScript.SelfEsteem -= 1;
-
-					// James: death animation
-					//Debug.Log("James: a death animation is needed here.");
 
 					// Destroy this fan
 					leadPlayer.GetComponent<TokenHandler>().HighlightToken();
