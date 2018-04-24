@@ -350,16 +350,14 @@ public class MapHandler : MonoBehaviour {
 					source.GetComponent<AudioSource>().clip = movementSFX[ Random.Range(0, movementSFX.Length) ];
 					source.GetComponent<AudioSource> ().Play ();
 
-					//Debug.Log ("About to DAMAGE");
-
-					// Damage player
-					LeadPlayerScript.SelfEsteem -= 1;
-
 					// Destroy this fan
 					leadPlayer.GetComponent<TokenHandler>().HighlightToken();
 					leadDate.GetComponent<TokenHandler> ().HighlightToken ();
 
 					DestroyFanNew(nextFan);
+
+					// Damage player
+					LeadPlayerScript.SelfEsteem -= 1;
 
 					return true;
 				}
