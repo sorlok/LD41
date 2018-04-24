@@ -743,8 +743,6 @@ public class GameState : MonoBehaviour {
 	}
 
 	public void GameoverTracker(int selfEsteem) {
-		Debug.Log ("Game Over check: " + selfEsteem);
-
 		if (selfEsteem <= 0) {
 			CurrState = ActState.GameOverFadein;
 
@@ -768,31 +766,47 @@ public class GameState : MonoBehaviour {
 		// Basically, favor additions and fans; sometimes negations and self esteem.
 		string res = "";
 		int count = rng.Next(100) > 75 ? 2 : 1;
+
+		int fanAmt = 0; 
+		int esteemAmt = 0; 
+
+		//count = 2;// TEST
+
 		for (int i = 0; i < count; i++) {
 			bool positive = rng.Next (100) > 75;
 			int amt = rng.Next (100) > 75 ? 2 : 1;
-			if (rng.Next (100) > fanCutoff) {
+			bool isFanCutoff = rng.Next (100) > fanCutoff;
+
+
+
+			//amt = 100; positive = false; isFanCutoff = false; positive = false; //TEST
+
+
+			if (isFanCutoff) {
 				// Fans
 				amt *= 10;
 				if (positive) {
-					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount += amt;
+					fanAmt += amt;
 					res += "\n  +" + amt + " Fans";
 				} else {
-					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount -= amt;
+					fanAmt -= amt;
 					res += "\n  -" + amt + " Fans";
 				}
 			} else {
 				// Self Esteem
 				if (positive) {
-					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem += amt;
+					esteemAmt += amt;
 					res += "\n  +" + amt + " Self Esteem";
 				} else {
-					MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem -= amt;
+					esteemAmt -= amt;
 					res += "\n  -" + amt + " Self Esteem";
 				}
 			}
 		}
-			
+
+		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.FanCount += fanAmt;
+		MapHandler.GetComponent<MapHandler>().LeadPlayerScript.SelfEsteem += esteemAmt;
+
 		return res;
 	}
 
@@ -828,11 +842,13 @@ public class GameState : MonoBehaviour {
 					StoryTxt.text += "\n" + RandomlyModifyStatsFromPersonal ();
 				}
 
-				// Set up next button again
-				NextStamp.GetComponent<StampHandler>().HideStamp ();
-				NextText.text = "Fan Phase";
+				if (CurrState != ActState.GameOverFadein) {
+					// Set up next button again
+					NextStamp.GetComponent<StampHandler>().HideStamp ();
+					NextText.text = "Fan Phase";
 
-				CurrState = ActState.DateActShowReward;
+					CurrState = ActState.DateActShowReward;
+				}
 			} else {
 				ThrowException ("Bad current state: " + CurrState);
 			}
