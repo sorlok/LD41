@@ -356,6 +356,9 @@ public class MapHandler : MonoBehaviour {
 					LeadPlayerScript.SelfEsteem -= 1;
 
 					// Destroy this fan
+					leadPlayer.GetComponent<TokenHandler>().HighlightToken();
+					leadDate.GetComponent<TokenHandler> ().HighlightToken ();
+
 					DestroyFanNew(nextFan);
 
 					return true;

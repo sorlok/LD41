@@ -27,9 +27,12 @@ public class TokenHandler : MonoBehaviour {
 	private bool highlighting = false;
 	public MeshRenderer tokenRender;
 	public Material fanMaterialOn, fanMaterialOff;
+	public Material leadMaterialOn, leadMaterialOff;
 
+	private bool leadHighlighting = false;
 
-
+	//Lead Highlighting
+	private float highlightTime, highlightDelay = .3f;
 
 	// Did our fan move this turn?
 	public bool MovedThisTurn = false;
@@ -60,6 +63,11 @@ public class TokenHandler : MonoBehaviour {
 			HandleRemoval ();
 		}
 
+		if (LeadObj != null) {
+			if (Delayed (highlightDelay, highlightTime)) {
+				HideToken ();
+			}
+		}
 		//FlipToken ();
 	}
 
@@ -282,8 +290,11 @@ public class TokenHandler : MonoBehaviour {
 	}
 
 	public void HighlightToken () {
+		//print ("Highlighting.");
+
 		highlighting = true;
 		tokenRender.material = fanMaterialOn;
+		highlightTime = Time.fixedTime;
 		//print ("Token Highlighted.");
 	}
 	public void HideToken () {
@@ -375,4 +386,5 @@ public class TokenHandler : MonoBehaviour {
 			self.transform.position += new Vector3 ((0), (-yShift), (0));
 		}
 	}
+
 }
