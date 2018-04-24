@@ -866,7 +866,9 @@ public class GameState : MonoBehaviour {
 			if (CurrState == ActState.FansAction) {
 				// Move a fan randomly, if one is next
 				if (MapHandler.GetComponent<MapHandler> ().MoveNextNPC ()) {
-					NPCMoveCount = 0;
+					if (CurrState != ActState.GameOverFadein) {
+						NPCMoveCount = 0;
+					}
 				} else {
 					// Is the state done, or are we doing it again?
 					if (firstTurnMoveNPC) {
