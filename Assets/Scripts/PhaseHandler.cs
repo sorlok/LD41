@@ -29,6 +29,7 @@ public class PhaseHandler : MonoBehaviour {
 
 	public void UpdateHour () {
 		thisHour += 1;
+		thisMinute = 0;
 		sun.MoveSun (1);
 	}
 
